@@ -169,145 +169,190 @@ export default function ClassEnrollments() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-8">
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Class Enrollments</h1>
-          <p className="text-gray-600">
-            Manage student enrollments in classes
-          </p>
-        </div>
-
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg shadow"
-        >
-          <Plus className="w-5 h-5" />
-          Enroll Student
-        </button>
+  <div className="p-4 sm:p-6 lg:p-8">
+    {/* HEADER */}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1">
+          Class Enrollments
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          Manage student enrollments in classes
+        </p>
       </div>
 
-      {/* MODAL */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-md">
-            <div className="flex justify-between p-6 border-b">
-              <h2 className="text-xl font-bold">New Enrollment</h2>
-              <button onClick={closeForm}>
-                <X />
-              </button>
-            </div>
+      <button
+        onClick={() => setShowForm(true)}
+        className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg shadow w-full sm:w-auto"
+      >
+        <Plus className="w-5 h-5" />
+        Enroll Student
+      </button>
+    </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <select
-                className="w-full border p-2 rounded"
-                value={formData.class_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, class_id: e.target.value })
-                }
-              >
-                <option value="">No Class (Optional)</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                className="w-full border p-2 rounded"
-                value={formData.user_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, user_id: e.target.value })
-                }
-                required
-              >
-                <option value="">Select user</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
-                    {u.email ? ` (${u.email})` : ''}
-                  </option>
-                ))}
-              </select>
-
-              <button
-                type="submit"
-                className="w-full bg-purple-600 text-white py-2 rounded"
-              >
-                Enroll Student
-              </button>
-            </form>
+    {/* MODAL */}
+    {showForm && (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
+        <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-xl max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center p-4 sm:p-6 border-b">
+            <h2 className="text-lg sm:text-xl font-bold">New Enrollment</h2>
+            <button onClick={closeForm}>
+              <X />
+            </button>
           </div>
-        </div>
-      )}
 
-      {/* SEARCH */}
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            placeholder="Search by class or user..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border rounded-lg"
-          />
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
+            <select
+              className="w-full border p-3 rounded-lg"
+              value={formData.class_id}
+              onChange={(e) =>
+                setFormData({ ...formData, class_id: e.target.value })
+              }
+            >
+              <option value="">No Class (Optional)</option>
+              {classes.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.title}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="w-full border p-3 rounded-lg"
+              value={formData.user_id}
+              onChange={(e) =>
+                setFormData({ ...formData, user_id: e.target.value })
+              }
+              required
+            >
+              <option value="">Select user</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
+                  {u.email ? ` (${u.email})` : ''}
+                </option>
+              ))}
+            </select>
+
+            <button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg"
+            >
+              Enroll Student
+            </button>
+          </form>
         </div>
       </div>
+    )}
 
-      {/* TABLE */}
-      <div className="bg-white rounded-xl shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Enrollment ID
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Class
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                User
-              </th>
-              <th className="px-6 py-4 text-right text-sm font-semibold">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {filteredEnrollments.map((e) => (
-              <tr key={e.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm">{e.id}</td>
-                <td className="px-6 py-4 text-sm">
-                  <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
-                    {getClassTitle(e.class_id)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                    {getUserName(e.user_id)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => handleDelete(e.id)}
-                    className="text-red-600 hover:bg-red-50 p-2 rounded"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {filteredEnrollments.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No enrollments found
-          </div>
-        )}
+    {/* SEARCH */}
+    <div className="mb-6">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+          placeholder="Search by class or user..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-3 border rounded-lg text-sm sm:text-base"
+        />
       </div>
     </div>
-  )
+
+    {/* MOBILE CARDS */}
+    <div className="block lg:hidden space-y-4">
+      {filteredEnrollments.map((e) => (
+        <div
+          key={e.id}
+          className="bg-white rounded-xl shadow p-4 space-y-3"
+        >
+          <div className="text-xs text-gray-500 break-all">
+            {e.id}
+          </div>
+
+          <div>
+            <span className="text-xs font-semibold text-gray-500">Class</span>
+            <div className="mt-1 inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+              {getClassTitle(e.class_id)}
+            </div>
+          </div>
+
+          <div>
+            <span className="text-xs font-semibold text-gray-500">User</span>
+            <div className="mt-1 inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+              {getUserName(e.user_id)}
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => handleDelete(e.id)}
+              className="text-red-600 hover:bg-red-50 p-2 rounded"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {filteredEnrollments.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          No enrollments found
+        </div>
+      )}
+    </div>
+
+    {/* DESKTOP TABLE */}
+    <div className="hidden lg:block bg-white rounded-xl shadow overflow-hidden">
+      <table className="w-full">
+        <thead className="bg-gray-50 border-b">
+          <tr>
+            <th className="px-6 py-4 text-left text-sm font-semibold">
+              Enrollment ID
+            </th>
+            <th className="px-6 py-4 text-left text-sm font-semibold">
+              Class
+            </th>
+            <th className="px-6 py-4 text-left text-sm font-semibold">
+              User
+            </th>
+            <th className="px-6 py-4 text-right text-sm font-semibold">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {filteredEnrollments.map((e) => (
+            <tr key={e.id} className="hover:bg-gray-50">
+              <td className="px-6 py-4 text-sm break-all">{e.id}</td>
+              <td className="px-6 py-4 text-sm">
+                <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+                  {getClassTitle(e.class_id)}
+                </span>
+              </td>
+              <td className="px-6 py-4 text-sm">
+                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                  {getUserName(e.user_id)}
+                </span>
+              </td>
+              <td className="px-6 py-4 text-right">
+                <button
+                  onClick={() => handleDelete(e.id)}
+                  className="text-red-600 hover:bg-red-50 p-2 rounded"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {filteredEnrollments.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          No enrollments found
+        </div>
+      )}
+    </div>
+  </div>
+)
 }
