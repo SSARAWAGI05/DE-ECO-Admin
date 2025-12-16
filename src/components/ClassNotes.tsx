@@ -186,40 +186,40 @@ export default function ClassNotes() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 lg:mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Class Notes</h1>
-          <p className="text-gray-600">Upload and manage class study materials</p>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Class Notes</h1>
+          <p className="text-sm sm:text-base text-gray-600">Upload and manage class study materials</p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg shadow"
+          className="flex items-center justify-center gap-2 bg-orange-600 active:bg-orange-700 text-white px-5 py-3 rounded-lg shadow text-sm sm:text-base w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
-          Upload Notes
+          Upload
         </button>
       </div>
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-xl p-6">
-            <div className="flex justify-between mb-4">
-              <h2 className="text-xl font-bold">
+        <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white">
+              <h2 className="text-xl sm:text-2xl font-bold">
                 {editingId ? 'Edit Notes' : 'Upload Notes'}
               </h2>
-              <button onClick={closeForm}>
-                <X />
+              <button onClick={closeForm} className="p-2 -mr-2">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
               {/* CLASS (OPTIONAL) */}
               <select
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.class_id}
                 onChange={(e) =>
                   setFormData({ ...formData, class_id: e.target.value })
@@ -235,7 +235,7 @@ export default function ClassNotes() {
 
               {/* USER (REQUIRED) */}
               <select
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.user_id}
                 onChange={(e) =>
                   setFormData({ ...formData, user_id: e.target.value })
@@ -253,7 +253,7 @@ export default function ClassNotes() {
 
               <input
                 placeholder="Title"
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -264,7 +264,7 @@ export default function ClassNotes() {
               <input
                 type="url"
                 placeholder="File URL"
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.file_url}
                 onChange={(e) =>
                   setFormData({ ...formData, file_url: e.target.value })
@@ -274,9 +274,9 @@ export default function ClassNotes() {
 
               <button
                 type="submit"
-                className="w-full bg-orange-600 text-white py-2 rounded"
+                className="w-full bg-orange-600 active:bg-orange-700 text-white py-3.5 rounded-lg font-medium text-base"
               >
-                {editingId ? 'Update Notes' : 'Upload Notes'}
+                {editingId ? 'Update' : 'Upload'}
               </button>
             </form>
           </div>
@@ -284,42 +284,50 @@ export default function ClassNotes() {
       )}
 
       {/* LIST */}
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {notes.map((note) => (
           <div
             key={note.id}
-            className="bg-white rounded-xl shadow p-6 flex justify-between"
+            className="bg-white rounded-xl shadow-md active:shadow-lg transition-shadow p-4 sm:p-6"
           >
-            <div className="flex gap-4">
-              <div className="bg-orange-100 p-3 rounded-lg">
-                <FileText className="w-6 h-6 text-orange-600" />
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex gap-3 sm:gap-4 flex-1 min-w-0">
+                <div className="bg-orange-100 p-3 rounded-lg flex-shrink-0 h-fit">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-base sm:text-lg mb-1 truncate">{note.title}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                    Class: {getClassTitle(note.class_id)}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-2 truncate">
+                    User: {getUserName(note.user_id)}
+                  </p>
+                  <a
+                    href={note.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-orange-600 text-sm inline-flex items-center gap-1 font-medium"
+                  >
+                    <Download size={14} /> Download
+                  </a>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold">{note.title}</h3>
-                <p className="text-sm text-gray-600">
-                  Class: {getClassTitle(note.class_id)}
-                </p>
-                <p className="text-sm text-gray-600">
-                  User: {getUserName(note.user_id)}
-                </p>
-                <a
-                  href={note.file_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-orange-600 text-sm inline-flex items-center gap-1 mt-1"
-                >
-                  <Download size={14} /> Download
-                </a>
-              </div>
-            </div>
 
-            <div className="flex gap-2">
-              <button onClick={() => handleEdit(note)}>
-                <Edit2 className="text-orange-600" />
-              </button>
-              <button onClick={() => handleDelete(note.id)}>
-                <Trash2 className="text-red-600" />
-              </button>
+              <div className="flex sm:flex-col gap-2">
+                <button
+                  onClick={() => handleEdit(note)}
+                  className="flex-1 sm:flex-initial p-2.5 text-orange-600 active:bg-orange-50 rounded-lg transition-colors"
+                >
+                  <Edit2 className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleDelete(note.id)}
+                  className="flex-1 sm:flex-initial p-2.5 text-red-600 active:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         ))}

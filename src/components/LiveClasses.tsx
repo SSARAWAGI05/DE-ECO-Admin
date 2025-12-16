@@ -204,42 +204,42 @@ export default function LiveClasses() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 lg:mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Live Classes</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Live Classes</h1>
+          <p className="text-sm sm:text-base text-gray-600">
             Schedule and manage live class sessions
           </p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow"
+          className="flex items-center justify-center gap-2 bg-green-600 active:bg-green-700 text-white px-5 py-3 rounded-lg shadow text-sm sm:text-base w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
-          Schedule Class
+          Schedule
         </button>
       </div>
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-xl p-6">
-            <div className="flex justify-between mb-4">
-              <h2 className="text-xl font-bold">
+        <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white">
+              <h2 className="text-xl sm:text-2xl font-bold">
                 {editingId ? 'Edit Class' : 'New Class'}
               </h2>
-              <button onClick={closeForm}>
-                <X />
+              <button onClick={closeForm} className="p-2 -mr-2">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
               {/* USER */}
               <select
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.user_id}
                 onChange={(e) =>
                   setFormData({ ...formData, user_id: e.target.value })
@@ -256,7 +256,7 @@ export default function LiveClasses() {
 
               <input
                 placeholder="Class Title"
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -266,7 +266,7 @@ export default function LiveClasses() {
 
               <input
                 placeholder="Instructor Name"
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.instructor_name}
                 onChange={(e) =>
                   setFormData({
@@ -283,7 +283,7 @@ export default function LiveClasses() {
                 <input
                   type="url"
                   placeholder={DEFAULT_MEETING_LINK}
-                  className="w-full border p-2 pl-9 rounded"
+                  className="w-full border p-3 pl-10 rounded-lg text-base"
                   value={formData.meeting_link}
                   onChange={(e) =>
                     setFormData({
@@ -297,7 +297,7 @@ export default function LiveClasses() {
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="date"
-                  className="border p-2 rounded"
+                  className="border p-3 rounded-lg text-base"
                   value={formData.scheduled_date}
                   onChange={(e) =>
                     setFormData({
@@ -309,7 +309,7 @@ export default function LiveClasses() {
                 />
                 <input
                   type="time"
-                  className="border p-2 rounded"
+                  className="border p-3 rounded-lg text-base"
                   value={formData.start_time}
                   onChange={(e) =>
                     setFormData({
@@ -324,7 +324,7 @@ export default function LiveClasses() {
               <input
                 type="number"
                 placeholder="Duration (minutes)"
-                className="w-full border p-2 rounded"
+                className="w-full border p-3 rounded-lg text-base"
                 value={formData.duration_minutes}
                 onChange={(e) =>
                   setFormData({
@@ -337,9 +337,9 @@ export default function LiveClasses() {
 
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-2 rounded"
+                className="w-full bg-green-600 active:bg-green-700 text-white py-3.5 rounded-lg font-medium text-base"
               >
-                {editingId ? 'Update Class' : 'Create Class'}
+                {editingId ? 'Update' : 'Create'}
               </button>
             </form>
           </div>
@@ -347,22 +347,22 @@ export default function LiveClasses() {
       )}
 
       {/* LIST */}
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {classes.map((c) => (
-          <div key={c.id} className="bg-white p-6 rounded-xl shadow">
-            <div className="flex justify-between">
-              <div>
-                <h3 className="font-bold text-lg">{c.title}</h3>
-                <div className="text-sm text-gray-600 mt-2 space-y-1">
+          <div key={c.id} className="bg-white p-4 sm:p-6 rounded-xl shadow-md active:shadow-lg transition-shadow">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-lg sm:text-xl mb-2">{c.title}</h3>
+                <div className="text-sm sm:text-base text-gray-600 space-y-1.5">
                   <div className="flex gap-2 items-center">
-                    <Users size={14} /> {c.instructor_name}
+                    <Users size={16} className="flex-shrink-0" />
+                    <span className="truncate">{c.instructor_name}</span>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <Calendar size={14} /> {c.scheduled_date}
+                    <Calendar size={16} className="flex-shrink-0" /> {c.scheduled_date}
                   </div>
                   <div className="flex gap-2 items-center">
-                    <Clock size={14} /> {c.start_time} ·{' '}
-                    {c.duration_minutes} min
+                    <Clock size={16} className="flex-shrink-0" /> {c.start_time} · {c.duration_minutes} min
                   </div>
 
                   {c.meeting_link && (
@@ -370,24 +370,30 @@ export default function LiveClasses() {
                       href={c.meeting_link}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-green-600 text-sm underline"
+                      className="inline-flex items-center gap-1 text-green-600 text-sm font-medium underline"
                     >
-                      Join Meeting
+                      <Link size={14} /> Join Meeting
                     </a>
                   )}
 
-                  <div className="text-gray-500">
+                  <div className="text-gray-500 text-sm truncate">
                     Assigned to: {getUserName(c.user_id)}
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <button onClick={() => handleEdit(c)}>
-                  <Edit2 className="text-green-600" />
+              <div className="flex sm:flex-col gap-2">
+                <button
+                  onClick={() => handleEdit(c)}
+                  className="flex-1 sm:flex-initial p-2.5 text-green-600 active:bg-green-50 rounded-lg transition-colors"
+                >
+                  <Edit2 className="w-5 h-5" />
                 </button>
-                <button onClick={() => handleDelete(c.id)}>
-                  <Trash2 className="text-red-600" />
+                <button
+                  onClick={() => handleDelete(c.id)}
+                  className="flex-1 sm:flex-initial p-2.5 text-red-600 active:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             </div>
