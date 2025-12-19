@@ -1,15 +1,37 @@
-import { BookOpen, Bell, Video, Users, FileText, PlayCircle, LayoutDashboard, X } from 'lucide-react';
+import {
+  BookOpen,
+  Bell,
+  Video,
+  Users,
+  FileText,
+  PlayCircle,
+  LayoutDashboard,
+  TrendingUp,
+  X,
+} from 'lucide-react'
 
-type Section = 'dashboard' | 'announcements' | 'classes' | 'enrollments' | 'notes' | 'recordings';
+type Section =
+  | 'dashboard'
+  | 'announcements'
+  | 'classes'
+  | 'enrollments'
+  | 'notes'
+  | 'recordings'
+  | 'market_pulse'
 
 interface SidebarProps {
-  activeSection: Section;
-  setActiveSection: (section: Section) => void;
-  isOpen: boolean;
-  onClose: () => void;
+  activeSection: Section
+  setActiveSection: (section: Section) => void
+  isOpen: boolean
+  onClose: () => void
 }
 
-export default function Sidebar({ activeSection, setActiveSection, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({
+  activeSection,
+  setActiveSection,
+  isOpen,
+  onClose,
+}: SidebarProps) {
   const menuItems = [
     { id: 'dashboard' as Section, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
@@ -17,7 +39,14 @@ export default function Sidebar({ activeSection, setActiveSection, isOpen, onClo
     { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
     { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
     { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
-  ];
+
+    // ✅ NEW
+    {
+      id: 'market_pulse' as Section,
+      label: 'Market Pulse',
+      icon: TrendingUp,
+    },
+  ]
 
   return (
     <aside
@@ -38,6 +67,7 @@ export default function Sidebar({ activeSection, setActiveSection, isOpen, onClo
               <p className="text-xs text-blue-200">Admin Portal</p>
             </div>
           </div>
+
           <button
             onClick={onClose}
             className="lg:hidden p-2 hover:bg-blue-700 rounded-lg transition-colors"
@@ -49,8 +79,9 @@ export default function Sidebar({ activeSection, setActiveSection, isOpen, onClo
 
         <nav className="space-y-2">
           {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeSection === item.id;
+            const Icon = item.icon
+            const isActive = activeSection === item.id
+
             return (
               <button
                 key={item.id}
@@ -62,12 +93,14 @@ export default function Sidebar({ activeSection, setActiveSection, isOpen, onClo
                 }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium text-left">{item.label}</span>
+                <span className="font-medium text-left">
+                  {item.label}
+                </span>
               </button>
-            );
+            )
           })}
         </nav>
       </div>
     </aside>
-  );
+  )
 }

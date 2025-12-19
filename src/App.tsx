@@ -1,42 +1,53 @@
-import { useState } from 'react';
-import Sidebar from './components/Sidebar';
-import MobileHeader from './components/MobileHeader';
-import ClassAnnouncements from './components/ClassAnnouncements';
-import LiveClasses from './components/LiveClasses';
-import ClassEnrollments from './components/ClassEnrollments';
-import ClassNotes from './components/ClassNotes';
-import ClassRecordings from './components/ClassRecordings';
-import Dashboard from './components/Dashboard';
+import { useState } from 'react'
+import Sidebar from './components/Sidebar'
+import MobileHeader from './components/MobileHeader'
+import ClassAnnouncements from './components/ClassAnnouncements'
+import LiveClasses from './components/LiveClasses'
+import ClassEnrollments from './components/ClassEnrollments'
+import ClassNotes from './components/ClassNotes'
+import ClassRecordings from './components/ClassRecordings'
+import Dashboard from './components/Dashboard'
+import MarketPulse from './components/MarketPulse' // ✅ NEW
 
-type Section = 'dashboard' | 'announcements' | 'classes' | 'enrollments' | 'notes' | 'recordings';
+type Section =
+  | 'dashboard'
+  | 'announcements'
+  | 'classes'
+  | 'enrollments'
+  | 'notes'
+  | 'recordings'
+  | 'market_pulse' // ✅ NEW
 
 function App() {
-  const [activeSection, setActiveSection] = useState<Section>('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] =
+    useState<Section>('dashboard')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard />
       case 'announcements':
-        return <ClassAnnouncements />;
+        return <ClassAnnouncements />
       case 'classes':
-        return <LiveClasses />;
+        return <LiveClasses />
       case 'enrollments':
-        return <ClassEnrollments />;
+        return <ClassEnrollments />
       case 'notes':
-        return <ClassNotes />;
+        return <ClassNotes />
       case 'recordings':
-        return <ClassRecordings />;
+        return <ClassRecordings />
+      case 'market_pulse': // ✅ NEW
+        return <MarketPulse />
       default:
-        return <Dashboard />;
+        return <Dashboard />
     }
-  };
+  }
 
   const handleSectionChange = (section: Section) => {
-    setActiveSection(section);
-    setSidebarOpen(false);
-  };
+    setActiveSection(section)
+    setSidebarOpen(false)
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -61,7 +72,7 @@ function App() {
         />
       )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
