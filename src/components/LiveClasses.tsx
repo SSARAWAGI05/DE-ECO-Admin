@@ -13,7 +13,7 @@ import { supabase } from '../lib/supabaseClient'
 
 /* ================= CONSTANT ================= */
 
-const DEFAULT_MEETING_LINK = 'https://meet.google.com/iep-zvtx-avk'
+const DEFAULT_MEETING_LINK = 'https://meet.google.com/qzh-kctw-doa'
 
 /* ================= TYPES ================= */
 
