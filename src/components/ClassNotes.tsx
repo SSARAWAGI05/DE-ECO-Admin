@@ -217,22 +217,6 @@ export default function ClassNotes() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-              {/* CLASS (OPTIONAL) */}
-              <select
-                className="w-full border p-3 rounded-lg text-base"
-                value={formData.class_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, class_id: e.target.value })
-                }
-              >
-                <option value="">No class (optional)</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </select>
-
               {/* USER (REQUIRED) */}
               <select
                 className="w-full border p-3 rounded-lg text-base"
