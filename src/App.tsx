@@ -7,7 +7,8 @@ import ClassEnrollments from './components/ClassEnrollments'
 import ClassNotes from './components/ClassNotes'
 import ClassRecordings from './components/ClassRecordings'
 import Dashboard from './components/Dashboard'
-import MarketPulse from './components/MarketPulse' // ✅ NEW
+import MarketPulse from './components/MarketPulse'
+import AdminContactMessages from './components/AdminContactMessages' // ✅ NEW
 
 type Section =
   | 'dashboard'
@@ -16,7 +17,8 @@ type Section =
   | 'enrollments'
   | 'notes'
   | 'recordings'
-  | 'market_pulse' // ✅ NEW
+  | 'market_pulse'
+  | 'contact_messages' // ✅ NEW
 
 function App() {
   const [activeSection, setActiveSection] =
@@ -37,8 +39,10 @@ function App() {
         return <ClassNotes />
       case 'recordings':
         return <ClassRecordings />
-      case 'market_pulse': // ✅ NEW
+      case 'market_pulse':
         return <MarketPulse />
+      case 'contact_messages': // ✅ NEW
+        return <AdminContactMessages />
       default:
         return <Dashboard />
     }

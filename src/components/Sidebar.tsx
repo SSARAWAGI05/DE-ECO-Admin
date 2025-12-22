@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   TrendingUp,
   X,
+  Mail
 } from 'lucide-react'
 
 type Section =
@@ -18,6 +19,7 @@ type Section =
   | 'notes'
   | 'recordings'
   | 'market_pulse'
+  | 'contact_messages' // ✅ ADD THIS
 
 interface SidebarProps {
   activeSection: Section
@@ -46,6 +48,12 @@ export default function Sidebar({
       label: 'Market Pulse',
       icon: TrendingUp,
     },
+    {
+      id: 'contact_messages' as Section,
+      label: 'Contact Messages',
+      icon: Mail,
+    },
+
   ]
 
   return (
