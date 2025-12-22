@@ -13,7 +13,6 @@ import { supabase } from '../lib/supabaseClient'
 
 /* ================= CONSTANT ================= */
 
-// 🔗 Default / common meeting link
 const DEFAULT_MEETING_LINK = 'https://meet.google.com/iep-zvtx-avk'
 
 /* ================= TYPES ================= */
@@ -24,11 +23,15 @@ interface LiveClass {
   title: string
   instructor_name: string
   meeting_link: string | null
-  scheduled_date: string
-  start_time: string
+
+  scheduled_datetime: string
+  end_datetime: string
+
   duration_minutes: number
   current_participants: number
 }
+
+
 
 interface UserFromDB {
   id: string
@@ -48,9 +51,10 @@ export default function LiveClasses() {
     user_id: '',
     title: '',
     instructor_name: '',
-    meeting_link: DEFAULT_MEETING_LINK, // ✅ DEFAULT
-    scheduled_date: '',
-    start_time: '',
+    meeting_link: DEFAULT_MEETING_LINK,
+
+    // UI-only field
+    scheduled_datetime: '',  // ✅ NEW
     duration_minutes: '',
   })
 
@@ -83,7 +87,7 @@ export default function LiveClasses() {
     const { data, error } = await supabase
       .from('live_classes')
       .select('*')
-      .order('scheduled_date', { ascending: true })
+      .order('scheduled_datetime', { ascending: true })
 
     if (error) {
       console.error('Failed to fetch classes:', error)
@@ -103,17 +107,19 @@ export default function LiveClasses() {
       return
     }
 
+    if (!formData.scheduled_datetime) {  // ✅ NEW
+      alert('Please select date and time')
+      return
+    }
+
+    const scheduledDatetime = new Date(formData.scheduled_datetime).toISOString()  // ✅ NEW
+
     const payload = {
       user_id: formData.user_id,
       title: formData.title,
       instructor_name: formData.instructor_name,
       meeting_link: formData.meeting_link || DEFAULT_MEETING_LINK,
-      scheduled_date: formData.scheduled_date,
-      start_time: formData.start_time,
-      end_time: calculateEndTime(
-        formData.start_time,
-        Number(formData.duration_minutes)
-      ),
+      scheduled_datetime: scheduledDatetime,
       duration_minutes: Number(formData.duration_minutes),
     }
 
@@ -137,14 +143,15 @@ export default function LiveClasses() {
   /* ================= EDIT ================= */
 
   const handleEdit = (liveClass: LiveClass) => {
+    const dt = new Date(liveClass.scheduled_datetime)
+
     setFormData({
       user_id: liveClass.user_id,
       title: liveClass.title,
       instructor_name: liveClass.instructor_name,
-      meeting_link:
-        liveClass.meeting_link ?? DEFAULT_MEETING_LINK,
-      scheduled_date: liveClass.scheduled_date,
-      start_time: liveClass.start_time,
+      meeting_link: liveClass.meeting_link ?? DEFAULT_MEETING_LINK,
+
+      scheduled_datetime: dt.toISOString().slice(0, 16), // ✅ NEW: "YYYY-MM-DDTHH:mm"
       duration_minutes: liveClass.duration_minutes.toString(),
     })
 
@@ -155,6 +162,8 @@ export default function LiveClasses() {
   /* ================= DELETE ================= */
 
   const handleDelete = async (id: string) => {
+    if (!confirm('Delete this class?')) return
+
     const { error } = await supabase
       .from('live_classes')
       .delete()
@@ -179,8 +188,7 @@ export default function LiveClasses() {
       title: '',
       instructor_name: '',
       meeting_link: DEFAULT_MEETING_LINK,
-      scheduled_date: '',
-      start_time: '',
+      scheduled_datetime: '',  // ✅ NEW
       duration_minutes: '',
     })
   }
@@ -191,16 +199,6 @@ export default function LiveClasses() {
     return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
   }
 
-  const calculateEndTime = (
-    startTime: string,
-    durationMinutes: number
-  ): string => {
-    const [hours, minutes] = startTime.split(':').map(Number)
-    const date = new Date()
-    date.setHours(hours, minutes + durationMinutes, 0, 0)
-    return date.toTimeString().slice(0, 5)
-  }
-
   /* ================= UI ================= */
 
   return (
@@ -208,7 +206,9 @@ export default function LiveClasses() {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 lg:mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Live Classes</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
+            Live Classes
+          </h1>
           <p className="text-sm sm:text-base text-gray-600">
             Schedule and manage live class sessions
           </p>
@@ -237,7 +237,6 @@ export default function LiveClasses() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-              {/* USER */}
               <select
                 className="w-full border p-3 rounded-lg text-base"
                 value={formData.user_id}
@@ -277,7 +276,6 @@ export default function LiveClasses() {
                 required
               />
 
-              {/* MEETING LINK */}
               <div className="relative">
                 <Link className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
@@ -294,32 +292,18 @@ export default function LiveClasses() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="date"
-                  className="border p-3 rounded-lg text-base"
-                  value={formData.scheduled_date}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      scheduled_date: e.target.value,
-                    })
-                  }
-                  required
-                />
-                <input
-                  type="time"
-                  className="border p-3 rounded-lg text-base"
-                  value={formData.start_time}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      start_time: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </div>
+              <input
+                type="datetime-local"
+                className="w-full border p-3 rounded-lg text-base"
+                value={formData.scheduled_datetime}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    scheduled_datetime: e.target.value,
+                  })
+                }
+                required
+              />
 
               <input
                 type="number"
@@ -348,57 +332,75 @@ export default function LiveClasses() {
 
       {/* LIST */}
       <div className="grid gap-3 sm:gap-4">
-        {classes.map((c) => (
-          <div key={c.id} className="bg-white p-4 sm:p-6 rounded-xl shadow-md active:shadow-lg transition-shadow">
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-lg sm:text-xl mb-2">{c.title}</h3>
-                <div className="text-sm sm:text-base text-gray-600 space-y-1.5">
-                  <div className="flex gap-2 items-center">
-                    <Users size={16} className="flex-shrink-0" />
-                    <span className="truncate">{c.instructor_name}</span>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <Calendar size={16} className="flex-shrink-0" /> {c.scheduled_date}
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <Clock size={16} className="flex-shrink-0" /> {c.start_time} · {c.duration_minutes} min
-                  </div>
+        {classes.map((c) => {
+          const start = new Date(c.scheduled_datetime)
 
-                  {c.meeting_link && (
-                    <a
-                      href={c.meeting_link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-green-600 text-sm font-medium underline"
-                    >
-                      <Link size={14} /> Join Meeting
-                    </a>
-                  )}
+          return (
+            <div
+              key={c.id}
+              className="bg-white p-4 sm:p-6 rounded-xl shadow-md active:shadow-lg transition-shadow"
+            >
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-lg sm:text-xl mb-2">
+                    {c.title}
+                  </h3>
 
-                  <div className="text-gray-500 text-sm truncate">
-                    Assigned to: {getUserName(c.user_id)}
+                  <div className="text-sm sm:text-base text-gray-600 space-y-1.5">
+                    <div className="flex gap-2 items-center">
+                      <Users size={16} />
+                      {c.instructor_name}
+                    </div>
+
+                    <div className="flex gap-2 items-center">
+                      <Calendar size={16} />
+                      {start.toLocaleDateString()}
+                    </div>
+
+                    <div className="flex gap-2 items-center">
+                      <Clock size={16} />
+                      {start.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}{' '}
+                      · {c.duration_minutes} min
+                    </div>
+
+                    {c.meeting_link && (
+                      <a
+                        href={c.meeting_link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-green-600 text-sm font-medium underline"
+                      >
+                        <Link size={14} /> Join Meeting
+                      </a>
+                    )}
+
+                    <div className="text-gray-500 text-sm truncate">
+                      Assigned to: {getUserName(c.user_id)}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex sm:flex-col gap-2">
-                <button
-                  onClick={() => handleEdit(c)}
-                  className="flex-1 sm:flex-initial p-2.5 text-green-600 active:bg-green-50 rounded-lg transition-colors"
-                >
-                  <Edit2 className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(c.id)}
-                  className="flex-1 sm:flex-initial p-2.5 text-red-600 active:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+                <div className="flex sm:flex-col gap-2">
+                  <button
+                    onClick={() => handleEdit(c)}
+                    className="p-2.5 text-green-600 active:bg-green-50 rounded-lg"
+                  >
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(c.id)}
+                    className="p-2.5 text-red-600 active:bg-red-50 rounded-lg"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
