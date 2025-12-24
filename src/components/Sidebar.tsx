@@ -15,11 +15,13 @@ type Section =
   | 'dashboard'
   | 'announcements'
   | 'classes'
+  | 'courses'          // ✅ NEW
   | 'enrollments'
   | 'notes'
   | 'recordings'
   | 'market_pulse'
-  | 'contact_messages' // ✅ ADD THIS
+  | 'contact_messages'
+
 
 interface SidebarProps {
   activeSection: Section
@@ -38,9 +40,16 @@ export default function Sidebar({
     { id: 'dashboard' as Section, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
     { id: 'classes' as Section, label: 'Live Classes', icon: Video },
+    {
+  id: 'courses' as Section,
+  label: 'Courses',
+  icon: BookOpen,
+},
+
     { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
     { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
     { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
+
 
     // ✅ NEW
     {
