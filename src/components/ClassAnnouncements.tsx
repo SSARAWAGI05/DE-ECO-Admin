@@ -1,44 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from '../lib/supabaseClient'
-import { Send } from "lucide-react";
+import { supabase } from "../lib/supabaseClient";
+import { Send, Edit2, Trash2, X } from "lucide-react";
 
-interface UserOption {
+/* ================= TYPES ================= */
+
+interface ClassOption {
   id: string;
-  name: string;
-  email: string;
+  title: string;
 }
 
+interface Announcement {
+  id: string;
+  class_id: string | null;
+  title: string;
+  message: string;
+  priority: "high" | "medium" | "low";
+  target_audience: "all" | "class";
+  created_at: string;
+}
+
+/* ================= COMPONENT ================= */
+
 const AdminAnnouncements: React.FC = () => {
-  const [users, setUsers] = useState<UserOption[]>([]);
+  const [classes, setClasses] = useState<ClassOption[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    userId: "all",
+    classId: "all",
     title: "",
     message: "",
     priority: "medium",
   });
 
-  /* ================= FETCH USERS ================= */
+  /* ================= FETCH CLASSES ================= */
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, email")
-        .order("first_name");
+    const fetchClasses = async () => {
+      const { data } = await supabase
+        .from("courses") // or live_classes if that's your class table
+        .select("id, title")
+        .order("title");
 
-      if (!error && data) {
-        setUsers(
-          data.map((u) => ({
-            id: u.id,
-            name: `${u.first_name ?? ""} ${u.last_name ?? ""}`.trim(),
-            email: u.email,
-          }))
-        );
-      }
+      setClasses(data ?? []);
     };
 
-    fetchUsers();
+    fetchClasses();
+  }, []);
+
+  /* ================= FETCH ANNOUNCEMENTS ================= */
+  const fetchAnnouncements = async () => {
+    const { data } = await supabase
+      .from("class_announcements")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    setAnnouncements(data ?? []);
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
   }, []);
 
   /* ================= SUBMIT ================= */
@@ -46,103 +67,125 @@ const AdminAnnouncements: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
-    const isEveryone = form.userId === "all";
+    const isGlobal = form.classId === "all";
 
-    const payload: any = {
+    const payload = {
       title: form.title,
       message: form.message,
       priority: form.priority,
       type: "general",
       is_active: true,
-      target_audience: isEveryone ? "all" : "specific",
+      target_audience: isGlobal ? "all" : "class",
+      class_id: isGlobal ? null : form.classId,
     };
 
-    if (!isEveryone) {
-      payload.user_id = form.userId;
-    }
-
-    const { error } = await supabase
-      .from("class_announcements")
-      .insert(payload);
+    const { error } = editingId
+      ? await supabase
+          .from("class_announcements")
+          .update(payload)
+          .eq("id", editingId)
+      : await supabase
+          .from("class_announcements")
+          .insert(payload);
 
     setLoading(false);
 
     if (error) {
       alert(error.message);
-    } else {
-      alert("Announcement sent successfully!");
-      setForm({
-        userId: "all",
-        title: "",
-        message: "",
-        priority: "medium",
-      });
+      return;
     }
+
+    resetForm();
+    fetchAnnouncements();
+  };
+
+  /* ================= EDIT ================= */
+  const handleEdit = (a: Announcement) => {
+    setEditingId(a.id);
+    setForm({
+      classId: a.class_id ?? "all",
+      title: a.title,
+      message: a.message,
+      priority: a.priority,
+    });
+  };
+
+  /* ================= DELETE ================= */
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this announcement?")) return;
+
+    const { error } = await supabase
+      .from("class_announcements")
+      .delete()
+      .eq("id", id);
+
+    if (!error) fetchAnnouncements();
+  };
+
+  /* ================= HELPERS ================= */
+  const resetForm = () => {
+    setEditingId(null);
+    setForm({
+      classId: "all",
+      title: "",
+      message: "",
+      priority: "medium",
+    });
   };
 
   /* ================= UI ================= */
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6">Create Announcement</h2>
+    <div className="max-w-5xl mx-auto p-6 space-y-10">
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* USER DROPDOWN */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Send To
-          </label>
+      {/* FORM */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">
+            {editingId ? "Edit Announcement" : "Create Announcement"}
+          </h2>
+          {editingId && (
+            <button onClick={resetForm}><X /></button>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* CLASS */}
           <select
             className="w-full border rounded-lg px-3 py-2"
-            value={form.userId}
+            value={form.classId}
             onChange={(e) =>
-              setForm({ ...form, userId: e.target.value })
+              setForm({ ...form, classId: e.target.value })
             }
           >
-            <option value="all">Everyone</option>
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name || "Unnamed User"} ({u.email})
+            <option value="all">All Classes</option>
+            {classes.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.title}
               </option>
             ))}
           </select>
-        </div>
 
-        {/* TITLE */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Title
-          </label>
           <input
-            type="text"
             className="w-full border rounded-lg px-3 py-2"
+            placeholder="Title"
             required
             value={form.title}
             onChange={(e) =>
               setForm({ ...form, title: e.target.value })
             }
           />
-        </div>
 
-        {/* MESSAGE */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Message
-          </label>
           <textarea
             className="w-full border rounded-lg px-3 py-2 min-h-[120px]"
+            placeholder="Message"
             required
             value={form.message}
             onChange={(e) =>
               setForm({ ...form, message: e.target.value })
             }
           />
-        </div>
 
-        {/* PRIORITY */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Priority
-          </label>
           <select
             className="w-full border rounded-lg px-3 py-2"
             value={form.priority}
@@ -154,18 +197,61 @@ const AdminAnnouncements: React.FC = () => {
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-        </div>
 
-        {/* SUBMIT */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl hover:opacity-90"
-        >
-          <Send size={18} />
-          {loading ? "Sending..." : "Send Announcement"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl"
+          >
+            <Send size={18} />
+            {loading
+              ? "Saving..."
+              : editingId
+              ? "Update Announcement"
+              : "Post Announcement"}
+          </button>
+        </form>
+      </div>
+
+      {/* LIST */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold">All Announcements</h3>
+
+        {announcements.length === 0 && (
+          <p className="text-gray-500">No announcements yet.</p>
+        )}
+
+        {announcements.map((a) => (
+          <div
+            key={a.id}
+            className="bg-white rounded-xl shadow p-5 flex justify-between"
+          >
+            <div>
+              <h4 className="font-bold">{a.title}</h4>
+              <p className="text-sm text-gray-600">{a.message}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Priority: {a.priority.toUpperCase()} •{" "}
+                {a.class_id ? "Class-specific" : "All classes"}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleEdit(a)}
+                className="text-blue-600"
+              >
+                <Edit2 />
+              </button>
+              <button
+                onClick={() => handleDelete(a.id)}
+                className="text-red-600"
+              >
+                <Trash2 />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
