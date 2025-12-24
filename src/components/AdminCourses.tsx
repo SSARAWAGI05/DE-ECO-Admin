@@ -95,10 +95,7 @@ export default function AdminCourses() {
     }
 
     const { error } = editingId
-      ? await supabase
-          .from('courses')
-          .update(payload)
-          .eq('id', editingId)
+      ? await supabase.from('courses').update(payload).eq('id', editingId)
       : await supabase.from('courses').insert(payload)
 
     if (error) {
@@ -136,10 +133,7 @@ export default function AdminCourses() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this course?')) return
 
-    const { error } = await supabase
-      .from('courses')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('courses').delete().eq('id', id)
 
     if (error) {
       alert(error.message)
@@ -242,6 +236,30 @@ export default function AdminCourses() {
                   setFormData({ ...formData, duration_weeks: e.target.value })
                 }
               />
+
+              {/* THUMBNAIL URL */}
+              <input
+                type="url"
+                className="w-full border p-3 rounded-lg"
+                placeholder="Thumbnail Image URL (https://...)"
+                value={formData.thumbnail_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, thumbnail_url: e.target.value })
+                }
+              />
+
+              {formData.thumbnail_url && (
+                <div className="border rounded-lg overflow-hidden">
+                  <img
+                    src={formData.thumbnail_url}
+                    alt="Thumbnail preview"
+                    className="w-full h-auto block"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                </div>
+              )}
 
               <input
                 className="w-full border p-3 rounded-lg"
