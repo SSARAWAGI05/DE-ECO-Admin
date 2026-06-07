@@ -136,37 +136,49 @@ export default function ClassNotes() {
       try {
         if (!selectedFile) return
 
-        const metadata = {
-          name: selectedFile.name,
-          mimeType: selectedFile.type,
+        // 1. Create the file metadata in Google Drive
+        const metadataRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: selectedFile.name,
+            mimeType: selectedFile.type,
+          })
+        });
+        
+        if (!metadataRes.ok) {
+           const errTxt = await metadataRes.text();
+           throw new Error('Failed to create file metadata: ' + errTxt);
         }
         
-        const form = new FormData()
-        form.append(
-          'metadata',
-          new Blob([JSON.stringify(metadata)], { type: 'application/json' })
-        )
-        form.append('file', selectedFile)
+        const metadata = await metadataRes.json();
+        const fileId = metadata.id;
 
-        // 1. Upload file to Google Drive
-        const res = await fetch(
-          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
-            body: form,
-          }
-        )
-        const data = await res.json()
+        // 2. Upload the actual file content to the created file ID
+        const uploadRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media&fields=id,webViewLink`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+            'Content-Type': selectedFile.type,
+          },
+          body: selectedFile,
+        });
+
+        if (!uploadRes.ok) {
+           throw new Error('Failed to upload file content');
+        }
+
+        const data = await uploadRes.json()
 
         if (!data.id) {
           throw new Error('Failed to get Drive file ID')
         }
 
-        // 2. Make the file public (Anyone with the link can view)
-        await fetch(
+        // 3. Make the file public (Anyone with the link can view)
+        const permRes = await fetch(
           `https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,
           {
             method: 'POST',
@@ -178,12 +190,12 @@ export default function ClassNotes() {
           }
         )
 
-        // 3. Save link to Supabase
+        // 4. Save link to Supabase
         await saveToSupabase(data.webViewLink)
 
-      } catch (err) {
+      } catch (err: any) {
         console.error('Drive upload failed', err)
-        alert('Failed to upload to Google Drive.')
+        alert('Failed to upload to Google Drive: ' + (err.message || 'Unknown error'))
         setIsUploading(false)
       }
     },
