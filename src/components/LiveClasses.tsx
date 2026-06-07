@@ -336,6 +336,23 @@ export default function LiveClasses() {
                 />
               </div>
 
+              {/* MEETING LINK */}
+              <div>
+                <label className="text-sm font-medium">Meeting Link</label>
+                <input
+                  type="url"
+                  placeholder="https://meet.google.com/..."
+                  className="w-full border p-2.5 rounded-lg mt-1"
+                  value={formData.meeting_link || ''}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      meeting_link: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
               {/* DATE */}
               <div>
                 <label className="text-sm font-medium">Date & Time</label>
