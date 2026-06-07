@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Plus, Edit2, Trash2, X, Download, FileText } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, Download, FileText, UploadCloud } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
+import { useGoogleLogin } from '@react-oauth/google'
 
 /* ================= TYPES ================= */
 
@@ -34,6 +35,9 @@ export default function ClassNotes() {
   const [users, setUsers] = useState<UserProfile[]>([])
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   const [formData, setFormData] = useState({
     class_id: '',     // optional
@@ -98,22 +102,14 @@ export default function ClassNotes() {
     setUsers(data ?? [])
   }
 
-  /* ================= SUBMIT ================= */
+  /* ================= SUBMIT / GOOGLE DRIVE ================= */
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // 🔒 REQUIRED VALIDATION
-    if (!formData.user_id || !formData.title || !formData.file_url) {
-      alert('User, Title, and File URL are required')
-      return
-    }
-
+  const saveToSupabase = async (fileUrl: string) => {
     const payload = {
       class_id: formData.class_id || null, // ✅ OPTIONAL
       user_id: formData.user_id,            // ✅ REQUIRED
       title: formData.title,
-      file_url: formData.file_url,
+      file_url: fileUrl,
     }
 
     const { error } = editingId
@@ -122,6 +118,8 @@ export default function ClassNotes() {
           .update(payload)
           .eq('id', editingId)
       : await supabase.from('class_notes').insert(payload)
+
+    setIsUploading(false)
 
     if (error) {
       console.error('Save failed:', error)
@@ -133,6 +131,90 @@ export default function ClassNotes() {
     fetchNotes()
   }
 
+  const loginAndUploadToDrive = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        if (!selectedFile) return
+
+        const metadata = {
+          name: selectedFile.name,
+          mimeType: selectedFile.type,
+        }
+        
+        const form = new FormData()
+        form.append(
+          'metadata',
+          new Blob([JSON.stringify(metadata)], { type: 'application/json' })
+        )
+        form.append('file', selectedFile)
+
+        // 1. Upload file to Google Drive
+        const res = await fetch(
+          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+            body: form,
+          }
+        )
+        const data = await res.json()
+
+        if (!data.id) {
+          throw new Error('Failed to get Drive file ID')
+        }
+
+        // 2. Make the file public (Anyone with the link can view)
+        await fetch(
+          `https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ role: 'reader', type: 'anyone' }),
+          }
+        )
+
+        // 3. Save link to Supabase
+        await saveToSupabase(data.webViewLink)
+
+      } catch (err) {
+        console.error('Drive upload failed', err)
+        alert('Failed to upload to Google Drive.')
+        setIsUploading(false)
+      }
+    },
+    onError: () => {
+      alert('Google Login Failed')
+      setIsUploading(false)
+    },
+    scope: 'https://www.googleapis.com/auth/drive.file',
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formData.user_id || !formData.title) {
+      alert('User and Title are required')
+      return
+    }
+
+    if (selectedFile) {
+      setIsUploading(true)
+      loginAndUploadToDrive()
+    } else {
+      if (!formData.file_url) {
+        alert('Please select a file or provide a URL')
+        return
+      }
+      setIsUploading(true)
+      saveToSupabase(formData.file_url)
+    }
+  }
+
   /* ================= EDIT ================= */
 
   const handleEdit = (note: ClassNote) => {
@@ -142,7 +224,6 @@ export default function ClassNotes() {
       title: note.title,
       file_url: note.file_url,
     })
-
     setEditingId(note.id)
     setShowForm(true)
   }
@@ -150,10 +231,8 @@ export default function ClassNotes() {
   /* ================= DELETE ================= */
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from('class_notes')
-      .delete()
-      .eq('id', id)
+    if (!confirm('Are you sure you want to delete this note?')) return
+    const { error } = await supabase.from('class_notes').delete().eq('id', id)
 
     if (error) {
       console.error('Delete failed:', error)
@@ -169,6 +248,7 @@ export default function ClassNotes() {
   const closeForm = () => {
     setShowForm(false)
     setEditingId(null)
+    setSelectedFile(null)
     setFormData({ class_id: '', user_id: '', title: '', file_url: '' })
   }
 
@@ -211,56 +291,104 @@ export default function ClassNotes() {
               <h2 className="text-xl sm:text-2xl font-bold">
                 {editingId ? 'Edit Notes' : 'Upload Notes'}
               </h2>
-              <button onClick={closeForm} className="p-2 -mr-2">
+              <button onClick={closeForm} disabled={isUploading} className="p-2 -mr-2 text-gray-500 hover:text-gray-800">
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
+              
               {/* USER (REQUIRED) */}
-              <select
-                className="w-full border p-3 rounded-lg text-base"
-                value={formData.user_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, user_id: e.target.value })
-                }
-                required
-              >
-                <option value="">Select user</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
-                    {u.email ? ` (${u.email})` : ''}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                <select
+                  className="w-full border p-3 rounded-lg text-base"
+                  value={formData.user_id}
+                  onChange={(e) =>
+                    setFormData({ ...formData, user_id: e.target.value })
+                  }
+                  required
+                >
+                  <option value="">Select user</option>
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
+                      {u.email ? ` (${u.email})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              <input
-                placeholder="Title"
-                className="w-full border p-3 rounded-lg text-base"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                required
-              />
+              {/* TITLE */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  placeholder="e.g. Chapter 1 Notes"
+                  className="w-full border p-3 rounded-lg text-base"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
-              <input
-                type="url"
-                placeholder="File URL"
-                className="w-full border p-3 rounded-lg text-base"
-                value={formData.file_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, file_url: e.target.value })
-                }
-                required
-              />
+              {/* UPLOAD FILE TO DRIVE */}
+              <div className="bg-gray-50 border border-dashed border-gray-300 p-4 rounded-xl">
+                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <UploadCloud size={18} className="text-blue-600" />
+                  Upload PDF to Google Drive
+                </label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  If you select a file, it will automatically upload to your Google Drive and attach the link.
+                </p>
+              </div>
+
+              <div className="flex items-center">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="flex-shrink-0 px-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">
+                  OR PROVIDE EXISTING LINK
+                </span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+
+              {/* MANUAL URL */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Drive URL</label>
+                <input
+                  type="url"
+                  placeholder="https://drive.google.com/..."
+                  className="w-full border p-3 rounded-lg text-base"
+                  value={formData.file_url}
+                  onChange={(e) =>
+                    setFormData({ ...formData, file_url: e.target.value })
+                  }
+                  disabled={!!selectedFile}
+                />
+              </div>
 
               <button
                 type="submit"
-                className="w-full bg-orange-600 active:bg-orange-700 text-white py-3.5 rounded-lg font-medium text-base"
+                disabled={isUploading}
+                className={`w-full py-3.5 rounded-lg font-medium text-base transition-colors ${
+                  isUploading 
+                    ? 'bg-gray-400 text-gray-100 cursor-not-allowed' 
+                    : 'bg-orange-600 active:bg-orange-700 text-white shadow-md'
+                }`}
               >
-                {editingId ? 'Update' : 'Upload'}
+                {isUploading 
+                  ? 'Processing...' 
+                  : selectedFile 
+                    ? 'Upload to Drive & Save' 
+                    : editingId 
+                      ? 'Update Note' 
+                      : 'Save Note'}
               </button>
             </form>
           </div>
