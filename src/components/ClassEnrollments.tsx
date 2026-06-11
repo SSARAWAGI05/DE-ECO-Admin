@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Search, UserCheck, UserX, Save, AlertCircle } from 'lucide-react'
+import { Search, UserCheck, UserX, AlertCircle, Plus, X } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
 
@@ -22,30 +22,50 @@ interface Profile {
   is_active: boolean
 }
 
+interface LiveClass {
+  id: string
+  title: string
+}
+
 /* ================= COMPONENT ================= */
 
 export default function ClassEnrollments() {
   const [profiles, setProfiles] = useState<Profile[]>([])
+  const [classes, setClasses] = useState<LiveClass[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [isSaving, setIsSaving] = useState<string | null>(null)
+
+  // Old Class Enrollment Form State
+  const [showForm, setShowForm] = useState(false)
+  const [formData, setFormData] = useState({
+    class_id: '',
+    user_id: '',
+  })
 
   /* ================= INITIAL LOAD ================= */
   useEffect(() => {
     fetchUsers()
+    fetchClasses()
   }, [])
 
   const fetchUsers = async () => {
-    // Note: requires `is_active` column in DB
     const { data, error } = await supabase
       .from('profiles')
       .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
       .order('first_name')
 
-    if (error) {
-      console.error('Failed to fetch users:', error)
-      return
-    }
-    setProfiles(data ?? [])
+    if (error) console.error('Failed to fetch users:', error)
+    else setProfiles(data ?? [])
+  }
+
+  const fetchClasses = async () => {
+    const { data, error } = await supabase
+      .from('live_classes')
+      .select('id, title')
+      .order('scheduled_datetime')
+
+    if (error) console.error('Failed to fetch classes:', error)
+    else setClasses(data ?? [])
   }
 
   /* ================= ACTIONS ================= */
@@ -64,11 +84,38 @@ export default function ClassEnrollments() {
     if (error) {
       console.error('Update failed:', error)
       alert('Failed to update student: ' + error.message)
-      // Revert on failure
-      fetchUsers()
+      fetchUsers() // Revert on failure
     }
     
     setIsSaving(null)
+  }
+
+  const handleAssignClass = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formData.user_id) {
+      alert('Please select a student.')
+      return
+    }
+
+    const payload = {
+      class_id: formData.class_id || null, 
+      user_id: formData.user_id,
+    }
+
+    const { error } = await supabase
+      .from('class_enrollments')
+      .insert(payload)
+
+    if (error) {
+      console.error(error)
+      alert(error.message)
+      return
+    }
+
+    setShowForm(false)
+    setFormData({ class_id: '', user_id: '' })
+    alert('Student successfully assigned to class!')
   }
 
   /* ================= FILTERING ================= */
@@ -98,7 +145,72 @@ export default function ClassEnrollments() {
             Manage global student status and base billing rates.
           </p>
         </div>
+
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg shadow w-full sm:w-auto transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+          Assign to Class
+        </button>
       </div>
+
+      {/* ASSIGN CLASS MODAL */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b bg-gray-50">
+              <h2 className="text-xl font-bold text-gray-900">Assign to Class</h2>
+              <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAssignClass} className="p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Student</label>
+                <select
+                  className="w-full border-gray-300 border p-3 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                  value={formData.user_id}
+                  onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
+                  required
+                >
+                  <option value="">-- Choose a student --</option>
+                  {profiles.filter(p => p.is_active).map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {`${u.first_name || ''} ${u.last_name || ''}`.trim()} ({u.email})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Only Active students are shown here.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Live Class</label>
+                <select
+                  className="w-full border-gray-300 border p-3 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                  value={formData.class_id}
+                  onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
+                >
+                  <option value="">-- Choose a class (Optional) --</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-lg transition-colors"
+              >
+                Assign Student
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* SEARCH BAR */}
       <div className="bg-white p-4 rounded-t-xl border border-b-0 shadow-sm shrink-0">
@@ -157,7 +269,6 @@ export default function ClassEnrollments() {
                           ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-sm'}
                         `}
                       >
-                        {/* The sliding circle */}
                         <div
                           className={`
                             absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-sm transition-transform duration-300
@@ -166,8 +277,6 @@ export default function ClassEnrollments() {
                         >
                           {profile.is_active ? <UserCheck size={16} /> : <UserX size={16} />}
                         </div>
-                        
-                        {/* Text Label */}
                         <span 
                           className={`
                             w-full text-center text-sm font-bold transition-colors
@@ -182,7 +291,6 @@ export default function ClassEnrollments() {
                     {/* HOURLY RATE CONTROLS */}
                     <td className="p-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 bg-white p-1.5 rounded-lg border shadow-sm max-w-[200px] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
-                        {/* Currency Dropdown */}
                         <select 
                           className="bg-transparent border-r border-gray-200 pr-2 py-1 text-sm font-semibold text-gray-700 focus:outline-none cursor-pointer"
                           value={profile.billing_currency || 'INR'}
@@ -193,8 +301,6 @@ export default function ClassEnrollments() {
                             <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
                           ))}
                         </select>
-                        
-                        {/* Hourly Rate Input */}
                         <input
                           type="number"
                           min="0"
