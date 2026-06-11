@@ -8,20 +8,21 @@ import {
   LayoutDashboard,
   TrendingUp,
   X,
-  Mail
+  Mail,
+  DollarSign // ✅ NEW
 } from 'lucide-react'
 
 type Section =
   | 'dashboard'
   | 'announcements'
   | 'classes'
-  | 'courses'          // ✅ NEW
+  | 'courses'          
   | 'enrollments'
   | 'notes'
   | 'recordings'
   | 'market_pulse'
   | 'contact_messages'
-
+  | 'billing'           // ✅ NEW
 
 interface SidebarProps {
   activeSection: Section
@@ -41,17 +42,13 @@ export default function Sidebar({
     { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
     { id: 'classes' as Section, label: 'Live Classes', icon: Video },
     {
-  id: 'courses' as Section,
-  label: 'Courses',
-  icon: BookOpen,
-},
-
+      id: 'courses' as Section,
+      label: 'Courses',
+      icon: BookOpen,
+    },
     { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
     { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
     { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
-
-
-    // ✅ NEW
     {
       id: 'market_pulse' as Section,
       label: 'Market Pulse',
@@ -62,7 +59,12 @@ export default function Sidebar({
       label: 'Contact Messages',
       icon: Mail,
     },
-
+    // ✅ NEW
+    {
+      id: 'billing' as Section,
+      label: 'Student Billing',
+      icon: DollarSign,
+    },
   ]
 
   return (
