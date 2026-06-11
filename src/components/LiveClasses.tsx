@@ -33,6 +33,7 @@ interface UserFromDB {
   id: string
   first_name: string | null
   last_name: string | null
+  is_active: boolean
 }
 
 /* ================= COMPONENT ================= */
@@ -88,7 +89,7 @@ export default function LiveClasses() {
     // 2️⃣ Fetch only those users from profiles
     const { data: usersData, error: usersErr } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name')
+      .select('id, first_name, last_name, is_active')
       .in('id', userIds)
       .order('first_name')
 
@@ -300,7 +301,7 @@ export default function LiveClasses() {
                   required
                 >
                   <option value="">Select enrolled user</option>
-                  {users.map((u) => (
+                  {users.filter(u => u.is_active).map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.first_name} {u.last_name}
                     </option>

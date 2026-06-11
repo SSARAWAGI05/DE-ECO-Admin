@@ -24,6 +24,7 @@ interface UserProfile {
   first_name: string | null
   last_name: string | null
   email: string | null
+  is_active: boolean
 }
 
 
@@ -91,7 +92,7 @@ export default function ClassNotes() {
   const fetchUsers = async () => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email')
+      .select('id, first_name, last_name, email, is_active')
       .order('first_name')
 
     if (error) {
@@ -322,7 +323,7 @@ export default function ClassNotes() {
                   required
                 >
                   <option value="">Select user</option>
-                  {users.map((u) => (
+                  {users.filter(u => u.is_active).map((u) => (
                     <option key={u.id} value={u.id}>
                       {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
                       {u.email ? ` (${u.email})` : ''}

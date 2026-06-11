@@ -32,7 +32,7 @@ function App() {
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
-        return <Dashboard />
+        return <Dashboard setActiveSection={handleSectionChange} />
       case 'announcements':
         return <ClassAnnouncements />
       case 'classes':

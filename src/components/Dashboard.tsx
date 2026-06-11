@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Zap,
 } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from '../lib/supabaseClient'
 
 /* ================= TYPES ================= */
@@ -30,7 +31,11 @@ interface Activity {
 
 /* ================= COMPONENT ================= */
 
-export default function Dashboard() {
+interface DashboardProps {
+  setActiveSection?: (section: any) => void
+}
+
+export default function Dashboard({ setActiveSection }: DashboardProps) {
   const [stats, setStats] = useState({
     upcoming: 0,
     ongoing: 0,
@@ -40,6 +45,7 @@ export default function Dashboard() {
 
   const [classes, setClasses] = useState<LiveClass[]>([])
   const [activity, setActivity] = useState<Activity[]>([])
+  const [chartData, setChartData] = useState<any[]>([])
 
   useEffect(() => {
     loadDashboard()
@@ -50,6 +56,7 @@ export default function Dashboard() {
       fetchStats(),
       fetchClasses(),
       fetchActivity(),
+      fetchEarnings(),
     ])
   }
 
@@ -137,6 +144,49 @@ export default function Dashboard() {
     setActivity(events)
   }
 
+  const fetchEarnings = async () => {
+    const now = new Date().toISOString()
+    const { data } = await supabase
+      .from('live_classes')
+      .select(`
+        scheduled_datetime,
+        duration_minutes,
+        profiles!live_classes_user_id_fkey (
+          hourly_rate
+        )
+      `)
+      .lt('end_datetime', now)
+      .neq('status', 'cancelled')
+
+    const months: Record<string, number> = {}
+    
+    for(let i=5; i>=0; i--) {
+      const d = new Date()
+      d.setMonth(d.getMonth() - i)
+      const monthName = d.toLocaleString('default', { month: 'short' })
+      months[monthName] = 0
+    }
+
+    if (data) {
+      data.forEach((c: any) => {
+        const d = new Date(c.scheduled_datetime)
+        const monthName = d.toLocaleString('default', { month: 'short' })
+        if (months[monthName] !== undefined) {
+          const rate = c.profiles?.hourly_rate || 0
+          const amount = (c.duration_minutes / 60) * rate
+          months[monthName] += amount
+        }
+      })
+    }
+
+    const formattedData = Object.keys(months).map(m => ({
+      name: m,
+      Earnings: Math.round(months[m])
+    }))
+
+    setChartData(formattedData)
+  }
+
   /* ================= UI ================= */
 
   return (
@@ -157,6 +207,32 @@ export default function Dashboard() {
         <Stat label="Live Now" value={stats.ongoing} icon={Zap} accent="rose" />
         <Stat label="New Enrollments" value={stats.enrollments} icon={Users} accent="emerald" />
         <Stat label="New Messages" value={stats.messages} icon={Mail} accent="slate" />
+      </div>
+
+      {/* EARNINGS CHART */}
+      <div className="bg-white rounded-2xl shadow-sm p-6 border border-slate-200">
+        <h2 className="text-xl font-bold mb-6 text-slate-900">Earnings Overview (Last 6 Months)</h2>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} dy={10} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} tickFormatter={(value) => `₹${value}`} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', padding: '12px' }}
+                itemStyle={{ color: '#0f172a', fontWeight: 700 }}
+                formatter={(value: any) => [`₹${value}`, 'Earnings']}
+              />
+              <Area type="monotone" dataKey="Earnings" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorEarnings)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* MAIN GRID */}
@@ -236,16 +312,16 @@ export default function Dashboard() {
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-5">
+      <div className="bg-white rounded-2xl shadow-sm p-6 border border-slate-200">
+        <h2 className="text-xl font-bold mb-5 text-slate-900">
           Quick Actions
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Action icon={Plus} label="Schedule Class" />
-          <Action icon={FileText} label="Post Announcement" />
-          <Action icon={PlayCircle} label="Add Recording" />
-          <Action icon={TrendingUp} label="Market Pulse" />
+          <Action icon={Plus} label="Schedule Class" onClick={() => setActiveSection?.('classes')} />
+          <Action icon={FileText} label="Post Announcement" onClick={() => setActiveSection?.('announcements')} />
+          <Action icon={PlayCircle} label="Add Recording" onClick={() => setActiveSection?.('recordings')} />
+          <Action icon={TrendingUp} label="Market Pulse" onClick={() => setActiveSection?.('market_pulse')} />
         </div>
       </div>
     </div>
@@ -275,11 +351,14 @@ function Stat({ label, value, icon: Icon, accent }: any) {
   )
 }
 
-function Action({ icon: Icon, label }: any) {
+function Action({ icon: Icon, label, onClick }: any) {
   return (
-    <button className="flex flex-col items-center justify-center gap-2 border border-slate-200 rounded-xl p-5 hover:border-slate-300 hover:shadow-sm transition bg-white text-slate-700 hover:text-slate-900 group">
-      <Icon className="w-6 h-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
-      <span className="text-sm font-medium">{label}</span>
+    <button 
+      onClick={onClick}
+      className="flex flex-col items-center justify-center gap-3 border border-slate-200 rounded-xl p-5 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-sm transition bg-white text-slate-700 hover:text-indigo-700 group"
+    >
+      <Icon className="w-7 h-7 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+      <span className="text-sm font-bold tracking-tight">{label}</span>
     </button>
   )
 }

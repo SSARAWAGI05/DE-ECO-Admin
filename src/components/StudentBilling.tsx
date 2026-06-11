@@ -189,12 +189,16 @@ export default function StudentBilling() {
   const summaryStats = useMemo(() => {
     let activeStudents = 0
     let totalScheduledHours = 0
-    let totalOutstandingDue = 0
+    let totalOutstandingDue: Record<string, number> = {}
     
     profilesWithStats.forEach(p => {
       if (p.stats.classCount > 0 && p.stats.isEnrolled) activeStudents++
       totalScheduledHours += p.stats.totalHours
-      if (p.stats.totalDue > 0) totalOutstandingDue += p.stats.totalDue
+      
+      if (p.stats.totalDue > 0) {
+        const currency = p.billing_currency || 'INR'
+        totalOutstandingDue[currency] = (totalOutstandingDue[currency] || 0) + p.stats.totalDue
+      }
     })
 
     return { activeStudents, totalScheduledHours, totalOutstandingDue }
@@ -280,13 +284,24 @@ export default function StudentBilling() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="bg-rose-100 p-3.5 rounded-xl text-rose-600">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
+          <div className="bg-rose-100 p-3.5 rounded-xl text-rose-600 mt-1 shrink-0">
             <DollarSign size={24} />
           </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Outstanding Due</p>
-            <p className="text-2xl font-bold text-slate-900">₹ {summaryStats.totalOutstandingDue.toFixed(2)}</p>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Total Outstanding</p>
+            <div className="space-y-1">
+              {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
+                <p className="text-xl font-bold text-slate-900">₹ 0.00</p>
+              ) : (
+                Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
+                  <p key={currency} className="text-xl font-bold text-slate-900">
+                    <span className="text-slate-400 mr-2 text-base font-semibold">{currency}</span>
+                    {getCurrencySymbol(currency)} {amount.toFixed(2)}
+                  </p>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
