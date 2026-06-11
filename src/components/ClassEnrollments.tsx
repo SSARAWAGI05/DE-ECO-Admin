@@ -98,7 +98,7 @@ export default function ClassEnrollments() {
     // Fetch class enrollments
     const { data: classesData } = await supabase
       .from('class_enrollments')
-      .select('id, live_classes(id, title)')
+      .select('id, live_classes(id, title, scheduled_datetime, end_datetime)')
       .eq('user_id', userId)
 
     setUserClassEnrollments(classesData ?? [])
@@ -406,27 +406,82 @@ export default function ClassEnrollments() {
                     {userClassEnrollments.length === 0 ? (
                       <p className="text-sm text-slate-500 italic bg-white p-4 rounded-lg border border-slate-200">No live classes enrolled.</p>
                     ) : (
-                      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                        <table className="w-full text-left text-sm">
-                          <thead className="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                              <th className="p-3 font-semibold text-slate-600">Class</th>
-                              <th className="p-3 font-semibold text-slate-600 w-24">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100">
-                            {userClassEnrollments.map(ce => (
-                              <tr key={ce.id}>
-                                <td className="p-3 font-medium text-slate-900">{ce.live_classes?.title || 'Unknown Class'}</td>
-                                <td className="p-3">
-                                  <button onClick={() => handleDeleteClassEnrollment(ce.id)} className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded hover:bg-rose-50">
-                                    <Trash2 size={16} />
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                      <div className="space-y-6">
+                        {/* Upcoming Classes */}
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">Upcoming Classes</h4>
+                          {userClassEnrollments.filter(ce => new Date(ce.live_classes?.end_datetime || '') >= new Date()).length === 0 ? (
+                            <p className="text-xs text-slate-500 italic bg-white p-3 rounded border border-slate-200">No upcoming classes.</p>
+                          ) : (
+                            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                              <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-50 border-b border-slate-200">
+                                  <tr>
+                                    <th className="p-3 font-semibold text-slate-600">Class</th>
+                                    <th className="p-3 font-semibold text-slate-600 w-48">Date</th>
+                                    <th className="p-3 font-semibold text-slate-600 w-24">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                  {userClassEnrollments
+                                    .filter(ce => new Date(ce.live_classes?.end_datetime || '') >= new Date())
+                                    .sort((a, b) => new Date(a.live_classes?.scheduled_datetime || '').getTime() - new Date(b.live_classes?.scheduled_datetime || '').getTime())
+                                    .map(ce => (
+                                    <tr key={ce.id}>
+                                      <td className="p-3 font-medium text-slate-900">{ce.live_classes?.title || 'Unknown Class'}</td>
+                                      <td className="p-3 text-slate-500">
+                                        {ce.live_classes?.scheduled_datetime ? new Date(ce.live_classes.scheduled_datetime).toLocaleDateString() : 'N/A'}
+                                      </td>
+                                      <td className="p-3">
+                                        <button onClick={() => handleDeleteClassEnrollment(ce.id)} className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded hover:bg-rose-50">
+                                          <Trash2 size={16} />
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Past Classes */}
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">Past Classes</h4>
+                          {userClassEnrollments.filter(ce => new Date(ce.live_classes?.end_datetime || '') < new Date()).length === 0 ? (
+                            <p className="text-xs text-slate-500 italic bg-white p-3 rounded border border-slate-200">No past classes.</p>
+                          ) : (
+                            <div className="bg-slate-50 rounded-lg border border-slate-200 overflow-hidden">
+                              <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-100 border-b border-slate-200">
+                                  <tr>
+                                    <th className="p-3 font-semibold text-slate-600">Class</th>
+                                    <th className="p-3 font-semibold text-slate-600 w-48">Date</th>
+                                    <th className="p-3 font-semibold text-slate-600 w-24">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-200">
+                                  {userClassEnrollments
+                                    .filter(ce => new Date(ce.live_classes?.end_datetime || '') < new Date())
+                                    .sort((a, b) => new Date(b.live_classes?.scheduled_datetime || '').getTime() - new Date(a.live_classes?.scheduled_datetime || '').getTime())
+                                    .map(ce => (
+                                    <tr key={ce.id} className="opacity-75">
+                                      <td className="p-3 font-medium text-slate-900">{ce.live_classes?.title || 'Unknown Class'}</td>
+                                      <td className="p-3 text-slate-500">
+                                        {ce.live_classes?.scheduled_datetime ? new Date(ce.live_classes.scheduled_datetime).toLocaleDateString() : 'N/A'}
+                                      </td>
+                                      <td className="p-3">
+                                        <button onClick={() => handleDeleteClassEnrollment(ce.id)} className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded hover:bg-rose-50">
+                                          <Trash2 size={16} />
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
