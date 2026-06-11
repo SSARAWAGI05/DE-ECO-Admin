@@ -166,19 +166,19 @@ export default function MarketPulse() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 h-full overflow-y-auto">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Market Pulse</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Market Pulse</h1>
+          <p className="text-slate-500 font-medium mt-1">
             Manage reels & short market insights
           </p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-lg shadow"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-5 py-2.5 rounded-lg shadow-sm font-medium"
         >
           <Plus className="w-5 h-5" />
           Add Reel
@@ -187,24 +187,24 @@ export default function MarketPulse() {
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-5 border-b">
-              <h2 className="text-xl font-bold">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100">
+              <h2 className="text-xl font-bold text-slate-900">
                 {editingId ? 'Edit Reel' : 'New Reel'}
               </h2>
-              <button onClick={closeForm}>
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors">
                 <X />
               </button>
             </div>
 
             <form
               onSubmit={handleSubmit}
-              className="p-5 space-y-4"
+              className="p-6 space-y-5"
             >
               <input
                 placeholder="Title"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -214,7 +214,7 @@ export default function MarketPulse() {
 
               <input
                 placeholder="Reel URL"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 value={formData.reel_url}
                 onChange={(e) =>
                   setFormData({ ...formData, reel_url: e.target.value })
@@ -224,7 +224,7 @@ export default function MarketPulse() {
 
               <input
                 placeholder="Thumbnail URL"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 value={formData.thumbnail_url}
                 onChange={(e) =>
                   setFormData({
@@ -234,9 +234,9 @@ export default function MarketPulse() {
                 }
               />
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <select
-                  className="border p-3 rounded-lg"
+                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900"
                   value={formData.platform}
                   onChange={(e) =>
                     setFormData({
@@ -252,7 +252,7 @@ export default function MarketPulse() {
 
                 <input
                   placeholder="Tag (e.g. BOJ, FED)"
-                  className="border p-3 rounded-lg"
+                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                   value={formData.tag}
                   onChange={(e) =>
                     setFormData({ ...formData, tag: e.target.value })
@@ -261,11 +261,11 @@ export default function MarketPulse() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <input
                   type="number"
                   placeholder="Duration (seconds)"
-                  className="border p-3 rounded-lg"
+                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                   value={formData.duration_seconds}
                   onChange={(e) =>
                     setFormData({
@@ -277,7 +277,7 @@ export default function MarketPulse() {
                 <input
                   type="number"
                   placeholder="View Count (Optional)"
-                  className="border p-3 rounded-lg"
+                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                   value={formData.view_count}
                   onChange={(e) =>
                     setFormData({
@@ -290,7 +290,7 @@ export default function MarketPulse() {
 
               <input
                 type="datetime-local"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-700"
                 value={formData.published_at}
                 onChange={(e) =>
                   setFormData({
@@ -300,37 +300,39 @@ export default function MarketPulse() {
                 }
               />
 
-              <button
-                type="submit"
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-medium"
-              >
-                {editingId ? 'Update Reel' : 'Create Reel'}
-              </button>
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors text-white py-3 rounded-xl font-semibold shadow-sm"
+                >
+                  {editingId ? 'Update Reel' : 'Create Reel'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
       )}
 
       {/* LIST */}
-      <div className="grid gap-4">
+      <div className="grid gap-5">
         {reels.map((r) => (
           <div
             key={r.id}
-            className="bg-white p-5 rounded-xl shadow flex justify-between gap-4"
+            className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between gap-4 hover:shadow-md transition-shadow"
           >
             <div>
-              <h3 className="font-bold text-lg">{r.title}</h3>
-              <p className="text-sm text-gray-600">{r.description}</p>
+              <h3 className="font-bold text-xl text-slate-900 mb-1">{r.title}</h3>
+              <p className="text-sm text-slate-500 max-w-2xl">{r.description}</p>
 
-              <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
-                  <Tag size={14} /> {r.tag}
+              <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-600 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Tag size={16} className="text-slate-400" /> {r.tag}
                 </span>
-                <span className="flex items-center gap-1">
-                  <Clock size={14} /> {r.duration_seconds ?? '—'}s
+                <span className="flex items-center gap-1.5">
+                  <Clock size={16} className="text-slate-400" /> {r.duration_seconds ?? '—'}s
                 </span>
-                <span className="flex items-center gap-1">
-                  <Eye size={14} /> {r.view_count}
+                <span className="flex items-center gap-1.5">
+                  <Eye size={16} className="text-slate-400" /> {r.view_count}
                 </span>
               </div>
 
@@ -338,24 +340,24 @@ export default function MarketPulse() {
                 href={r.reel_url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-green-600 underline mt-2"
+                className="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 font-medium underline mt-4 transition-colors"
               >
-                <Link size={14} /> View Reel
+                <Link size={16} /> View Reel
               </a>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(r)}
-                className="p-2 text-green-600"
+                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
               >
-                <Edit2 />
+                <Edit2 size={18} />
               </button>
               <button
                 onClick={() => handleDelete(r.id)}
-                className="p-2 text-red-600"
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
               >
-                <Trash2 />
+                <Trash2 size={18} />
               </button>
             </div>
           </div>

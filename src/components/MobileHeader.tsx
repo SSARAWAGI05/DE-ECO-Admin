@@ -1,4 +1,4 @@
-import { Menu, BookOpen } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
@@ -6,17 +6,17 @@ interface MobileHeaderProps {
 
 export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
   return (
-    <header className="lg:hidden bg-gradient-to-r from-blue-900 to-blue-800 text-white px-4 py-3 flex items-center justify-between shadow-lg sticky top-0 z-20">
+    <header className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <BookOpen className="w-6 h-6" />
+        <img src="/logo.png" alt="DEECO Logo" className="w-8 h-8 object-contain" />
         <div>
-          <h1 className="text-lg font-bold">DE-ECO</h1>
-          <p className="text-xs text-blue-200">Admin Portal</p>
+          <h1 className="text-lg font-bold tracking-tight text-slate-900 leading-tight">DEECO</h1>
+          <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider leading-tight">Admin Portal</p>
         </div>
       </div>
       <button
         onClick={onMenuClick}
-        className="p-2 hover:bg-blue-700 rounded-lg transition-colors active:bg-blue-600"
+        className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors active:bg-slate-200"
         aria-label="Open menu"
       >
         <Menu className="w-6 h-6" />

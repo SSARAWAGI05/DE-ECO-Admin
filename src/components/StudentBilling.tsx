@@ -26,7 +26,8 @@ interface Profile {
   email: string | null
   hourly_rate: number
   billing_currency: string
-  is_active: boolean // Added from DB schema change
+  is_active: boolean
+  total_paid: number // Added to track manual settlements
 }
 
 interface LiveClass {
@@ -50,8 +51,13 @@ export default function StudentBilling() {
   // Filters & Sorting
   const [period, setPeriod] = useState<FilterPeriod>('current_month')
   const [searchTerm, setSearchTerm] = useState('')
-  const [showActiveOnly, setShowActiveOnly] = useState(false)
+  const [showActiveOnly, setShowActiveOnly] = useState(true) // User requested default to active
   const [sortBy, setSortBy] = useState<SortOption>('name_asc')
+
+  // Settlement Modal State
+  const [settleProfile, setSettleProfile] = useState<Profile | null>(null)
+  const [settleAmount, setSettleAmount] = useState('')
+  const [isSettling, setIsSettling] = useState(false)
 
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
@@ -62,7 +68,7 @@ export default function StudentBilling() {
   const fetchData = async () => {
     const { data: profilesData, error: profilesErr } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
+      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active, total_paid')
       .order('first_name')
 
     if (profilesErr) console.error('Failed to fetch profiles:', profilesErr)
@@ -111,17 +117,25 @@ export default function StudentBilling() {
   }
 
   // Calculate stats for a single user
-  const getUserStats = (userId: string, rate: number, isActiveProfile: boolean) => {
-    // If a student is inactive, we could freeze their hours here. But usually, if they are inactive, 
-    // they just don't accumulate NEW hours. The database naturally handles this because they won't 
-    // be added to new `live_classes`. So we just calculate whatever is in the DB.
+  const getUserStats = (userId: string, rate: number, isActiveProfile: boolean, totalPaid: number) => {
     const studentClasses = filteredClasses.filter(c => c.user_id === userId)
-    const totalMinutes = studentClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
-    const totalHours = totalMinutes / 60
+    const allTimeClasses = classes.filter(c => c.user_id === userId && new Date(c.scheduled_datetime) >= BILLING_START_DATE)
+    
+    // Period specific
+    const periodMinutes = studentClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
+    const periodHours = periodMinutes / 60
+    
+    // All time specific (for total due calculation)
+    const allTimeMinutes = allTimeClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
+    const allTimeHours = allTimeMinutes / 60
+    
+    const allTimeDue = (allTimeHours * (rate || 0)) - (totalPaid || 0)
+
     return {
       classCount: studentClasses.length,
-      totalHours,
-      amountDue: totalHours * (rate || 0),
+      totalHours: periodHours,
+      periodAmountDue: periodHours * (rate || 0),
+      totalDue: allTimeDue, // Overall remaining balance
       isEnrolled: isActiveProfile
     }
   }
@@ -130,9 +144,9 @@ export default function StudentBilling() {
   const profilesWithStats = useMemo(() => {
     return profiles.map(p => ({
       ...p,
-      stats: getUserStats(p.id, p.hourly_rate, p.is_active)
+      stats: getUserStats(p.id, p.hourly_rate, p.is_active, p.total_paid)
     }))
-  }, [profiles, filteredClasses])
+  }, [profiles, filteredClasses, classes])
 
   // Apply Search, Filter, and Sort
   const processedProfiles = useMemo(() => {
@@ -157,7 +171,7 @@ export default function StudentBilling() {
     // 3. Sorting
     result.sort((a, b) => {
       if (sortBy === 'amount_desc') {
-        return b.stats.amountDue - a.stats.amountDue
+        return b.stats.totalDue - a.stats.totalDue
       } else if (sortBy === 'hours_desc') {
         return b.stats.totalHours - a.stats.totalHours
       } else {
@@ -175,32 +189,65 @@ export default function StudentBilling() {
   const summaryStats = useMemo(() => {
     let activeStudents = 0
     let totalScheduledHours = 0
+    let totalOutstandingDue = 0
     
     profilesWithStats.forEach(p => {
-      // Only count officially enrolled students in the summary
       if (p.stats.classCount > 0 && p.stats.isEnrolled) activeStudents++
       totalScheduledHours += p.stats.totalHours
+      if (p.stats.totalDue > 0) totalOutstandingDue += p.stats.totalDue
     })
 
-    return { activeStudents, totalScheduledHours }
+    return { activeStudents, totalScheduledHours, totalOutstandingDue }
   }, [profilesWithStats])
+
+  /* ================= HANDLERS ================= */
+  const handleSettleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!settleProfile) return
+    
+    const amount = parseFloat(settleAmount)
+    if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid positive amount.")
+      return
+    }
+
+    setIsSettling(true)
+    const newTotalPaid = (settleProfile.total_paid || 0) + amount
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ total_paid: newTotalPaid })
+      .eq('id', settleProfile.id)
+
+    setIsSettling(false)
+
+    if (error) {
+      console.error("Failed to settle amount:", error)
+      alert("Failed to settle: Make sure 'total_paid' column exists in 'profiles' table.")
+      return
+    }
+
+    setSettleProfile(null)
+    setSettleAmount('')
+    fetchData() // Refresh data
+  }
 
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-hidden">
+    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-y-auto">
       
       {/* HEADER & TIME PERIOD CONTROL */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Student Billing</h1>
-          <p className="text-gray-500">Auto-calculate invoice amounts for enrolled students.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-1">Student Billing</h1>
+          <p className="text-slate-500 font-medium mt-1">Auto-calculate and settle invoice amounts for enrolled students.</p>
         </div>
 
-        <div className="flex items-center bg-white border rounded-lg shadow-sm p-1">
-          <CalendarIcon size={18} className="text-gray-400 ml-3 mr-2" />
+        <div className="flex items-center bg-gray-50 border border-slate-300 rounded-xl p-1 focus-within:ring-2 focus-within:ring-indigo-500 transition-shadow">
+          <CalendarIcon size={18} className="text-slate-400 ml-3 mr-2" />
           <select
-            className="p-2 border-none bg-transparent focus:ring-0 font-medium text-gray-700 cursor-pointer"
+            className="p-2.5 border-none bg-transparent focus:ring-0 font-semibold text-slate-700 cursor-pointer outline-none"
             value={period}
             onChange={(e) => setPeriod(e.target.value as FilterPeriod)}
           >
@@ -212,40 +259,50 @@ export default function StudentBilling() {
       </div>
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 shrink-0">
-        <div className="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4">
-          <div className="bg-blue-100 p-3 rounded-lg text-blue-600">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 shrink-0">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+          <div className="bg-indigo-100 p-3.5 rounded-xl text-indigo-600">
             <Users size={24} />
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Active Students (Filtered)</p>
-            <p className="text-2xl font-bold text-gray-900">{summaryStats.activeStudents}</p>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Active Students</p>
+            <p className="text-2xl font-bold text-slate-900">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4">
-          <div className="bg-green-100 p-3 rounded-lg text-green-600">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+          <div className="bg-emerald-100 p-3.5 rounded-xl text-emerald-600">
             <TrendingUp size={24} />
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Total Scheduled Hours</p>
-            <p className="text-2xl font-bold text-gray-900">{summaryStats.totalScheduledHours.toFixed(1)} hrs</p>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Scheduled Hours</p>
+            <p className="text-2xl font-bold text-slate-900">{summaryStats.totalScheduledHours.toFixed(1)} hrs</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+          <div className="bg-rose-100 p-3.5 rounded-xl text-rose-600">
+            <DollarSign size={24} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Outstanding Due</p>
+            <p className="text-2xl font-bold text-slate-900">₹ {summaryStats.totalOutstandingDue.toFixed(2)}</p>
           </div>
         </div>
       </div>
 
       {/* CONTROL PANEL: Search, Filter, Sort */}
-      <div className="bg-white p-4 rounded-t-xl border border-b-0 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
+      <div className="bg-white p-5 rounded-t-2xl border border-b-0 border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
         
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-gray-400" />
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+            <Search size={18} className="text-slate-400" />
           </div>
           <input
             type="text"
             placeholder="Search by name or email..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -253,22 +310,22 @@ export default function StudentBilling() {
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           {/* Active Only Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors bg-gray-50 px-3 py-2 rounded-lg border">
-            <Filter size={16} className={showActiveOnly ? "text-blue-600" : "text-gray-400"} />
+          <label className={`flex items-center gap-2 cursor-pointer text-sm font-semibold transition-colors px-4 py-3 rounded-xl border ${showActiveOnly ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-300 text-slate-600 hover:text-slate-900'}`}>
+            <Filter size={16} className={showActiveOnly ? "text-indigo-600" : "text-slate-400"} />
             <span className="hidden sm:inline">Active Only</span>
             <input 
               type="checkbox" 
-              className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
               checked={showActiveOnly}
               onChange={(e) => setShowActiveOnly(e.target.checked)}
             />
           </label>
 
           {/* Sort Dropdown */}
-          <div className="flex items-center bg-gray-50 border rounded-lg px-3 py-2">
-            <ArrowUpDown size={16} className="text-gray-400 mr-2" />
+          <div className="flex items-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 transition-shadow">
+            <ArrowUpDown size={16} className="text-slate-400 mr-2" />
             <select
-              className="bg-transparent border-none focus:ring-0 text-sm font-medium text-gray-700 cursor-pointer p-0 pr-6"
+              className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-slate-700 cursor-pointer p-0 pr-6 outline-none"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
             >
@@ -281,27 +338,28 @@ export default function StudentBilling() {
       </div>
 
       {/* TABLE DATA */}
-      <div className="bg-white rounded-b-xl shadow-sm border overflow-hidden flex-1 flex flex-col min-h-0">
+      <div className="bg-white rounded-b-2xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
         <div className="overflow-auto flex-1 relative">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50 border-b sticky top-0 z-10 shadow-sm">
+          <table className="w-full text-left border-collapse min-w-[800px]">
+            <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Student</th>
-                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Base Rate</th>
-                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Activity</th>
-                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Total Hours</th>
-                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Amount Due</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Student</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Base Rate</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Activity</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Period Hours</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Total Due</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {processedProfiles.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-12 text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
-                      <Search className="text-gray-400" />
+                  <td colSpan={6} className="p-12 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 mb-4 border border-slate-100">
+                      <Search className="text-slate-400 w-8 h-8" />
                     </div>
-                    <p className="text-lg font-medium text-gray-900">No students found</p>
-                    <p className="text-gray-500 text-sm mt-1">Try adjusting your search or filters.</p>
+                    <p className="text-lg font-bold text-slate-900">No students found</p>
+                    <p className="text-slate-500 font-medium text-sm mt-1">Try adjusting your search or filters.</p>
                   </td>
                 </tr>
               ) : (
@@ -314,18 +372,18 @@ export default function StudentBilling() {
                   const isOfficiallyEnrolled = stats.isEnrolled
 
                   return (
-                    <tr key={profile.id} className="hover:bg-blue-50/50 transition-colors">
+                    <tr key={profile.id} className="hover:bg-slate-50/50 transition-colors">
                       {/* Name */}
                       <td className="p-4 whitespace-nowrap">
-                        <div className="font-semibold text-gray-900">
+                        <div className="font-bold text-slate-900">
                           {profile.first_name} {profile.last_name}
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5">{profile.email}</div>
+                        <div className="text-xs font-medium text-slate-500 mt-0.5">{profile.email}</div>
                       </td>
 
                       {/* Base Rate (Read-Only) */}
                       <td className="p-4 whitespace-nowrap">
-                        <span className="font-semibold text-gray-800 bg-gray-100 px-3 py-1 rounded-md">
+                        <span className="font-semibold text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
                           {currencySymbol} {profile.hourly_rate || 0}
                         </span>
                       </td>
@@ -333,34 +391,45 @@ export default function StudentBilling() {
                       {/* Activity Status */}
                       <td className="p-4 whitespace-nowrap">
                         {!isOfficiallyEnrolled ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-700 font-medium text-xs border border-red-200">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200 shadow-sm">
                             Unenrolled
                           </span>
                         ) : hasClasses ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 font-medium text-xs border border-green-200">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs border border-emerald-200 shadow-sm">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                             {stats.classCount} Classes
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium text-xs border border-gray-200">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 text-slate-500 font-bold text-xs border border-slate-200 shadow-sm">
                             No Classes
                           </span>
                         )}
                       </td>
 
-                      {/* Total Hours */}
+                      {/* Period Hours */}
                       <td className="p-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1.5 font-medium ${(hasClasses && isOfficiallyEnrolled) ? 'text-gray-800' : 'text-gray-400'}`}>
-                          <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-blue-500" : "text-gray-300"} />
-                          {stats.totalHours.toFixed(1)} <span className="text-sm font-normal text-gray-500">hrs</span>
+                        <span className={`inline-flex items-center gap-1.5 font-bold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800' : 'text-slate-400'}`}>
+                          <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-indigo-500" : "text-slate-300"} />
+                          {stats.totalHours.toFixed(1)} <span className="text-sm font-medium text-slate-500">hrs</span>
                         </span>
                       </td>
 
-                      {/* Amount Due */}
+                      {/* Total Amount Due */}
                       <td className="p-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center font-bold text-lg ${(hasClasses && isOfficiallyEnrolled) ? 'text-green-600' : 'text-gray-400'}`}>
-                          {currencySymbol} {stats.amountDue.toFixed(2)}
+                        <span className={`inline-flex items-center font-bold text-lg ${stats.totalDue > 0 ? 'text-rose-600' : stats.totalDue < 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                          {currencySymbol} {stats.totalDue.toFixed(2)}
                         </span>
+                      </td>
+                      
+                      {/* Actions */}
+                      <td className="p-4 whitespace-nowrap text-right">
+                         <button 
+                           onClick={() => setSettleProfile(profile)}
+                           disabled={stats.totalDue <= 0}
+                           className="bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-600 hover:text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                         >
+                           Settle Due
+                         </button>
                       </td>
                     </tr>
                   )
@@ -370,6 +439,53 @@ export default function StudentBilling() {
           </table>
         </div>
       </div>
+
+      {/* SETTLE MODAL */}
+      {settleProfile && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl border border-slate-200 p-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Settle Balance</h2>
+            <p className="text-sm text-slate-500 mb-6 font-medium">
+              Record a payment from <span className="font-bold text-slate-800">{settleProfile.first_name}</span>.
+            </p>
+
+            <form onSubmit={handleSettleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Amount Paid ({getCurrencySymbol(settleProfile.billing_currency)})</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  required
+                  placeholder={`e.g. ${settleProfile.stats.totalDue.toFixed(2)}`}
+                  value={settleAmount}
+                  onChange={(e) => setSettleAmount(e.target.value)}
+                  className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900 font-medium"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSettleProfile(null)
+                    setSettleAmount('')
+                  }}
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSettling}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-sm transition-colors disabled:opacity-70"
+                >
+                  {isSettling ? 'Saving...' : 'Confirm'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

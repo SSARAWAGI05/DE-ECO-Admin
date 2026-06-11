@@ -97,31 +97,34 @@ const AdminContactMessages: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">📩 Contact Us Messages</h1>
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 h-full overflow-y-auto">
+      <div className="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">📩 Contact Us Messages</h1>
+        <p className="text-slate-500 font-medium mt-1">Manage and respond to user inquiries</p>
+      </div>
 
       {messages.length === 0 && (
-        <p className="text-gray-500">No messages yet.</p>
+        <p className="text-slate-500 font-medium bg-white p-6 rounded-2xl border border-slate-200 text-center">No messages yet.</p>
       )}
 
       <div className="space-y-6">
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="bg-white rounded-xl shadow-md border p-6 space-y-4"
+            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5 hover:shadow-md transition-shadow"
           >
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-4">
               <div>
-                <h2 className="text-xl font-semibold">{msg.subject}</h2>
-                <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={14} />
+                <h2 className="text-xl font-bold text-slate-900">{msg.subject}</h2>
+                <div className="flex items-center gap-3 text-sm text-slate-500 font-medium mt-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar size={16} className="text-slate-400" />
                     {new Date(msg.created_at).toLocaleString()}
                   </span>
                   {msg.user_id && (
-                    <span className="flex items-center gap-1">
-                      <User size={14} />
+                    <span className="flex items-center gap-1.5">
+                      <User size={16} className="text-slate-400" />
                       Logged-in User
                     </span>
                   )}
@@ -129,7 +132,7 @@ const AdminContactMessages: React.FC = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 shrink-0">
                 <select
                   value={msg.status}
                   disabled={updatingId === msg.id}
@@ -139,7 +142,7 @@ const AdminContactMessages: React.FC = () => {
                       e.target.value as ContactMessage["status"]
                     )
                   }
-                  className="border rounded-md px-3 py-2 text-sm"
+                  className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 font-medium disabled:opacity-70"
                 >
                   <option value="new">New</option>
                   <option value="in_progress">In Progress</option>
@@ -150,38 +153,38 @@ const AdminContactMessages: React.FC = () => {
                 <button
                   onClick={() => deleteMessage(msg.id)}
                   disabled={deletingId === msg.id}
-                  className="p-2 rounded-md border text-red-600 hover:bg-red-50 disabled:opacity-50"
+                  className="p-2.5 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 disabled:opacity-50 transition-colors"
                   title="Delete message"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             </div>
 
             {/* Contact Info */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <User size={16} /> {msg.name}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-medium text-slate-700">
+              <div className="flex items-center gap-2.5">
+                <User size={18} className="text-slate-400" /> {msg.name}
               </div>
-              <div className="flex items-center gap-2">
-                <Mail size={16} /> {msg.email}
+              <div className="flex items-center gap-2.5">
+                <Mail size={18} className="text-slate-400" /> {msg.email}
               </div>
-              <div className="flex items-center gap-2">
-                <Phone size={16} /> {msg.phone}
+              <div className="flex items-center gap-2.5">
+                <Phone size={18} className="text-slate-400" /> {msg.phone}
               </div>
             </div>
 
             {/* Message */}
-            <div className="bg-gray-50 p-4 rounded-lg border text-gray-700">
-              <div className="flex items-center gap-2 mb-2 font-medium">
-                <MessageSquare size={16} /> Message
+            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-slate-700 leading-relaxed shadow-inner">
+              <div className="flex items-center gap-2 mb-3 font-semibold text-slate-900">
+                <MessageSquare size={18} className="text-indigo-600" /> Message
               </div>
               <p className="whitespace-pre-line">{msg.message}</p>
             </div>
 
             {/* Admin Notes */}
-            <div>
-              <label className="text-sm font-medium block mb-1">
+            <div className="pt-2">
+              <label className="text-sm font-semibold text-slate-700 block mb-2">
                 Admin Notes
               </label>
               <textarea
@@ -189,7 +192,7 @@ const AdminContactMessages: React.FC = () => {
                 onBlur={(e) =>
                   updateAdminNotes(msg.id, e.target.value)
                 }
-                className="w-full border rounded-lg p-3 text-sm min-h-[80px]"
+                className="w-full border border-slate-300 rounded-xl p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Add internal notes here..."
               />
             </div>

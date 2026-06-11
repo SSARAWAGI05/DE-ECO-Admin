@@ -142,21 +142,21 @@ export default function Dashboard() {
   return (
     <div className="p-6 lg:p-8 space-y-10 bg-gray-50 min-h-full">
       {/* HERO */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
-        <h1 className="text-3xl font-bold mb-1">
+      <div className="bg-slate-900 rounded-2xl p-8 text-white shadow-md border border-slate-800">
+        <h1 className="text-3xl font-bold mb-2 tracking-tight">
           Welcome back 👋
         </h1>
-        <p className="opacity-90">
+        <p className="text-slate-400 font-medium">
           Here’s what’s happening on DE-ECO today
         </p>
       </div>
 
       {/* SIGNAL STATS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-        <Stat label="Upcoming Classes" value={stats.upcoming} icon={Calendar} accent="green" />
-        <Stat label="Live Now" value={stats.ongoing} icon={Zap} accent="red" />
-        <Stat label="New Enrollments" value={stats.enrollments} icon={Users} accent="purple" />
-        <Stat label="New Messages" value={stats.messages} icon={Mail} accent="blue" />
+        <Stat label="Upcoming Classes" value={stats.upcoming} icon={Calendar} accent="indigo" />
+        <Stat label="Live Now" value={stats.ongoing} icon={Zap} accent="rose" />
+        <Stat label="New Enrollments" value={stats.enrollments} icon={Users} accent="emerald" />
+        <Stat label="New Messages" value={stats.messages} icon={Mail} accent="slate" />
       </div>
 
       {/* MAIN GRID */}
@@ -256,20 +256,20 @@ export default function Dashboard() {
 
 function Stat({ label, value, icon: Icon, accent }: any) {
   const colors: any = {
-    green: 'bg-green-100 text-green-700',
-    red: 'bg-red-100 text-red-700',
-    purple: 'bg-purple-100 text-purple-700',
-    blue: 'bg-blue-100 text-blue-700',
+    indigo: 'bg-indigo-50 text-indigo-600',
+    rose: 'bg-rose-50 text-rose-600',
+    emerald: 'bg-emerald-50 text-emerald-600',
+    slate: 'bg-slate-100 text-slate-600',
   }
 
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center gap-4">
+    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center gap-4">
       <div className={`p-3 rounded-xl ${colors[accent]}`}>
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-2xl font-bold">{value}</p>
+        <p className="text-sm font-medium text-slate-500">{label}</p>
+        <p className="text-2xl font-bold text-slate-900">{value}</p>
       </div>
     </div>
   )
@@ -277,8 +277,8 @@ function Stat({ label, value, icon: Icon, accent }: any) {
 
 function Action({ icon: Icon, label }: any) {
   return (
-    <button className="flex flex-col items-center justify-center gap-2 border rounded-xl p-5 hover:shadow-md transition bg-gray-50">
-      <Icon className="w-6 h-6 text-green-600" />
+    <button className="flex flex-col items-center justify-center gap-2 border border-slate-200 rounded-xl p-5 hover:border-slate-300 hover:shadow-sm transition bg-white text-slate-700 hover:text-slate-900 group">
+      <Icon className="w-6 h-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
       <span className="text-sm font-medium">{label}</span>
     </button>
   )

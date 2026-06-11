@@ -9,7 +9,7 @@ import {
   TrendingUp,
   X,
   Mail,
-  DollarSign // ✅ NEW
+  DollarSign
 } from 'lucide-react'
 
 type Section =
@@ -22,7 +22,7 @@ type Section =
   | 'recordings'
   | 'market_pulse'
   | 'contact_messages'
-  | 'billing'           // ✅ NEW
+  | 'billing'
 
 interface SidebarProps {
   activeSection: Section
@@ -41,30 +41,13 @@ export default function Sidebar({
     { id: 'dashboard' as Section, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
     { id: 'classes' as Section, label: 'Live Classes', icon: Video },
-    {
-      id: 'courses' as Section,
-      label: 'Courses',
-      icon: BookOpen,
-    },
+    { id: 'courses' as Section, label: 'Courses', icon: BookOpen },
     { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
     { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
     { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
-    {
-      id: 'market_pulse' as Section,
-      label: 'Market Pulse',
-      icon: TrendingUp,
-    },
-    {
-      id: 'contact_messages' as Section,
-      label: 'Contact Messages',
-      icon: Mail,
-    },
-    // ✅ NEW
-    {
-      id: 'billing' as Section,
-      label: 'Student Billing',
-      icon: DollarSign,
-    },
+    { id: 'market_pulse' as Section, label: 'Market Pulse', icon: TrendingUp },
+    { id: 'contact_messages' as Section, label: 'Contact Messages', icon: Mail },
+    { id: 'billing' as Section, label: 'Student Billing', icon: DollarSign },
   ]
 
   return (
@@ -72,53 +55,60 @@ export default function Sidebar({
       className={`
         fixed lg:static inset-y-0 left-0 z-40
         w-72 lg:w-64
-        bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-xl
+        bg-white border-r border-slate-200 shadow-sm
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}
     >
-      <div className="p-4 lg:p-6 h-full overflow-y-auto">
-        <div className="flex items-center justify-between mb-6 lg:mb-8">
+      <div className="flex flex-col h-full">
+        {/* LOGO & HEADER */}
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <BookOpen className="w-7 h-7 lg:w-8 lg:h-8" />
+            <img src="/logo.png" alt="DEECO Logo" className="w-10 h-10 object-contain" />
             <div>
-              <h1 className="text-xl lg:text-2xl font-bold">DE-ECO</h1>
-              <p className="text-xs text-blue-200">Admin Portal</p>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">DEECO</h1>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Admin Portal</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="lg:hidden p-2 hover:bg-blue-700 rounded-lg transition-colors"
+            className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
             aria-label="Close menu"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="space-y-2">
-          {menuItems.map((item) => {
-            const Icon = item.icon
-            const isActive = activeSection === item.id
+        {/* NAVIGATION */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <nav className="space-y-1">
+            <div className="px-3 mb-2">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</p>
+            </div>
+            {menuItems.map((item) => {
+              const Icon = item.icon
+              const isActive = activeSection === item.id
 
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveSection(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-lg transition-all active:scale-95 ${
-                  isActive
-                    ? 'bg-white text-blue-900 shadow-lg'
-                    : 'text-blue-100 hover:bg-blue-700 active:bg-blue-600'
-                }`}
-              >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium text-left">
-                  {item.label}
-                </span>
-              </button>
-            )
-          })}
-        </nav>
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveSection(item.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                    isActive
+                      ? 'bg-indigo-50 text-indigo-700'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <span className="text-left">
+                    {item.label}
+                  </span>
+                </button>
+              )
+            })}
+          </nav>
+        </div>
       </div>
     </aside>
   )

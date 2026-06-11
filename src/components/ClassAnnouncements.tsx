@@ -135,24 +135,24 @@ const AdminAnnouncements: React.FC = () => {
 
   /* ================= UI ================= */
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-10">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-10 bg-gray-50 min-h-full">
 
       {/* FORM */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
             {editingId ? "Edit Announcement" : "Create Announcement"}
           </h2>
           {editingId && (
-            <button onClick={resetForm}><X /></button>
+            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors"><X /></button>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
           {/* CLASS */}
           <select
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900"
             value={form.classId}
             onChange={(e) =>
               setForm({ ...form, classId: e.target.value })
@@ -167,7 +167,7 @@ const AdminAnnouncements: React.FC = () => {
           </select>
 
           <input
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
             placeholder="Title"
             required
             value={form.title}
@@ -177,7 +177,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <textarea
-            className="w-full border rounded-lg px-3 py-2 min-h-[120px]"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
             placeholder="Message"
             required
             value={form.message}
@@ -187,66 +187,77 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <select
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900"
             value={form.priority}
             onChange={(e) =>
               setForm({ ...form, priority: e.target.value })
             }
           >
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
+            <option value="high">High Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="low">Low Priority</option>
           </select>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl"
-          >
-            <Send size={18} />
-            {loading
-              ? "Saving..."
-              : editingId
-              ? "Update Announcement"
-              : "Post Announcement"}
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 disabled:opacity-70 text-white px-8 py-3 rounded-xl font-semibold shadow-sm transition-colors"
+            >
+              <Send size={18} />
+              {loading
+                ? "Saving..."
+                : editingId
+                ? "Update Announcement"
+                : "Post Announcement"}
+            </button>
+          </div>
         </form>
       </div>
 
       {/* LIST */}
-      <div className="space-y-4">
-        <h3 className="text-xl font-bold">All Announcements</h3>
+      <div className="space-y-5">
+        <h3 className="text-xl font-bold text-slate-900 tracking-tight">All Announcements</h3>
 
         {announcements.length === 0 && (
-          <p className="text-gray-500">No announcements yet.</p>
+          <p className="text-slate-500 font-medium bg-white p-6 rounded-2xl border border-slate-200 text-center">No announcements yet.</p>
         )}
 
         {announcements.map((a) => (
           <div
             key={a.id}
-            className="bg-white rounded-xl shadow p-5 flex justify-between"
+            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-md transition-shadow"
           >
             <div>
-              <h4 className="font-bold">{a.title}</h4>
-              <p className="text-sm text-gray-600">{a.message}</p>
-              <p className="text-xs text-gray-500 mt-1">
-                Priority: {a.priority.toUpperCase()} •{" "}
+              <div className="flex items-center gap-3 mb-2">
+                <h4 className="font-bold text-lg text-slate-900">{a.title}</h4>
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  a.priority === 'high' ? 'bg-rose-100 text-rose-700' :
+                  a.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
+                  'bg-emerald-100 text-emerald-700'
+                }`}>
+                  {a.priority.toUpperCase()}
+                </span>
+              </div>
+              <p className="text-sm text-slate-600 mb-3 whitespace-pre-wrap leading-relaxed">{a.message}</p>
+              <p className="text-xs font-medium text-slate-400 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                 {a.class_id ? "Class-specific" : "All classes"}
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(a)}
-                className="text-blue-600"
+                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
               >
-                <Edit2 />
+                <Edit2 size={18} />
               </button>
               <button
                 onClick={() => handleDelete(a.id)}
-                className="text-red-600"
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
               >
-                <Trash2 />
+                <Trash2 size={18} />
               </button>
             </div>
           </div>

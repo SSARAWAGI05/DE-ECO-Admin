@@ -190,49 +190,49 @@ export default function LiveClasses() {
   /* ================= UI ================= */
 
   return (
-    <div className="relative h-full">
+    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-y-auto">
       {/* HEADER */}
-      <div className="flex items-center justify-between p-6 border-b bg-white">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold">Live Classes</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-1">Live Classes</h1>
+          <p className="text-slate-500 font-medium mt-1">
             Manage scheduled live sessions
           </p>
         </div>
 
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg"
+          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold w-full sm:w-auto"
         >
-          <Plus size={18} />
+          <Plus className="w-5 h-5" />
           New Class
         </button>
       </div>
 
       {/* LIST */}
-      <div className="p-6 space-y-3">
+      <div className="grid gap-4 shrink-0">
         {classes.map((c) => {
           const start = new Date(c.scheduled_datetime)
 
           return (
             <div
               key={c.id}
-              className="grid grid-cols-12 gap-4 bg-white rounded-xl border p-4 items-center"
+              className="grid grid-cols-12 gap-4 bg-white rounded-xl border border-slate-200 p-4 items-center hover:shadow-sm transition-shadow"
             >
               <div className="col-span-12 md:col-span-3">
-                <div className="font-semibold">{c.title}</div>
-                <div className="text-sm text-gray-500">
+                <div className="font-semibold text-slate-900">{c.title}</div>
+                <div className="text-sm text-slate-500">
                   {c.instructor_name}
                 </div>
               </div>
 
-              <div className="col-span-6 md:col-span-2 text-sm">
-                <Calendar size={14} className="inline mr-1" />
+              <div className="col-span-6 md:col-span-2 text-sm text-slate-600 font-medium">
+                <Calendar size={14} className="inline mr-1 text-slate-400" />
                 {start.toLocaleDateString()}
               </div>
 
-              <div className="col-span-6 md:col-span-2 text-sm">
-                <Clock size={14} className="inline mr-1" />
+              <div className="col-span-6 md:col-span-2 text-sm text-slate-600 font-medium">
+                <Clock size={14} className="inline mr-1 text-slate-400" />
                 {start.toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -240,32 +240,33 @@ export default function LiveClasses() {
                 · {c.duration_minutes}m
               </div>
 
-              <div className="col-span-12 md:col-span-3 text-sm">
-                Assigned: {getUserName(c.user_id)}
+              <div className="col-span-12 md:col-span-3 text-sm text-slate-600">
+                <span className="text-slate-400 mr-1">Assigned:</span> 
+                <span className="font-medium text-slate-900">{getUserName(c.user_id)}</span>
               </div>
 
-              <div className="col-span-12 md:col-span-2 flex justify-end gap-2">
+              <div className="col-span-12 md:col-span-2 flex justify-end gap-1">
                 {c.meeting_link && (
                   <a
                     href={c.meeting_link}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 rounded-lg hover:bg-gray-100"
+                    className="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition-colors"
                   >
-                    <LinkIcon size={16} />
+                    <LinkIcon size={18} />
                   </a>
                 )}
                 <button
                   onClick={() => openEdit(c)}
-                  className="p-2 rounded-lg hover:bg-gray-100"
+                  className="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition-colors"
                 >
-                  <Edit2 size={16} />
+                  <Edit2 size={18} />
                 </button>
                 <button
                   onClick={() => handleDelete(c.id)}
-                  className="p-2 rounded-lg text-red-600 hover:bg-red-50"
+                  className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             </div>
@@ -275,23 +276,23 @@ export default function LiveClasses() {
 
       {/* SIDE PANEL */}
       {panelOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex justify-end">
-          <div className="w-full max-w-md bg-white h-full shadow-xl">
-            <div className="flex items-center justify-between p-5 border-b">
-              <h2 className="text-lg font-bold">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-end">
+          <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col border-l border-slate-200">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 shrink-0 bg-white">
+              <h2 className="text-xl font-bold text-slate-900">
                 {editingId ? 'Edit Class' : 'Create Class'}
               </h2>
-              <button onClick={() => setPanelOpen(false)}>
-                <X />
+              <button onClick={() => setPanelOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                <X size={24} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1">
               {/* USER */}
               <div>
-                <label className="text-sm font-medium">Assigned User</label>
+                <label className="text-sm font-semibold text-slate-700">Assigned User</label>
                 <select
-                  className="w-full border p-2.5 rounded-lg mt-1"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -309,9 +310,9 @@ export default function LiveClasses() {
 
               {/* TITLE */}
               <div>
-                <label className="text-sm font-medium">Class Title</label>
+                <label className="text-sm font-semibold text-slate-700">Class Title</label>
                 <input
-                  className="w-full border p-2.5 rounded-lg mt-1"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -322,9 +323,9 @@ export default function LiveClasses() {
 
               {/* INSTRUCTOR */}
               <div>
-                <label className="text-sm font-medium">Instructor</label>
+                <label className="text-sm font-semibold text-slate-700">Instructor</label>
                 <input
-                  className="w-full border p-2.5 rounded-lg mt-1"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
                   value={formData.instructor_name}
                   onChange={(e) =>
                     setFormData({
@@ -338,11 +339,11 @@ export default function LiveClasses() {
 
               {/* MEETING LINK */}
               <div>
-                <label className="text-sm font-medium">Meeting Link</label>
+                <label className="text-sm font-semibold text-slate-700">Meeting Link</label>
                 <input
                   type="url"
                   placeholder="https://meet.google.com/..."
-                  className="w-full border p-2.5 rounded-lg mt-1"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
                   value={formData.meeting_link || ''}
                   onChange={(e) =>
                     setFormData({
@@ -355,10 +356,10 @@ export default function LiveClasses() {
 
               {/* DATE */}
               <div>
-                <label className="text-sm font-medium">Date & Time</label>
+                <label className="text-sm font-semibold text-slate-700">Date & Time</label>
                 <input
                   type="datetime-local"
-                  className="w-full border p-2.5 rounded-lg mt-1"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-700"
                   value={formData.scheduled_datetime}
                   onChange={(e) =>
                     setFormData({
@@ -372,7 +373,7 @@ export default function LiveClasses() {
 
               {/* DURATION */}
               <div>
-                <label className="text-sm font-medium mb-2 block">
+                <label className="text-sm font-semibold text-slate-700 mb-2 block">
                   Duration
                 </label>
 
@@ -388,10 +389,10 @@ export default function LiveClasses() {
                           duration_minutes: d.toString(),
                         })
                       }}
-                      className={`px-4 py-2 rounded-md border text-sm ${
+                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                         formData.duration_minutes === d.toString()
-                          ? 'bg-green-600 text-white border-green-600'
-                          : 'bg-white hover:bg-gray-100'
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                          : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'
                       }`}
                     >
                       {d} min
@@ -407,10 +408,10 @@ export default function LiveClasses() {
                         duration_minutes: '',
                       })
                     }}
-                    className={`px-4 py-2 rounded-md border text-sm ${
+                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                       customDuration
-                        ? 'bg-green-600 text-white border-green-600'
-                        : 'bg-white hover:bg-gray-100'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'
                     }`}
                   >
                     Other
@@ -421,7 +422,7 @@ export default function LiveClasses() {
                   <input
                     type="number"
                     placeholder="Custom duration (minutes)"
-                    className="w-full border p-2.5 rounded-lg mt-3"
+                    className="w-full border border-slate-300 p-2.5 rounded-lg mt-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
                     value={formData.duration_minutes}
                     onChange={(e) =>
                       setFormData({
@@ -434,12 +435,14 @@ export default function LiveClasses() {
                 )}
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-medium mt-6"
-              >
-                {editingId ? 'Update Class' : 'Create Class'}
-              </button>
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors text-white py-4 rounded-xl font-bold shadow-sm"
+                >
+                  {editingId ? 'Update Class' : 'Create Class'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

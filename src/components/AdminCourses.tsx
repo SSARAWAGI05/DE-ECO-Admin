@@ -166,37 +166,37 @@ export default function AdminCourses() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-6">
+    <div className="p-6 lg:p-8 bg-gray-50 h-full overflow-y-auto">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <div>
-          <h1 className="text-3xl font-bold">Courses Admin</h1>
-          <p className="text-gray-600">Manage all courses</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Courses Admin</h1>
+          <p className="text-slate-500 font-medium mt-1">Manage all courses and curriculum</p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-lg"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-5 py-2.5 rounded-lg font-medium shadow-sm"
         >
-          <Plus /> Add Course
+          <Plus size={18} /> Add Course
         </button>
       </div>
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-5 border-b">
-              <h2 className="text-xl font-bold">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100">
+              <h2 className="text-xl font-bold text-slate-900">
                 {editingId ? 'Edit Course' : 'New Course'}
               </h2>
-              <button onClick={closeForm}><X /></button>
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors"><X /></button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
               <input
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Course Title"
                 value={formData.title}
                 onChange={(e) =>
@@ -206,7 +206,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Short Description"
                 value={formData.description}
                 onChange={(e) =>
@@ -216,7 +216,7 @@ export default function AdminCourses() {
               />
 
               <select
-                className="border p-3 rounded-lg w-full"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900"
                 value={formData.level}
                 onChange={(e) =>
                   setFormData({ ...formData, level: e.target.value as any })
@@ -229,7 +229,7 @@ export default function AdminCourses() {
 
               <input
                 type="number"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Duration (weeks)"
                 value={formData.duration_weeks}
                 onChange={(e) =>
@@ -240,7 +240,7 @@ export default function AdminCourses() {
               {/* THUMBNAIL URL */}
               <input
                 type="url"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Thumbnail Image URL (https://...)"
                 value={formData.thumbnail_url}
                 onChange={(e) =>
@@ -262,7 +262,7 @@ export default function AdminCourses() {
               )}
 
               <input
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Instructor Name"
                 value={formData.instructor_name}
                 onChange={(e) =>
@@ -272,7 +272,7 @@ export default function AdminCourses() {
 
               <input
                 type="number"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Price (INR)"
                 value={formData.price}
                 onChange={(e) =>
@@ -282,7 +282,7 @@ export default function AdminCourses() {
 
               <input
                 type="date"
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-700"
                 value={formData.enrollment_deadline}
                 onChange={(e) =>
                   setFormData({ ...formData, enrollment_deadline: e.target.value })
@@ -290,7 +290,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="What you'll learn (one per line)"
                 value={formData.what_you_learn}
                 onChange={(e) =>
@@ -299,7 +299,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border p-3 rounded-lg"
+                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Prerequisites (one per line)"
                 value={formData.prerequisites}
                 onChange={(e) =>
@@ -307,9 +307,10 @@ export default function AdminCourses() {
                 }
               />
 
-              <label className="flex items-center gap-2">
+              <label className="flex items-center gap-3 cursor-pointer text-slate-700 font-medium">
                 <input
                   type="checkbox"
+                  className="w-5 h-5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
                   checked={formData.is_active}
                   onChange={(e) =>
                     setFormData({ ...formData, is_active: e.target.checked })
@@ -318,12 +319,14 @@ export default function AdminCourses() {
                 Active
               </label>
 
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"
-              >
-                {editingId ? 'Update Course' : 'Create Course'}
-              </button>
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition-colors shadow-sm"
+                >
+                  {editingId ? 'Update Course' : 'Create Course'}
+                </button>
+              </div>
 
             </form>
           </div>
@@ -331,35 +334,42 @@ export default function AdminCourses() {
       )}
 
       {/* LIST */}
-      <div className="grid gap-4">
+      <div className="grid gap-5">
         {courses.map((c) => (
           <div
             key={c.id}
-            className="bg-white p-5 rounded-xl shadow flex justify-between"
+            className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between gap-4 hover:shadow-md transition-shadow"
           >
             <div>
-              <h3 className="font-bold text-lg">{c.title}</h3>
-              <p className="text-sm text-gray-600">{c.description}</p>
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="font-bold text-xl text-slate-900">{c.title}</h3>
+                {!c.is_active && (
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
+                    Draft
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-slate-500 mb-4 max-w-2xl">{c.description}</p>
 
-              <div className="flex gap-4 mt-2 text-sm text-gray-500">
-                <span><Users size={14} /> {c.level}</span>
-                <span><Clock size={14} /> {c.duration_weeks ?? '—'} weeks</span>
-                <span><Calendar size={14} /> {c.enrollment_deadline ?? '—'}</span>
+              <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-600 font-medium">
+                <span className="flex items-center gap-1.5"><Users size={16} className="text-slate-400"/> <span className="capitalize">{c.level}</span></span>
+                <span className="flex items-center gap-1.5"><Clock size={16} className="text-slate-400"/> {c.duration_weeks ?? '—'} weeks</span>
+                <span className="flex items-center gap-1.5"><Calendar size={16} className="text-slate-400"/> {c.enrollment_deadline ?? '—'}</span>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(c)}
-                className="p-2 text-blue-600"
+                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
               >
-                <Edit2 />
+                <Edit2 size={18} />
               </button>
               <button
                 onClick={() => handleDelete(c.id)}
-                className="p-2 text-red-600"
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
               >
-                <Trash2 />
+                <Trash2 size={18} />
               </button>
             </div>
           </div>
