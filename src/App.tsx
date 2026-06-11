@@ -11,6 +11,7 @@ import MarketPulse from './components/MarketPulse'
 import AdminContactMessages from './components/AdminContactMessages'
 import AdminCourses from './components/AdminCourses'
 import StudentBilling from './components/StudentBilling' // ✅ NEW
+import PastClassHistory from './components/PastClassHistory'
 
 type Section =
   | 'dashboard'
@@ -23,6 +24,7 @@ type Section =
   | 'market_pulse'
   | 'contact_messages'
   | 'billing'           // ✅ NEW
+  | 'past_history'
 
 function App() {
   const [activeSection, setActiveSection] =
@@ -51,6 +53,8 @@ function App() {
         return <AdminContactMessages />
       case 'billing':               // ✅ NEW
         return <StudentBilling />
+      case 'past_history':
+        return <PastClassHistory />
       default:
         return <Dashboard />
     }

@@ -9,7 +9,8 @@ import {
   TrendingUp,
   X,
   Mail,
-  DollarSign
+  DollarSign,
+  History
 } from 'lucide-react'
 
 type Section =
@@ -23,6 +24,7 @@ type Section =
   | 'market_pulse'
   | 'contact_messages'
   | 'billing'
+  | 'past_history'
 
 interface SidebarProps {
   activeSection: Section
@@ -48,6 +50,7 @@ export default function Sidebar({
     { id: 'market_pulse' as Section, label: 'Market Pulse', icon: TrendingUp },
     { id: 'contact_messages' as Section, label: 'Contact Messages', icon: Mail },
     { id: 'billing' as Section, label: 'Student Billing', icon: DollarSign },
+    { id: 'past_history' as Section, label: 'Past Class History', icon: History },
   ]
 
   return (

@@ -42,6 +42,7 @@ export default function LiveClasses() {
   /* ---------- STATE ---------- */
   const [classes, setClasses] = useState<LiveClass[]>([])
   const [users, setUsers] = useState<UserFromDB[]>([])
+  const [courses, setCourses] = useState<{id: string, title: string}[]>([])
   const [panelOpen, setPanelOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [customDuration, setCustomDuration] = useState(false)
@@ -59,9 +60,15 @@ export default function LiveClasses() {
   useEffect(() => {
     fetchEligibleUsers()
     fetchClasses()
+    fetchCourses()
   }, [])
 
   /* ================= DATA FETCHING ================= */
+
+  const fetchCourses = async () => {
+    const { data } = await supabase.from('courses').select('id, title').order('created_at')
+    if (data) setCourses(data)
+  }
 
   /**
    * Fetch ONLY users who appear in class_enrollments
@@ -312,14 +319,21 @@ export default function LiveClasses() {
               {/* TITLE */}
               <div>
                 <label className="text-sm font-semibold text-slate-700">Class Title</label>
-                <input
+                <select
                   className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
                   required
-                />
+                >
+                  <option value="">Select a course</option>
+                  {courses.map(c => (
+                    <option key={c.id} value={c.title}>
+                      {c.title}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* INSTRUCTOR */}
