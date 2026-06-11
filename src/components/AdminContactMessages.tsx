@@ -97,7 +97,7 @@ const AdminContactMessages: React.FC = () => {
   }
 
   return (
-    <div className="p-6 lg:p-10 bg-[#fbfbfd] h-full overflow-y-auto font-sans">
+    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       <div className="mb-8 pb-4 border-b border-slate-200">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">Contact Us Messages</h1>
         <p className="text-slate-500 font-medium">Manage and respond to user inquiries</p>

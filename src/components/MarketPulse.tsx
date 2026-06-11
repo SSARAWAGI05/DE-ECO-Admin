@@ -166,7 +166,7 @@ export default function MarketPulse() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-6 lg:p-10 h-full flex flex-col bg-[#fbfbfd] overflow-y-auto font-sans">
+    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
         <div>
@@ -234,7 +234,7 @@ export default function MarketPulse() {
                 }
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <select
                   className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
                   value={formData.platform}
@@ -261,7 +261,7 @@ export default function MarketPulse() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
                   type="number"
                   placeholder="Duration (seconds)"

@@ -186,7 +186,7 @@ export default function ClassEnrollments() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-6 lg:p-10 h-full flex flex-col bg-[#fbfbfd] overflow-y-auto font-sans">
+    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">

@@ -135,7 +135,7 @@ const AdminAnnouncements: React.FC = () => {
 
   /* ================= UI ================= */
   return (
-    <div className="max-w-5xl mx-auto p-6 lg:p-10 space-y-8 bg-[#fbfbfd] min-h-full font-sans">
+    <div className="max-w-5xl mx-auto w-full overflow-x-hidden p-4 sm:p-6 lg:p-10 ">
 
       {/* FORM */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8">

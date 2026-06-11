@@ -191,7 +191,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
   /* ================= UI ================= */
 
   return (
-    <div className="p-6 lg:p-10 space-y-8 bg-[#fbfbfd] min-h-full font-sans">
+    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HERO */}
       <div className="pb-2">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">
@@ -203,7 +203,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* SIGNAL STATS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <Stat label="Upcoming Classes" value={stats.upcoming} icon={Calendar} accent="indigo" />
         <Stat label="Live Now" value={stats.ongoing} icon={Zap} accent="rose" />
         <Stat label="New Enrollments" value={stats.enrollments} icon={Users} accent="emerald" />
@@ -318,7 +318,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
           Quick Actions
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Action icon={Plus} label="Schedule Class" onClick={() => setActiveSection?.('classes')} />
           <Action icon={FileText} label="Post Announcement" onClick={() => setActiveSection?.('announcements')} />
           <Action icon={PlayCircle} label="Add Recording" onClick={() => setActiveSection?.('recordings')} />
