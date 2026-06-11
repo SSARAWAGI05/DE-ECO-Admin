@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Search, UserCheck, UserX, AlertCircle, Plus, X } from 'lucide-react'
+import { Search, UserCheck, UserX, Plus, X, Settings, Trash2, Edit2 } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
 
@@ -27,25 +27,35 @@ interface LiveClass {
   title: string
 }
 
+interface Course {
+  id: string
+  title: string
+}
+
 /* ================= COMPONENT ================= */
 
 export default function ClassEnrollments() {
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [classes, setClasses] = useState<LiveClass[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [isSaving, setIsSaving] = useState<string | null>(null)
 
-  // Old Class Enrollment Form State
-  const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({
-    class_id: '',
-    user_id: '',
-  })
+  // Enrollment Modal State
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
+  const [userCourseEnrollments, setUserCourseEnrollments] = useState<any[]>([])
+  const [userClassEnrollments, setUserClassEnrollments] = useState<any[]>([])
+  const [loadingEnrollments, setLoadingEnrollments] = useState(false)
+
+  // Add Enrollment Form State inside modal
+  const [newEnrollmentType, setNewEnrollmentType] = useState<'course' | 'class'>('course')
+  const [newEnrollmentId, setNewEnrollmentId] = useState('')
 
   /* ================= INITIAL LOAD ================= */
   useEffect(() => {
     fetchUsers()
     fetchClasses()
+    fetchCourses()
   }, [])
 
   const fetchUsers = async () => {
@@ -53,69 +63,112 @@ export default function ClassEnrollments() {
       .from('profiles')
       .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
       .order('first_name')
-
-    if (error) console.error('Failed to fetch users:', error)
-    else setProfiles(data ?? [])
+    if (!error) setProfiles(data ?? [])
   }
 
   const fetchClasses = async () => {
-    const { data, error } = await supabase
-      .from('live_classes')
-      .select('id, title')
-      .order('scheduled_datetime')
+    const { data, error } = await supabase.from('live_classes').select('id, title').order('scheduled_datetime')
+    if (!error) setClasses(data ?? [])
+  }
 
-    if (error) console.error('Failed to fetch classes:', error)
-    else setClasses(data ?? [])
+  const fetchCourses = async () => {
+    const { data, error } = await supabase.from('courses').select('id, title').order('created_at')
+    if (!error) setCourses(data ?? [])
+  }
+
+  /* ================= FETCH ENROLLMENTS ================= */
+  useEffect(() => {
+    if (selectedProfile) {
+      fetchUserEnrollments(selectedProfile.id)
+    }
+  }, [selectedProfile])
+
+  const fetchUserEnrollments = async (userId: string) => {
+    setLoadingEnrollments(true)
+    
+    // Fetch course enrollments
+    const { data: coursesData } = await supabase
+      .from('course_enrollments')
+      .select('id, status, enrolled_at, courses(id, title)')
+      .eq('user_id', userId)
+      .order('enrolled_at', { ascending: false })
+
+    setUserCourseEnrollments(coursesData ?? [])
+
+    // Fetch class enrollments
+    const { data: classesData } = await supabase
+      .from('class_enrollments')
+      .select('id, live_classes(id, title)')
+      .eq('user_id', userId)
+
+    setUserClassEnrollments(classesData ?? [])
+
+    setLoadingEnrollments(false)
   }
 
   /* ================= ACTIONS ================= */
 
   const handleUpdateProfile = async (id: string, updates: Partial<Profile>) => {
     setIsSaving(id)
-    
-    // Update locally immediately for optimistic UI
     setProfiles(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p))
-
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', id)
-
+    const { error } = await supabase.from('profiles').update(updates).eq('id', id)
     if (error) {
-      console.error('Update failed:', error)
       alert('Failed to update student: ' + error.message)
-      fetchUsers() // Revert on failure
+      fetchUsers()
     }
-    
     setIsSaving(null)
   }
 
-  const handleAssignClass = async (e: React.FormEvent) => {
+  // Assign new enrollment
+  const handleAssignEnrollment = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!selectedProfile || !newEnrollmentId) return
 
-    if (!formData.user_id) {
-      alert('Please select a student.')
-      return
+    if (newEnrollmentType === 'course') {
+      const { error } = await supabase.from('course_enrollments').insert({
+        course_id: newEnrollmentId,
+        user_id: selectedProfile.id,
+        status: 'active',
+        enrolled_at: new Date().toISOString()
+      })
+      if (error) {
+        alert(error.message)
+      } else {
+        fetchUserEnrollments(selectedProfile.id)
+        setNewEnrollmentId('')
+      }
+    } else {
+      const { error } = await supabase.from('class_enrollments').insert({
+        class_id: newEnrollmentId,
+        user_id: selectedProfile.id
+      })
+      if (error) {
+        alert(error.message)
+      } else {
+        fetchUserEnrollments(selectedProfile.id)
+        setNewEnrollmentId('')
+      }
     }
+  }
 
-    const payload = {
-      class_id: formData.class_id || null, 
-      user_id: formData.user_id,
-    }
+  const handleUpdateCourseStatus = async (id: string, newStatus: string) => {
+    const { error } = await supabase.from('course_enrollments').update({ status: newStatus }).eq('id', id)
+    if (error) alert(error.message)
+    else fetchUserEnrollments(selectedProfile!.id)
+  }
 
-    const { error } = await supabase
-      .from('class_enrollments')
-      .insert(payload)
+  const handleDeleteCourseEnrollment = async (id: string) => {
+    if(!confirm("Remove this course enrollment?")) return
+    const { error } = await supabase.from('course_enrollments').delete().eq('id', id)
+    if (error) alert(error.message)
+    else fetchUserEnrollments(selectedProfile!.id)
+  }
 
-    if (error) {
-      console.error(error)
-      alert(error.message)
-      return
-    }
-
-    setShowForm(false)
-    setFormData({ class_id: '', user_id: '' })
-    alert('Student successfully assigned to class!')
+  const handleDeleteClassEnrollment = async (id: string) => {
+    if(!confirm("Remove this class enrollment?")) return
+    const { error } = await supabase.from('class_enrollments').delete().eq('id', id)
+    if (error) alert(error.message)
+    else fetchUserEnrollments(selectedProfile!.id)
   }
 
   /* ================= FILTERING ================= */
@@ -142,75 +195,10 @@ export default function ClassEnrollments() {
             Student Enrollments
           </h1>
           <p className="text-slate-500 font-medium">
-            Manage global student status and base billing rates.
+            Manage global student status, billing rates, and course/class enrollments.
           </p>
         </div>
-
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Assign to Class
-        </button>
       </div>
-
-      {/* ASSIGN CLASS MODAL */}
-      {showForm && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
-              <h2 className="text-xl font-bold text-slate-900">Assign to Class</h2>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors">
-                <X size={24} />
-              </button>
-            </div>
-
-            <form onSubmit={handleAssignClass} className="p-6 space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Select Student</label>
-                <select
-                  className="w-full border border-slate-300 bg-white p-3.5 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow"
-                  value={formData.user_id}
-                  onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
-                  required
-                >
-                  <option value="">-- Choose a student --</option>
-                  {profiles.filter(p => p.is_active).map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {`${u.first_name || ''} ${u.last_name || ''}`.trim()} ({u.email})
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-slate-500 font-medium mt-2">Only Active students are shown here.</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Select Live Class</label>
-                <select
-                  className="w-full border border-slate-300 bg-white p-3.5 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow"
-                  value={formData.class_id}
-                  onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
-                >
-                  <option value="">-- Choose a class (Optional) --</option>
-                  {classes.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-lg transition-colors mt-2"
-              >
-                Assign Student
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* SEARCH BAR */}
       <div className="bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 shrink-0">
@@ -230,30 +218,26 @@ export default function ClassEnrollments() {
       {/* TABLE */}
       <div className="bg-white rounded-b-xl border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
         <div className="overflow-auto flex-1 relative">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+          <table className="w-full text-left border-collapse min-w-[900px]">
             <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Student Details</th>
-                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Enrollment Status</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Account Status</th>
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Hourly Rate & Currency</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredProfiles.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="p-12 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 mb-4 border border-slate-100">
-                      <Search className="text-slate-400 w-8 h-8" />
-                    </div>
+                  <td colSpan={4} className="p-12 text-center">
                     <p className="text-lg font-bold text-slate-900">No students found</p>
-                    <p className="text-slate-500 font-medium text-sm mt-1">Try adjusting your search query.</p>
                   </td>
                 </tr>
               ) : (
                 filteredProfiles.map((profile) => (
                   <tr key={profile.id} className="hover:bg-slate-50/50 transition-colors">
                     
-                    {/* STUDENT DETAILS */}
                     <td className="p-4 whitespace-nowrap">
                       <div className="font-bold text-slate-900">
                         {profile.first_name} {profile.last_name}
@@ -261,7 +245,6 @@ export default function ClassEnrollments() {
                       <div className="text-xs font-medium text-slate-500 mt-0.5">{profile.email}</div>
                     </td>
 
-                    {/* STATUS TOGGLE */}
                     <td className="p-4 whitespace-nowrap">
                       <button
                         onClick={() => handleUpdateProfile(profile.id, { is_active: !profile.is_active })}
@@ -291,7 +274,6 @@ export default function ClassEnrollments() {
                       </button>
                     </td>
 
-                    {/* HOURLY RATE CONTROLS */}
                     <td className="p-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-300 max-w-[200px] focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
                         <select 
@@ -322,6 +304,15 @@ export default function ClassEnrollments() {
                       </div>
                     </td>
 
+                    <td className="p-4 whitespace-nowrap">
+                      <button
+                        onClick={() => setSelectedProfile(profile)}
+                        className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+                      >
+                        <Settings size={16} /> Manage Enrollments
+                      </button>
+                    </td>
+
                   </tr>
                 ))
               )}
@@ -329,6 +320,164 @@ export default function ClassEnrollments() {
           </table>
         </div>
       </div>
+
+      {/* MANAGE ENROLLMENTS MODAL */}
+      {selectedProfile && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-3xl max-h-[90vh] rounded-xl shadow-2xl border border-slate-200 flex flex-col">
+            
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 shrink-0">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  Manage Enrollments
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  {selectedProfile.first_name} {selectedProfile.last_name} ({selectedProfile.email})
+                </p>
+              </div>
+              <button 
+                onClick={() => {
+                  setSelectedProfile(null)
+                  setNewEnrollmentId('')
+                }} 
+                className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
+              {loadingEnrollments ? (
+                <div className="flex justify-center p-10 text-slate-500 font-semibold">Loading enrollments...</div>
+              ) : (
+                <div className="space-y-8">
+                  
+                  {/* COURSES SECTION */}
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      Course Enrollments
+                    </h3>
+                    {userCourseEnrollments.length === 0 ? (
+                      <p className="text-sm text-slate-500 italic bg-white p-4 rounded-lg border border-slate-200">No courses enrolled.</p>
+                    ) : (
+                      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                        <table className="w-full text-left text-sm">
+                          <thead className="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                              <th className="p-3 font-semibold text-slate-600">Course</th>
+                              <th className="p-3 font-semibold text-slate-600">Status</th>
+                              <th className="p-3 font-semibold text-slate-600 w-24">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {userCourseEnrollments.map(ce => (
+                              <tr key={ce.id}>
+                                <td className="p-3 font-medium text-slate-900">{ce.courses?.title || 'Unknown Course'}</td>
+                                <td className="p-3">
+                                  <select
+                                    value={ce.status}
+                                    onChange={(e) => handleUpdateCourseStatus(ce.id, e.target.value)}
+                                    className="bg-slate-50 border border-slate-200 rounded px-2 py-1 outline-none focus:ring-2 focus:ring-slate-900 text-xs font-semibold uppercase"
+                                  >
+                                    <option value="contacted">Contacted</option>
+                                    <option value="active">Active</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="dropped">Dropped</option>
+                                  </select>
+                                </td>
+                                <td className="p-3">
+                                  <button onClick={() => handleDeleteCourseEnrollment(ce.id)} className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded hover:bg-rose-50">
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CLASSES SECTION */}
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      Live Class Enrollments
+                    </h3>
+                    {userClassEnrollments.length === 0 ? (
+                      <p className="text-sm text-slate-500 italic bg-white p-4 rounded-lg border border-slate-200">No live classes enrolled.</p>
+                    ) : (
+                      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                        <table className="w-full text-left text-sm">
+                          <thead className="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                              <th className="p-3 font-semibold text-slate-600">Class</th>
+                              <th className="p-3 font-semibold text-slate-600 w-24">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {userClassEnrollments.map(ce => (
+                              <tr key={ce.id}>
+                                <td className="p-3 font-medium text-slate-900">{ce.live_classes?.title || 'Unknown Class'}</td>
+                                <td className="p-3">
+                                  <button onClick={() => handleDeleteClassEnrollment(ce.id)} className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded hover:bg-rose-50">
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              )}
+            </div>
+
+            {/* ADD ENROLLMENT SECTION */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 shrink-0">
+              <h4 className="font-bold text-slate-900 mb-3">Add New Enrollment</h4>
+              <form onSubmit={handleAssignEnrollment} className="flex gap-3">
+                <select
+                  value={newEnrollmentType}
+                  onChange={(e) => {
+                    setNewEnrollmentType(e.target.value as 'course' | 'class')
+                    setNewEnrollmentId('')
+                  }}
+                  className="border border-slate-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                >
+                  <option value="course">Course</option>
+                  <option value="class">Live Class</option>
+                </select>
+
+                <select
+                  value={newEnrollmentId}
+                  onChange={(e) => setNewEnrollmentId(e.target.value)}
+                  className="flex-1 border border-slate-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                  required
+                >
+                  <option value="">-- Select --</option>
+                  {newEnrollmentType === 'course' 
+                    ? courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)
+                    : classes.map(c => <option key={c.id} value={c.id}>{c.title}</option>)
+                  }
+                </select>
+
+                <button
+                  type="submit"
+                  disabled={!newEnrollmentId}
+                  className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-lg font-bold transition-colors disabled:opacity-50"
+                >
+                  Assign
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

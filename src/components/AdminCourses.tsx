@@ -207,12 +207,11 @@ export default function AdminCourses() {
 
               <textarea
                 className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
-                placeholder="Short Description"
+                placeholder="Short Description (Optional)"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                required
               />
 
               <select
