@@ -1,358 +1,225 @@
-import { useEffect, useState } from 'react'
-import { Plus, Trash2, X, Search } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { Search, UserCheck, UserX, Save, AlertCircle } from 'lucide-react'
 
-/* ================= TYPES ================= */
+/* ================= TYPES & CONSTANTS ================= */
 
-interface Enrollment {
-  id: string
-  class_id: string
-  user_id: string
-}
+const CURRENCIES = [
+  { code: 'INR', symbol: '₹' },
+  { code: 'USD', symbol: '$' },
+  { code: 'CHF', symbol: '₣' },
+  { code: 'EUR', symbol: '€' },
+  { code: 'GBP', symbol: '£' }
+]
 
-interface LiveClass {
-  id: string
-  title: string
-}
-
-interface UserProfile {
+interface Profile {
   id: string
   first_name: string | null
   last_name: string | null
   email: string | null
+  hourly_rate: number
+  billing_currency: string
+  is_active: boolean
 }
 
 /* ================= COMPONENT ================= */
 
 export default function ClassEnrollments() {
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
-  const [classes, setClasses] = useState<LiveClass[]>([])
-  const [users, setUsers] = useState<UserProfile[]>([])
-  const [showForm, setShowForm] = useState(false)
+  const [profiles, setProfiles] = useState<Profile[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-
-  const [formData, setFormData] = useState({
-    class_id: '',
-    user_id: '',
-  })
+  const [isSaving, setIsSaving] = useState<string | null>(null)
 
   /* ================= INITIAL LOAD ================= */
-
   useEffect(() => {
-    fetchEnrollments()
-    fetchClasses()
     fetchUsers()
   }, [])
 
-  /* ================= FETCH ENROLLMENTS ================= */
-
-  const fetchEnrollments = async () => {
-    const { data, error } = await supabase
-      .from('class_enrollments')
-      .select('*')
-      .order('enrollment_date', { ascending: false })
-
-    if (error) {
-      console.error('Failed to fetch enrollments:', error)
-      return
-    }
-
-    setEnrollments(data ?? [])
-  }
-
-  /* ================= FETCH CLASSES ================= */
-
-  const fetchClasses = async () => {
-    const { data, error } = await supabase
-      .from('live_classes')
-      .select('id, title')
-      .order('scheduled_date')
-
-    if (error) {
-      console.error('Failed to fetch classes:', error)
-      return
-    }
-
-    setClasses(data ?? [])
-  }
-
-  /* ================= FETCH USERS ================= */
-
   const fetchUsers = async () => {
+    // Note: requires `is_active` column in DB
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email')
+      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
       .order('first_name')
 
     if (error) {
       console.error('Failed to fetch users:', error)
       return
     }
-
-    setUsers(data ?? [])
+    setProfiles(data ?? [])
   }
 
-  /* ================= SUBMIT ================= */
+  /* ================= ACTIONS ================= */
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
+  const handleUpdateProfile = async (id: string, updates: Partial<Profile>) => {
+    setIsSaving(id)
+    
+    // Update locally immediately for optimistic UI
+    setProfiles(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p))
 
-  if (!formData.user_id) {
-    alert('Please select a user')
-    return
-  }
-
-  const payload = {
-    class_id: formData.class_id || null, // ✅ OPTIONAL
-    user_id: formData.user_id,           // ✅ REQUIRED
-  }
-
-  const { error } = await supabase
-    .from('class_enrollments')
-    .insert(payload)
-
-  if (error) {
-    console.error(error)
-    alert(error.message)
-    return
-  }
-
-  closeForm()
-  fetchEnrollments()
-}
-
-
-  /* ================= DELETE ================= */
-
-  const handleDelete = async (id: string) => {
     const { error } = await supabase
-      .from('class_enrollments')
-      .delete()
+      .from('profiles')
+      .update(updates)
       .eq('id', id)
 
     if (error) {
-      console.error('Delete failed:', error)
-      alert(error.message)
-      return
+      console.error('Update failed:', error)
+      alert('Failed to update student: ' + error.message)
+      // Revert on failure
+      fetchUsers()
     }
-
-    fetchEnrollments()
+    
+    setIsSaving(null)
   }
 
-  /* ================= HELPERS ================= */
+  /* ================= FILTERING ================= */
 
-  const closeForm = () => {
-    setShowForm(false)
-    setFormData({ class_id: '', user_id: '' })
-  }
-
-  const getClassTitle = (classId: string) => {
-    return classes.find((c) => c.id === classId)?.title ?? '—'
-  }
-
-  const getUserName = (userId: string) => {
-    const user = users.find((u) => u.id === userId)
-    if (!user) return '—'
-    return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
-  }
-
-  const filteredEnrollments = enrollments.filter(
-    (e) =>
-      getClassTitle(e.class_id)
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      getUserName(e.user_id)
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  )
+  const filteredProfiles = useMemo(() => {
+    if (!searchTerm.trim()) return profiles
+    const term = searchTerm.toLowerCase()
+    return profiles.filter(p => 
+      p.first_name?.toLowerCase().includes(term) ||
+      p.last_name?.toLowerCase().includes(term) ||
+      p.email?.toLowerCase().includes(term)
+    )
+  }, [profiles, searchTerm])
 
   /* ================= UI ================= */
 
   return (
-  <div className="p-4 sm:p-6 lg:p-8">
-    {/* HEADER */}
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-1">
-          Class Enrollments
-        </h1>
-        <p className="text-sm sm:text-base text-gray-600">
-          Manage student enrollments in classes
-        </p>
-      </div>
-
-      <button
-        onClick={() => setShowForm(true)}
-        className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg shadow w-full sm:w-auto"
-      >
-        <Plus className="w-5 h-5" />
-        Enroll Student
-      </button>
-    </div>
-
-    {/* MODAL */}
-    {showForm && (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
-        <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-xl max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-between items-center p-4 sm:p-6 border-b">
-            <h2 className="text-lg sm:text-xl font-bold">New Enrollment</h2>
-            <button onClick={closeForm}>
-              <X />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-            <select
-              className="w-full border p-3 rounded-lg"
-              value={formData.class_id}
-              onChange={(e) =>
-                setFormData({ ...formData, class_id: e.target.value })
-              }
-            >
-              <option value="">No Class (Optional)</option>
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.title}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="w-full border p-3 rounded-lg"
-              value={formData.user_id}
-              onChange={(e) =>
-                setFormData({ ...formData, user_id: e.target.value })
-              }
-              required
-            >
-              <option value="">Select user</option>
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
-                  {u.email ? ` (${u.email})` : ''}
-                </option>
-              ))}
-            </select>
-
-            <button
-              type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg"
-            >
-              Enroll Student
-            </button>
-          </form>
+    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-hidden">
+      
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 shrink-0">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+            Student Enrollments
+          </h1>
+          <p className="text-sm sm:text-base text-gray-500">
+            Manage global student status and base billing rates.
+          </p>
         </div>
       </div>
-    )}
 
-    {/* SEARCH */}
-    <div className="mb-6">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
-          placeholder="Search by class or user..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border rounded-lg text-sm sm:text-base"
-        />
+      {/* SEARCH BAR */}
+      <div className="bg-white p-4 rounded-t-xl border border-b-0 shadow-sm shrink-0">
+        <div className="relative w-full max-w-md">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search size={18} className="text-gray-400" />
+          </div>
+          <input
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+          />
+        </div>
+      </div>
+
+      {/* TABLE */}
+      <div className="bg-white rounded-b-xl shadow-sm border overflow-hidden flex-1 flex flex-col min-h-0">
+        <div className="overflow-auto flex-1 relative">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-50 border-b sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Student Details</th>
+                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Enrollment Status</th>
+                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Hourly Rate & Currency</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredProfiles.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="p-12 text-center text-gray-500">
+                    <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-lg font-medium text-gray-900">No students found.</p>
+                  </td>
+                </tr>
+              ) : (
+                filteredProfiles.map((profile) => (
+                  <tr key={profile.id} className="hover:bg-gray-50/50 transition-colors">
+                    
+                    {/* STUDENT DETAILS */}
+                    <td className="p-4 whitespace-nowrap">
+                      <div className="font-semibold text-gray-900">
+                        {profile.first_name} {profile.last_name}
+                      </div>
+                      <div className="text-sm text-gray-500 mt-0.5">{profile.email}</div>
+                    </td>
+
+                    {/* STATUS TOGGLE */}
+                    <td className="p-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleUpdateProfile(profile.id, { is_active: !profile.is_active })}
+                        disabled={isSaving === profile.id}
+                        className={`
+                          relative inline-flex items-center w-32 h-10 rounded-full transition-colors focus:outline-none
+                          ${profile.is_active ? 'bg-green-100 border border-green-200' : 'bg-gray-100 border border-gray-200'}
+                          ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-sm'}
+                        `}
+                      >
+                        {/* The sliding circle */}
+                        <div
+                          className={`
+                            absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-sm transition-transform duration-300
+                            ${profile.is_active ? 'translate-x-22 text-green-600' : 'translate-x-0 text-gray-400'}
+                          `}
+                        >
+                          {profile.is_active ? <UserCheck size={16} /> : <UserX size={16} />}
+                        </div>
+                        
+                        {/* Text Label */}
+                        <span 
+                          className={`
+                            w-full text-center text-sm font-bold transition-colors
+                            ${profile.is_active ? 'pr-8 pl-2 text-green-700' : 'pl-8 pr-2 text-gray-500'}
+                          `}
+                        >
+                          {profile.is_active ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                      </button>
+                    </td>
+
+                    {/* HOURLY RATE CONTROLS */}
+                    <td className="p-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2 bg-white p-1.5 rounded-lg border shadow-sm max-w-[200px] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                        {/* Currency Dropdown */}
+                        <select 
+                          className="bg-transparent border-r border-gray-200 pr-2 py-1 text-sm font-semibold text-gray-700 focus:outline-none cursor-pointer"
+                          value={profile.billing_currency || 'INR'}
+                          onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
+                          disabled={isSaving === profile.id}
+                        >
+                          {CURRENCIES.map(c => (
+                            <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                          ))}
+                        </select>
+                        
+                        {/* Hourly Rate Input */}
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="w-full bg-transparent border-none p-1 text-sm font-semibold text-gray-900 focus:ring-0 disabled:opacity-50"
+                          value={profile.hourly_rate ?? 0}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value)
+                            if (!isNaN(val)) {
+                              handleUpdateProfile(profile.id, { hourly_rate: val })
+                            }
+                          }}
+                          disabled={isSaving === profile.id}
+                        />
+                      </div>
+                    </td>
+
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
-    {/* MOBILE CARDS */}
-    <div className="block lg:hidden space-y-4">
-      {filteredEnrollments.map((e) => (
-        <div
-          key={e.id}
-          className="bg-white rounded-xl shadow p-4 space-y-3"
-        >
-          <div className="text-xs text-gray-500 break-all">
-            {e.id}
-          </div>
-
-          <div>
-            <span className="text-xs font-semibold text-gray-500">Class</span>
-            <div className="mt-1 inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-              {getClassTitle(e.class_id)}
-            </div>
-          </div>
-
-          <div>
-            <span className="text-xs font-semibold text-gray-500">User</span>
-            <div className="mt-1 inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-              {getUserName(e.user_id)}
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              onClick={() => handleDelete(e.id)}
-              className="text-red-600 hover:bg-red-50 p-2 rounded"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
-        </div>
-      ))}
-
-      {filteredEnrollments.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
-          No enrollments found
-        </div>
-      )}
-    </div>
-
-    {/* DESKTOP TABLE */}
-    <div className="hidden lg:block bg-white rounded-xl shadow overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-gray-50 border-b">
-          <tr>
-            <th className="px-6 py-4 text-left text-sm font-semibold">
-              Enrollment ID
-            </th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">
-              Class
-            </th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">
-              User
-            </th>
-            <th className="px-6 py-4 text-right text-sm font-semibold">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {filteredEnrollments.map((e) => (
-            <tr key={e.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 text-sm break-all">{e.id}</td>
-              <td className="px-6 py-4 text-sm">
-                <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
-                  {getClassTitle(e.class_id)}
-                </span>
-              </td>
-              <td className="px-6 py-4 text-sm">
-                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                  {getUserName(e.user_id)}
-                </span>
-              </td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  onClick={() => handleDelete(e.id)}
-                  className="text-red-600 hover:bg-red-50 p-2 rounded"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {filteredEnrollments.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
-          No enrollments found
-        </div>
-      )}
-    </div>
-  </div>
-)
+  )
 }

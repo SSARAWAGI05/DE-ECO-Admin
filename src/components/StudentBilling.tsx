@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient'
 import { 
   DollarSign, Clock, Users, Edit3, Check, X, 
   TrendingUp, Calendar as CalendarIcon, 
-  Search, Filter, ArrowUpDown
+  Search, Filter, ArrowUpDown, AlertCircle
 } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
@@ -26,6 +26,7 @@ interface Profile {
   email: string | null
   hourly_rate: number
   billing_currency: string
+  is_active: boolean // Added from DB schema change
 }
 
 interface LiveClass {
@@ -51,11 +52,6 @@ export default function StudentBilling() {
   const [searchTerm, setSearchTerm] = useState('')
   const [showActiveOnly, setShowActiveOnly] = useState(false)
   const [sortBy, setSortBy] = useState<SortOption>('name_asc')
-  
-  // Inline Editing
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editRate, setEditRate] = useState<string>('')
-  const [editCurrency, setEditCurrency] = useState<string>('INR')
 
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
@@ -66,7 +62,7 @@ export default function StudentBilling() {
   const fetchData = async () => {
     const { data: profilesData, error: profilesErr } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email, hourly_rate, billing_currency')
+      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
       .order('first_name')
 
     if (profilesErr) console.error('Failed to fetch profiles:', profilesErr)
@@ -79,46 +75,6 @@ export default function StudentBilling() {
 
     if (classesErr) console.error('Failed to fetch classes:', classesErr)
     else setClasses(classesData ?? [])
-  }
-
-  /* ================= ACTIONS ================= */
-  const startEdit = (profile: Profile) => {
-    setEditingId(profile.id)
-    setEditRate(profile.hourly_rate?.toString() || '0')
-    setEditCurrency(profile.billing_currency || 'INR')
-  }
-
-  const cancelEdit = () => {
-    setEditingId(null)
-    setEditRate('')
-  }
-
-  const saveBillingDetails = async (userId: string) => {
-    const numRate = parseFloat(editRate)
-    if (isNaN(numRate) || numRate < 0) {
-      alert("Please enter a valid rate.")
-      return
-    }
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({ 
-        hourly_rate: numRate,
-        billing_currency: editCurrency
-      })
-      .eq('id', userId)
-
-    if (error) {
-      console.error("Failed to update billing details", error)
-      alert("Failed to update billing details: " + error.message)
-      return
-    }
-
-    // Optimistic update
-    setProfiles((prev) => 
-      prev.map(p => p.id === userId ? { ...p, hourly_rate: numRate, billing_currency: editCurrency } : p)
-    )
-    setEditingId(null)
   }
 
   /* ================= CALCULATION LOGIC ================= */
@@ -155,14 +111,18 @@ export default function StudentBilling() {
   }
 
   // Calculate stats for a single user
-  const getUserStats = (userId: string, rate: number) => {
+  const getUserStats = (userId: string, rate: number, isActiveProfile: boolean) => {
+    // If a student is inactive, we could freeze their hours here. But usually, if they are inactive, 
+    // they just don't accumulate NEW hours. The database naturally handles this because they won't 
+    // be added to new `live_classes`. So we just calculate whatever is in the DB.
     const studentClasses = filteredClasses.filter(c => c.user_id === userId)
     const totalMinutes = studentClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
     const totalHours = totalMinutes / 60
     return {
       classCount: studentClasses.length,
       totalHours,
-      amountDue: totalHours * (rate || 0)
+      amountDue: totalHours * (rate || 0),
+      isEnrolled: isActiveProfile
     }
   }
 
@@ -170,7 +130,7 @@ export default function StudentBilling() {
   const profilesWithStats = useMemo(() => {
     return profiles.map(p => ({
       ...p,
-      stats: getUserStats(p.id, p.hourly_rate)
+      stats: getUserStats(p.id, p.hourly_rate, p.is_active)
     }))
   }, [profiles, filteredClasses])
 
@@ -189,8 +149,9 @@ export default function StudentBilling() {
     }
 
     // 2. Active Only Filter
+    // In the billing context, "Active" means they are officially enrolled (is_active) AND have classes scheduled.
     if (showActiveOnly) {
-      result = result.filter(p => p.stats.classCount > 0)
+      result = result.filter(p => p.stats.classCount > 0 && p.stats.isEnrolled)
     }
 
     // 3. Sorting
@@ -216,7 +177,8 @@ export default function StudentBilling() {
     let totalScheduledHours = 0
     
     profilesWithStats.forEach(p => {
-      if (p.stats.classCount > 0) activeStudents++
+      // Only count officially enrolled students in the summary
+      if (p.stats.classCount > 0 && p.stats.isEnrolled) activeStudents++
       totalScheduledHours += p.stats.totalHours
     })
 
@@ -232,7 +194,7 @@ export default function StudentBilling() {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 shrink-0">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Student Billing</h1>
-          <p className="text-gray-500">Manage hourly rates and auto-calculate invoice amounts.</p>
+          <p className="text-gray-500">Auto-calculate invoice amounts for enrolled students.</p>
         </div>
 
         <div className="flex items-center bg-white border rounded-lg shadow-sm p-1">
@@ -325,7 +287,7 @@ export default function StudentBilling() {
             <thead className="bg-gray-50 border-b sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Student</th>
-                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Hourly Rate</th>
+                <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Base Rate</th>
                 <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Activity</th>
                 <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Total Hours</th>
                 <th className="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider bg-gray-50">Amount Due</th>
@@ -346,7 +308,10 @@ export default function StudentBilling() {
                 processedProfiles.map((profile) => {
                   const stats = profile.stats
                   const currencySymbol = getCurrencySymbol(profile.billing_currency || 'INR')
-                  const isActive = stats.classCount > 0
+                  
+                  // A student is only "Billing Active" if they have > 0 classes AND they are officially enrolled.
+                  const hasClasses = stats.classCount > 0
+                  const isOfficiallyEnrolled = stats.isEnrolled
 
                   return (
                     <tr key={profile.id} className="hover:bg-blue-50/50 transition-colors">
@@ -358,77 +323,42 @@ export default function StudentBilling() {
                         <div className="text-xs text-gray-500 mt-0.5">{profile.email}</div>
                       </td>
 
-                      {/* Hourly Rate Editor */}
+                      {/* Base Rate (Read-Only) */}
                       <td className="p-4 whitespace-nowrap">
-                        {editingId === profile.id ? (
-                          <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-lg border">
-                            <select 
-                              className="bg-transparent border-r border-gray-300 pr-2 py-1 text-sm font-medium text-gray-700 focus:outline-none"
-                              value={editCurrency}
-                              onChange={(e) => setEditCurrency(e.target.value)}
-                            >
-                              {CURRENCIES.map(c => (
-                                <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
-                              ))}
-                            </select>
-                            <input
-                              type="number"
-                              className="w-16 bg-transparent border-none p-1 text-sm font-medium focus:ring-0"
-                              value={editRate}
-                              onChange={(e) => setEditRate(e.target.value)}
-                              placeholder="Rate"
-                              autoFocus
-                            />
-                            <div className="flex border-l border-gray-300 pl-1">
-                              <button onClick={() => saveBillingDetails(profile.id)} className="text-green-600 hover:bg-green-100 p-1.5 rounded transition-colors">
-                                <Check size={16} />
-                              </button>
-                              <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-1.5 rounded transition-colors">
-                                <X size={16} />
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-3 group">
-                            <span className="font-semibold text-gray-800 bg-gray-100 px-3 py-1 rounded-md">
-                              {currencySymbol} {profile.hourly_rate || 0}
-                            </span>
-                            <button 
-                              onClick={() => startEdit(profile)}
-                              className="opacity-0 group-hover:opacity-100 text-blue-500 hover:text-blue-700 transition-all p-1 bg-blue-50 hover:bg-blue-100 rounded"
-                              title="Edit Rate & Currency"
-                            >
-                              <Edit3 size={14} />
-                            </button>
-                          </div>
-                        )}
+                        <span className="font-semibold text-gray-800 bg-gray-100 px-3 py-1 rounded-md">
+                          {currencySymbol} {profile.hourly_rate || 0}
+                        </span>
                       </td>
 
                       {/* Activity Status */}
                       <td className="p-4 whitespace-nowrap">
-                        {isActive ? (
+                        {!isOfficiallyEnrolled ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-700 font-medium text-xs border border-red-200">
+                            Unenrolled
+                          </span>
+                        ) : hasClasses ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 font-medium text-xs border border-green-200">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                             {stats.classCount} Classes
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium text-xs border border-gray-200">
-                            Inactive
+                            No Classes
                           </span>
                         )}
                       </td>
 
                       {/* Total Hours */}
                       <td className="p-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1.5 font-medium ${isActive ? 'text-gray-800' : 'text-gray-400'}`}>
-                          <Clock size={16} className={isActive ? "text-blue-500" : "text-gray-300"} />
+                        <span className={`inline-flex items-center gap-1.5 font-medium ${(hasClasses && isOfficiallyEnrolled) ? 'text-gray-800' : 'text-gray-400'}`}>
+                          <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-blue-500" : "text-gray-300"} />
                           {stats.totalHours.toFixed(1)} <span className="text-sm font-normal text-gray-500">hrs</span>
                         </span>
                       </td>
 
                       {/* Amount Due */}
                       <td className="p-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center font-bold text-lg ${isActive ? 'text-green-600' : 'text-gray-400'}`}>
+                        <span className={`inline-flex items-center font-bold text-lg ${(hasClasses && isOfficiallyEnrolled) ? 'text-green-600' : 'text-gray-400'}`}>
                           {currencySymbol} {stats.amountDue.toFixed(2)}
                         </span>
                       </td>
