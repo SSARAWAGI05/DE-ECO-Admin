@@ -191,19 +191,19 @@ export default function ClassRecordings() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-full">
+    <div className="p-6 lg:p-10 bg-[#fbfbfd] min-h-full font-sans">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-1">Class Recordings</h1>
-          <p className="text-slate-500 font-medium mt-1">
+          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-1">Class Recordings</h1>
+          <p className="text-slate-500 font-medium">
             Upload and manage recorded class sessions
           </p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 transition-colors text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           Add Recording
@@ -228,7 +228,7 @@ export default function ClassRecordings() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Class (Optional)</label>
                 <select
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow bg-slate-50"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow bg-white"
                   value={formData.class_id}
                   onChange={(e) =>
                     setFormData({ ...formData, class_id: e.target.value })
@@ -247,7 +247,7 @@ export default function ClassRecordings() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Student</label>
                 <select
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow bg-slate-50"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow bg-white"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -268,7 +268,7 @@ export default function ClassRecordings() {
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Title</label>
                 <input
                   placeholder="e.g. Session 1 Recording"
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow placeholder:text-slate-400"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow placeholder:text-slate-400"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -282,7 +282,7 @@ export default function ClassRecordings() {
                 <input
                   type="url"
                   placeholder="https://..."
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow placeholder:text-slate-400"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow placeholder:text-slate-400"
                   value={formData.video_url}
                   onChange={(e) =>
                     setFormData({ ...formData, video_url: e.target.value })
@@ -294,7 +294,7 @@ export default function ClassRecordings() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold text-base transition-colors shadow-sm"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-lg font-bold text-base transition-colors"
                 >
                   {editingId ? 'Update Recording' : 'Add Recording'}
                 </button>
@@ -309,11 +309,11 @@ export default function ClassRecordings() {
         {recordings.map((r) => (
           <div
             key={r.id}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow p-6 flex flex-col"
+            className="bg-white rounded-xl border border-slate-200 hover:shadow-sm transition-shadow p-6 flex flex-col"
           >
             <div className="flex gap-4 flex-1">
-              <div className="bg-indigo-50 p-3.5 rounded-xl flex-shrink-0 h-fit">
-                <Play className="w-6 h-6 text-indigo-600" />
+              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-100 flex-shrink-0 h-fit">
+                <Play className="w-6 h-6 text-slate-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-lg text-slate-900 mb-1.5 truncate" title={r.title}>{r.title}</h3>
@@ -331,7 +331,7 @@ export default function ClassRecordings() {
                   href={r.video_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 font-bold transition-colors"
+                  className="text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 font-bold transition-colors"
                 >
                   <Play size={16} /> Watch
                 </a>
@@ -341,7 +341,7 @@ export default function ClassRecordings() {
             <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-100">
               <button
                 onClick={() => handleEdit(r)}
-                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
               >
                 <Edit2 className="w-5 h-5" />
               </button>

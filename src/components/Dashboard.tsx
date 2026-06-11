@@ -156,6 +156,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         )
       `)
       .lt('end_datetime', now)
+      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
       .neq('status', 'cancelled')
 
     const months: Record<string, number> = {}
@@ -190,14 +191,14 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
   /* ================= UI ================= */
 
   return (
-    <div className="p-6 lg:p-8 space-y-10 bg-gray-50 min-h-full">
+    <div className="p-6 lg:p-10 space-y-8 bg-[#fbfbfd] min-h-full font-sans">
       {/* HERO */}
-      <div className="bg-slate-900 rounded-2xl p-8 text-white shadow-md border border-slate-800">
-        <h1 className="text-3xl font-bold mb-2 tracking-tight">
-          Welcome back 👋
+      <div className="pb-2">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">
+          Welcome back
         </h1>
-        <p className="text-slate-400 font-medium">
-          Here’s what’s happening on DE-ECO today
+        <p className="text-slate-500 font-medium">
+          Here’s what’s happening on DE-ECO today.
         </p>
       </div>
 
@@ -210,26 +211,26 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* EARNINGS CHART */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 border border-slate-200">
-        <h2 className="text-xl font-bold mb-6 text-slate-900">Earnings Overview (Last 6 Months)</h2>
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="text-lg font-semibold mb-6 text-slate-900 tracking-tight">Earnings Overview</h2>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#1e293b" stopOpacity={0.1}/>
+                  <stop offset="95%" stopColor="#1e293b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} dy={10} />
               <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} tickFormatter={(value) => `₹${value}`} />
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', padding: '12px' }}
-                itemStyle={{ color: '#0f172a', fontWeight: 700 }}
+                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', padding: '12px' }}
+                itemStyle={{ color: '#0f172a', fontWeight: 600 }}
                 formatter={(value: any) => [`₹${value}`, 'Earnings']}
               />
-              <Area type="monotone" dataKey="Earnings" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorEarnings)" />
+              <Area type="monotone" dataKey="Earnings" stroke="#0f172a" strokeWidth={2} fillOpacity={1} fill="url(#colorEarnings)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -238,8 +239,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* CLASSES */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-5">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
+          <h2 className="text-lg font-semibold mb-5 text-slate-900 tracking-tight">
             Upcoming Live Classes
           </h2>
 
@@ -282,8 +283,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         </div>
 
         {/* ACTIVITY */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <h2 className="text-lg font-semibold mb-5 text-slate-900 tracking-tight">
             Activity Feed
           </h2>
 
@@ -312,8 +313,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 border border-slate-200">
-        <h2 className="text-xl font-bold mb-5 text-slate-900">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="text-lg font-semibold mb-5 text-slate-900 tracking-tight">
           Quick Actions
         </h2>
 
@@ -331,21 +332,14 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
 /* ================= SUB COMPONENTS ================= */
 
 function Stat({ label, value, icon: Icon, accent }: any) {
-  const colors: any = {
-    indigo: 'bg-indigo-50 text-indigo-600',
-    rose: 'bg-rose-50 text-rose-600',
-    emerald: 'bg-emerald-50 text-emerald-600',
-    slate: 'bg-slate-100 text-slate-600',
-  }
-
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center gap-4">
-      <div className={`p-3 rounded-xl ${colors[accent]}`}>
+    <div className="bg-white rounded-xl p-5 border border-slate-200 flex items-center gap-4">
+      <div className="p-3 bg-slate-50 text-slate-700 rounded-lg">
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-sm font-medium text-slate-500">{label}</p>
-        <p className="text-2xl font-bold text-slate-900">{value}</p>
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
+        <p className="text-2xl font-bold text-slate-900 tracking-tight">{value}</p>
       </div>
     </div>
   )
@@ -355,10 +349,10 @@ function Action({ icon: Icon, label, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-3 border border-slate-200 rounded-xl p-5 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-sm transition bg-white text-slate-700 hover:text-indigo-700 group"
+      className="flex flex-col items-center justify-center gap-3 border border-slate-200 rounded-xl p-5 hover:bg-slate-50 hover:border-slate-300 transition bg-white text-slate-600 hover:text-slate-900 group"
     >
-      <Icon className="w-7 h-7 text-slate-400 group-hover:text-indigo-600 transition-colors" />
-      <span className="text-sm font-bold tracking-tight">{label}</span>
+      <Icon className="w-6 h-6 text-slate-400 group-hover:text-slate-900 transition-colors" />
+      <span className="text-sm font-semibold tracking-tight">{label}</span>
     </button>
   )
 }

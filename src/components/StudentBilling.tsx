@@ -239,16 +239,16 @@ export default function StudentBilling() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-y-auto">
+    <div className="p-6 lg:p-10 h-full flex flex-col bg-[#fbfbfd] overflow-y-auto font-sans">
       
       {/* HEADER & TIME PERIOD CONTROL */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 pb-4 border-b border-slate-200">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-1">Student Billing</h1>
-          <p className="text-slate-500 font-medium mt-1">Auto-calculate and settle invoice amounts for enrolled students.</p>
+          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-1">Student Billing</h1>
+          <p className="text-slate-500 font-medium">Auto-calculate and settle invoice amounts for enrolled students.</p>
         </div>
 
-        <div className="flex items-center bg-gray-50 border border-slate-300 rounded-xl p-1 focus-within:ring-2 focus-within:ring-indigo-500 transition-shadow">
+        <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
           <CalendarIcon size={18} className="text-slate-400 ml-3 mr-2" />
           <select
             className="p-2.5 border-none bg-transparent focus:ring-0 font-semibold text-slate-700 cursor-pointer outline-none"
@@ -264,39 +264,39 @@ export default function StudentBilling() {
 
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 shrink-0">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="bg-indigo-100 p-3.5 rounded-xl text-indigo-600">
+        <div className="bg-white p-6 rounded-xl border border-slate-200 flex items-center gap-4">
+          <div className="bg-slate-50 p-3.5 rounded-lg text-slate-700">
             <Users size={24} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Active Students</p>
-            <p className="text-2xl font-bold text-slate-900">{summaryStats.activeStudents}</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Active Students</p>
+            <p className="text-2xl font-bold text-slate-900 tracking-tight">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="bg-emerald-100 p-3.5 rounded-xl text-emerald-600">
+        <div className="bg-white p-6 rounded-xl border border-slate-200 flex items-center gap-4">
+          <div className="bg-slate-50 p-3.5 rounded-lg text-slate-700">
             <TrendingUp size={24} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Scheduled Hours</p>
-            <p className="text-2xl font-bold text-slate-900">{summaryStats.totalScheduledHours.toFixed(1)} hrs</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Scheduled Hours</p>
+            <p className="text-2xl font-bold text-slate-900 tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} hrs</p>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
-          <div className="bg-rose-100 p-3.5 rounded-xl text-rose-600 mt-1 shrink-0">
+        <div className="bg-white p-6 rounded-xl border border-slate-200 flex items-start gap-4">
+          <div className="bg-slate-50 p-3.5 rounded-lg text-slate-700 shrink-0">
             <DollarSign size={24} />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Total Outstanding</p>
-            <div className="space-y-1">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Outstanding</p>
+            <div className="space-y-1 mt-1">
               {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
-                <p className="text-xl font-bold text-slate-900">₹ 0.00</p>
+                <p className="text-xl font-bold text-slate-900 tracking-tight">₹ 0.00</p>
               ) : (
                 Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
-                  <p key={currency} className="text-xl font-bold text-slate-900">
-                    <span className="text-slate-400 mr-2 text-base font-semibold">{currency}</span>
+                  <p key={currency} className="text-xl font-bold text-slate-900 tracking-tight">
+                    <span className="text-slate-400 mr-2 text-sm font-semibold">{currency}</span>
                     {getCurrencySymbol(currency)} {amount.toFixed(2)}
                   </p>
                 ))
@@ -307,7 +307,7 @@ export default function StudentBilling() {
       </div>
 
       {/* CONTROL PANEL: Search, Filter, Sort */}
-      <div className="bg-white p-5 rounded-t-2xl border border-b-0 border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
+      <div className="bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
         
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
@@ -317,7 +317,7 @@ export default function StudentBilling() {
           <input
             type="text"
             placeholder="Search by name or email..."
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 text-sm font-medium outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -325,19 +325,19 @@ export default function StudentBilling() {
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           {/* Active Only Toggle */}
-          <label className={`flex items-center gap-2 cursor-pointer text-sm font-semibold transition-colors px-4 py-3 rounded-xl border ${showActiveOnly ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-300 text-slate-600 hover:text-slate-900'}`}>
-            <Filter size={16} className={showActiveOnly ? "text-indigo-600" : "text-slate-400"} />
+          <label className={`flex items-center gap-2 cursor-pointer text-sm font-semibold transition-colors px-4 py-3 rounded-lg border ${showActiveOnly ? 'bg-slate-900 border-slate-900 text-white' : 'bg-slate-50 border-slate-300 text-slate-600 hover:text-slate-900'}`}>
+            <Filter size={16} className={showActiveOnly ? "text-white" : "text-slate-400"} />
             <span className="hidden sm:inline">Active Only</span>
             <input 
               type="checkbox" 
-              className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+              className="w-4 h-4 text-slate-900 rounded border-slate-300 focus:ring-slate-900 cursor-pointer hidden"
               checked={showActiveOnly}
               onChange={(e) => setShowActiveOnly(e.target.checked)}
             />
           </label>
 
           {/* Sort Dropdown */}
-          <div className="flex items-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 transition-shadow">
+          <div className="flex items-center bg-white border border-slate-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
             <ArrowUpDown size={16} className="text-slate-400 mr-2" />
             <select
               className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-slate-700 cursor-pointer p-0 pr-6 outline-none"
@@ -353,7 +353,7 @@ export default function StudentBilling() {
       </div>
 
       {/* TABLE DATA */}
-      <div className="bg-white rounded-b-2xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
+      <div className="bg-white rounded-b-xl border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
         <div className="overflow-auto flex-1 relative">
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
@@ -424,7 +424,7 @@ export default function StudentBilling() {
                       {/* Period Hours */}
                       <td className="p-4 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1.5 font-bold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800' : 'text-slate-400'}`}>
-                          <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-indigo-500" : "text-slate-300"} />
+                          <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-slate-600" : "text-slate-300"} />
                           {stats.totalHours.toFixed(1)} <span className="text-sm font-medium text-slate-500">hrs</span>
                         </span>
                       </td>
@@ -441,7 +441,7 @@ export default function StudentBilling() {
                          <button 
                            onClick={() => setSettleProfile(profile)}
                            disabled={stats.totalDue <= 0}
-                           className="bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-600 hover:text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                           className="bg-slate-900 border border-slate-800 text-white hover:bg-slate-800 px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                          >
                            Settle Due
                          </button>
@@ -458,7 +458,7 @@ export default function StudentBilling() {
       {/* SETTLE MODAL */}
       {settleProfile && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl border border-slate-200 p-6">
+          <div className="bg-white rounded-xl w-full max-w-sm shadow-2xl border border-slate-200 p-6">
             <h2 className="text-xl font-bold text-slate-900 mb-2">Settle Balance</h2>
             <p className="text-sm text-slate-500 mb-6 font-medium">
               Record a payment from <span className="font-bold text-slate-800">{settleProfile.first_name}</span>.
@@ -475,7 +475,7 @@ export default function StudentBilling() {
                   placeholder={`e.g. ${settleProfile.stats.totalDue.toFixed(2)}`}
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900 font-medium"
+                  className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 font-medium"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -485,14 +485,14 @@ export default function StudentBilling() {
                     setSettleProfile(null)
                     setSettleAmount('')
                   }}
-                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-colors"
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSettling}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-sm transition-colors disabled:opacity-70"
+                  className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-70"
                 >
                   {isSettling ? 'Saving...' : 'Confirm'}
                 </button>

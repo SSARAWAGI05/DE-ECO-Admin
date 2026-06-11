@@ -279,17 +279,17 @@ export default function ClassNotes() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-full">
+    <div className="p-6 lg:p-10 bg-[#fbfbfd] min-h-full font-sans">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-1">Class Notes</h1>
-          <p className="text-slate-500 font-medium mt-1">Upload and manage class study materials</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">Class Notes</h1>
+          <p className="text-slate-500 font-medium">Upload and manage class study materials</p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 transition-colors text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           Upload Note
@@ -315,7 +315,7 @@ export default function ClassNotes() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Student</label>
                 <select
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow bg-slate-50"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow bg-white"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -337,7 +337,7 @@ export default function ClassNotes() {
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Title</label>
                 <input
                   placeholder="e.g. Chapter 1 Notes"
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow placeholder:text-slate-400"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow placeholder:text-slate-400"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -347,18 +347,18 @@ export default function ClassNotes() {
               </div>
 
               {/* UPLOAD FILE TO DRIVE */}
-              <div className="bg-indigo-50/50 border-2 border-dashed border-indigo-200 p-5 rounded-2xl transition-colors hover:bg-indigo-50/80">
-                <label className="block text-sm font-bold text-indigo-900 mb-2 flex items-center gap-2">
-                  <UploadCloud size={20} className="text-indigo-600" />
+              <div className="bg-slate-50 border border-slate-200 p-5 rounded-lg transition-colors hover:bg-slate-100">
+                <label className="block text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+                  <UploadCloud size={20} className="text-slate-600" />
                   Upload PDF to Google Drive
                 </label>
                 <input
                   type="file"
                   accept="application/pdf"
-                  className="w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 transition-colors cursor-pointer"
+                  className="w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-white file:border file:border-slate-200 file:text-slate-700 hover:file:bg-slate-50 transition-colors cursor-pointer"
                   onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                 />
-                <p className="text-xs text-indigo-600/70 font-medium mt-3">
+                <p className="text-xs text-slate-500 font-medium mt-3">
                   If you select a file, it will automatically upload to your Google Drive and attach the link.
                 </p>
               </div>
@@ -377,7 +377,7 @@ export default function ClassNotes() {
                 <input
                   type="url"
                   placeholder="https://drive.google.com/..."
-                  className="w-full border border-slate-300 p-3.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow placeholder:text-slate-400 disabled:bg-slate-100 disabled:text-slate-500"
+                  className="w-full border border-slate-300 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow placeholder:text-slate-400 disabled:bg-slate-100 disabled:text-slate-500"
                   value={formData.file_url}
                   onChange={(e) =>
                     setFormData({ ...formData, file_url: e.target.value })
@@ -389,10 +389,10 @@ export default function ClassNotes() {
               <button
                 type="submit"
                 disabled={isUploading}
-                className={`w-full py-4 rounded-xl font-bold text-base transition-colors shadow-sm ${
+                className={`w-full py-4 rounded-lg font-bold text-base transition-colors ${
                   isUploading 
-                    ? 'bg-slate-200 text-slate-500 cursor-not-allowed' 
-                    : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200' 
+                    : 'bg-slate-900 hover:bg-slate-800 text-white'
                 }`}
               >
                 {isUploading 
@@ -413,11 +413,11 @@ export default function ClassNotes() {
         {notes.map((note) => (
           <div
             key={note.id}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow p-6 flex flex-col"
+            className="bg-white rounded-xl border border-slate-200 hover:shadow-sm transition-shadow p-6 flex flex-col"
           >
             <div className="flex gap-4 flex-1">
-              <div className="bg-indigo-50 p-3.5 rounded-xl flex-shrink-0 h-fit">
-                <FileText className="w-6 h-6 text-indigo-600" />
+              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-100 flex-shrink-0 h-fit">
+                <FileText className="w-6 h-6 text-slate-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-lg text-slate-900 mb-1.5 truncate" title={note.title}>{note.title}</h3>
@@ -435,7 +435,7 @@ export default function ClassNotes() {
                   href={note.file_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 font-bold transition-colors"
+                  className="text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 font-bold transition-colors"
                 >
                   <Download size={16} /> Open Note
                 </a>
@@ -445,7 +445,7 @@ export default function ClassNotes() {
             <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-100">
               <button
                 onClick={() => handleEdit(note)}
-                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
               >
                 <Edit2 className="w-5 h-5" />
               </button>

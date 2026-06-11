@@ -135,10 +135,10 @@ const AdminAnnouncements: React.FC = () => {
 
   /* ================= UI ================= */
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-10 bg-gray-50 min-h-full">
+    <div className="max-w-5xl mx-auto p-6 lg:p-10 space-y-8 bg-[#fbfbfd] min-h-full font-sans">
 
       {/* FORM */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
             {editingId ? "Edit Announcement" : "Create Announcement"}
@@ -152,7 +152,7 @@ const AdminAnnouncements: React.FC = () => {
 
           {/* CLASS */}
           <select
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
             value={form.classId}
             onChange={(e) =>
               setForm({ ...form, classId: e.target.value })
@@ -167,7 +167,7 @@ const AdminAnnouncements: React.FC = () => {
           </select>
 
           <input
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
             placeholder="Title"
             required
             value={form.title}
@@ -177,7 +177,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <textarea
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
             placeholder="Message"
             required
             value={form.message}
@@ -187,7 +187,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <select
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900"
+            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
             value={form.priority}
             onChange={(e) =>
               setForm({ ...form, priority: e.target.value })
@@ -202,7 +202,7 @@ const AdminAnnouncements: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 disabled:opacity-70 text-white px-8 py-3 rounded-xl font-semibold shadow-sm transition-colors"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto bg-slate-900 hover:bg-slate-800 disabled:opacity-70 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               <Send size={18} />
               {loading
@@ -226,7 +226,7 @@ const AdminAnnouncements: React.FC = () => {
         {announcements.map((a) => (
           <div
             key={a.id}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
           >
             <div>
               <div className="flex items-center gap-3 mb-2">
@@ -249,7 +249,7 @@ const AdminAnnouncements: React.FC = () => {
             <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(a)}
-                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
               >
                 <Edit2 size={18} />
               </button>

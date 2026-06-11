@@ -191,19 +191,19 @@ export default function LiveClasses() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-y-auto">
+    <div className="p-6 lg:p-10 h-full flex flex-col bg-[#fbfbfd] overflow-y-auto font-sans">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-1">Live Classes</h1>
-          <p className="text-slate-500 font-medium mt-1">
+          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-1">Live Classes</h1>
+          <p className="text-slate-500 font-medium">
             Manage scheduled live sessions
           </p>
         </div>
 
         <button
           onClick={openCreate}
-          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 transition-colors text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           New Class
@@ -218,7 +218,7 @@ export default function LiveClasses() {
           return (
             <div
               key={c.id}
-              className="grid grid-cols-12 gap-4 bg-white rounded-xl border border-slate-200 p-4 items-center hover:shadow-sm transition-shadow"
+              className="grid grid-cols-12 gap-4 bg-white rounded-xl border border-slate-200 p-5 items-center hover:shadow-sm transition-shadow"
             >
               <div className="col-span-12 md:col-span-3">
                 <div className="font-semibold text-slate-900">{c.title}</div>
@@ -252,14 +252,14 @@ export default function LiveClasses() {
                     href={c.meeting_link}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="p-2 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     <LinkIcon size={18} />
                   </a>
                 )}
                 <button
                   onClick={() => openEdit(c)}
-                  className="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="p-2 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors"
                 >
                   <Edit2 size={18} />
                 </button>
@@ -293,7 +293,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-semibold text-slate-700">Assigned User</label>
                 <select
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -313,7 +313,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-semibold text-slate-700">Class Title</label>
                 <input
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -326,7 +326,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-semibold text-slate-700">Instructor</label>
                 <input
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
                   value={formData.instructor_name}
                   onChange={(e) =>
                     setFormData({
@@ -344,7 +344,7 @@ export default function LiveClasses() {
                 <input
                   type="url"
                   placeholder="https://meet.google.com/..."
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
                   value={formData.meeting_link || ''}
                   onChange={(e) =>
                     setFormData({
@@ -360,7 +360,7 @@ export default function LiveClasses() {
                 <label className="text-sm font-semibold text-slate-700">Date & Time</label>
                 <input
                   type="datetime-local"
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-700"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700"
                   value={formData.scheduled_datetime}
                   onChange={(e) =>
                     setFormData({
@@ -392,7 +392,7 @@ export default function LiveClasses() {
                       }}
                       className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                         formData.duration_minutes === d.toString()
-                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                          ? 'bg-slate-900 text-white border-slate-900'
                           : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'
                       }`}
                     >
@@ -411,7 +411,7 @@ export default function LiveClasses() {
                     }}
                     className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                       customDuration
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        ? 'bg-slate-900 text-white border-slate-900'
                         : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'
                     }`}
                   >
@@ -423,7 +423,7 @@ export default function LiveClasses() {
                   <input
                     type="number"
                     placeholder="Custom duration (minutes)"
-                    className="w-full border border-slate-300 p-2.5 rounded-lg mt-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                    className="w-full border border-slate-300 p-2.5 rounded-lg mt-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
                     value={formData.duration_minutes}
                     onChange={(e) =>
                       setFormData({
@@ -439,7 +439,7 @@ export default function LiveClasses() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors text-white py-4 rounded-xl font-bold shadow-sm"
+                  className="w-full bg-slate-900 hover:bg-slate-800 transition-colors text-white py-4 rounded-xl font-bold"
                 >
                   {editingId ? 'Update Class' : 'Create Class'}
                 </button>

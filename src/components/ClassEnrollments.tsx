@@ -133,22 +133,22 @@ export default function ClassEnrollments() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col bg-gray-50 overflow-y-auto">
+    <div className="p-6 lg:p-10 h-full flex flex-col bg-[#fbfbfd] overflow-y-auto font-sans">
       
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-1">
+          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-1">
             Student Enrollments
           </h1>
-          <p className="text-slate-500 font-medium mt-1">
+          <p className="text-slate-500 font-medium">
             Manage global student status and base billing rates.
           </p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold w-full sm:w-auto transition-colors"
+          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto transition-colors"
         >
           <Plus className="w-5 h-5" />
           Assign to Class
@@ -158,7 +158,7 @@ export default function ClassEnrollments() {
       {/* ASSIGN CLASS MODAL */}
       {showForm && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
               <h2 className="text-xl font-bold text-slate-900">Assign to Class</h2>
               <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors">
@@ -170,7 +170,7 @@ export default function ClassEnrollments() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Select Student</label>
                 <select
-                  className="w-full border border-slate-300 bg-slate-50 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow"
+                  className="w-full border border-slate-300 bg-white p-3.5 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow"
                   value={formData.user_id}
                   onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
                   required
@@ -188,7 +188,7 @@ export default function ClassEnrollments() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Select Live Class</label>
                 <select
-                  className="w-full border border-slate-300 bg-slate-50 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 transition-shadow"
+                  className="w-full border border-slate-300 bg-white p-3.5 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 transition-shadow"
                   value={formData.class_id}
                   onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
                 >
@@ -203,7 +203,7 @@ export default function ClassEnrollments() {
 
               <button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-sm transition-colors mt-2"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-lg transition-colors mt-2"
               >
                 Assign Student
               </button>
@@ -213,7 +213,7 @@ export default function ClassEnrollments() {
       )}
 
       {/* SEARCH BAR */}
-      <div className="bg-white p-5 rounded-t-2xl border border-b-0 border-slate-200 shadow-sm shrink-0">
+      <div className="bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 shrink-0">
         <div className="relative w-full max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
@@ -222,13 +222,13 @@ export default function ClassEnrollments() {
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 text-sm font-medium outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
           />
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="bg-white rounded-b-2xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
+      <div className="bg-white rounded-b-xl border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
         <div className="overflow-auto flex-1 relative">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
@@ -293,7 +293,7 @@ export default function ClassEnrollments() {
 
                     {/* HOURLY RATE CONTROLS */}
                     <td className="p-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-300 shadow-sm max-w-[200px] focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-shadow">
+                      <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-300 max-w-[200px] focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
                         <select 
                           className="bg-transparent border-r border-slate-200 pr-2 py-1 text-sm font-bold text-slate-700 focus:outline-none cursor-pointer outline-none"
                           value={profile.billing_currency || 'INR'}

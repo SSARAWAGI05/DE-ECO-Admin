@@ -97,10 +97,10 @@ const AdminContactMessages: React.FC = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 h-full overflow-y-auto">
-      <div className="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">📩 Contact Us Messages</h1>
-        <p className="text-slate-500 font-medium mt-1">Manage and respond to user inquiries</p>
+    <div className="p-6 lg:p-10 bg-[#fbfbfd] h-full overflow-y-auto font-sans">
+      <div className="mb-8 pb-4 border-b border-slate-200">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">Contact Us Messages</h1>
+        <p className="text-slate-500 font-medium">Manage and respond to user inquiries</p>
       </div>
 
       {messages.length === 0 && (
@@ -111,7 +111,7 @@ const AdminContactMessages: React.FC = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5 hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-5 hover:shadow-md transition-shadow"
           >
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-4">
@@ -142,7 +142,7 @@ const AdminContactMessages: React.FC = () => {
                       e.target.value as ContactMessage["status"]
                     )
                   }
-                  className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 font-medium disabled:opacity-70"
+                  className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 font-medium disabled:opacity-70"
                 >
                   <option value="new">New</option>
                   <option value="in_progress">In Progress</option>
@@ -175,9 +175,9 @@ const AdminContactMessages: React.FC = () => {
             </div>
 
             {/* Message */}
-            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-slate-700 leading-relaxed shadow-inner">
+            <div className="bg-slate-50 p-5 rounded-lg border border-slate-200 text-slate-700 leading-relaxed shadow-inner">
               <div className="flex items-center gap-2 mb-3 font-semibold text-slate-900">
-                <MessageSquare size={18} className="text-indigo-600" /> Message
+                <MessageSquare size={18} className="text-slate-600" /> Message
               </div>
               <p className="whitespace-pre-line">{msg.message}</p>
             </div>
@@ -192,7 +192,7 @@ const AdminContactMessages: React.FC = () => {
                 onBlur={(e) =>
                   updateAdminNotes(msg.id, e.target.value)
                 }
-                className="w-full border border-slate-300 rounded-xl p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 rounded-lg p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
                 placeholder="Add internal notes here..."
               />
             </div>
