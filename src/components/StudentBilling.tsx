@@ -4,6 +4,9 @@ import { DollarSign, Clock, Users, Edit3, Check, X, TrendingUp, Calendar as Cale
 
 /* ================= TYPES & CONSTANTS ================= */
 
+// We ignore all classes scheduled before this date for billing purposes.
+const BILLING_START_DATE = new Date('2026-06-11T00:00:00')
+
 const CURRENCIES = [
   { code: 'INR', symbol: '₹' },
   { code: 'USD', symbol: '$' },
@@ -115,9 +118,12 @@ export default function StudentBilling() {
     const currentYear = now.getFullYear()
 
     return classes.filter(c => {
-      if (period === 'all_time') return true
-
       const classDate = new Date(c.scheduled_datetime)
+      
+      // CRITICAL: Ignore any classes scheduled before Today (June 11, 2026)
+      if (classDate < BILLING_START_DATE) return false
+
+      if (period === 'all_time') return true
       if (period === 'current_month') {
         return classDate.getMonth() === currentMonth && classDate.getFullYear() === currentYear
       }
