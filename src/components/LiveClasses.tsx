@@ -300,7 +300,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-semibold text-slate-700">Assigned User</label>
                 <select
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow min-w-0"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -320,7 +320,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-semibold text-slate-700">Class Title</label>
                 <select
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow min-w-0"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -340,7 +340,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-semibold text-slate-700">Instructor</label>
                 <input
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow min-w-0"
                   value={formData.instructor_name}
                   onChange={(e) =>
                     setFormData({
@@ -358,7 +358,7 @@ export default function LiveClasses() {
                 <input
                   type="url"
                   placeholder="https://meet.google.com/..."
-                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow"
+                  className="w-full border border-slate-300 p-2.5 rounded-lg mt-1.5 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow min-w-0"
                   value={formData.meeting_link || ''}
                   onChange={(e) =>
                     setFormData({

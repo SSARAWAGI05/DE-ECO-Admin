@@ -52,10 +52,11 @@ export default function PastClassHistory() {
       .eq('user_id', userId)
 
     if (data) {
-      const past = data.filter((ce: any) => 
-        ce.live_classes && new Date(ce.live_classes.end_datetime || '') < new Date()
-      ).sort((a: any, b: any) => 
-        new Date(b.live_classes.scheduled_datetime || '').getTime() - new Date(a.live_classes.scheduled_datetime || '').getTime()
+      const past = data.filter((ce: any) => {
+        if (!ce.live_classes || !ce.live_classes.scheduled_datetime) return false
+        return new Date(ce.live_classes.scheduled_datetime) < new Date()
+      }).sort((a: any, b: any) => 
+        new Date(b.live_classes.scheduled_datetime).getTime() - new Date(a.live_classes.scheduled_datetime).getTime()
       )
       setPastClasses(past)
     } else {

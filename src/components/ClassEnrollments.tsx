@@ -360,8 +360,8 @@ export default function ClassEnrollments() {
                     {userCourseEnrollments.length === 0 ? (
                       <p className="text-sm text-slate-500 italic bg-white p-4 rounded-lg border border-slate-200">No courses enrolled.</p>
                     ) : (
-                      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                        <table className="w-full text-left text-sm">
+                      <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+                        <table className="w-full text-left text-sm min-w-[500px]">
                           <thead className="bg-slate-50 border-b border-slate-200">
                             <tr>
                               <th className="p-3 font-semibold text-slate-600">Course</th>
@@ -406,8 +406,8 @@ export default function ClassEnrollments() {
                     {userClassEnrollments.length === 0 ? (
                       <p className="text-sm text-slate-500 italic bg-white p-4 rounded-lg border border-slate-200">No live classes enrolled.</p>
                     ) : (
-                      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                        <table className="w-full text-left text-sm">
+                      <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+                        <table className="w-full text-left text-sm min-w-[400px]">
                           <thead className="bg-slate-50 border-b border-slate-200">
                             <tr>
                               <th className="p-3 font-semibold text-slate-600">Class</th>
@@ -436,9 +436,9 @@ export default function ClassEnrollments() {
             </div>
 
             {/* ADD ENROLLMENT SECTION */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 shrink-0">
+            <div className="p-4 sm:p-6 border-t border-slate-100 bg-slate-50 shrink-0">
               <h4 className="font-bold text-slate-900 mb-3">Add New Enrollment</h4>
-              <form onSubmit={handleAssignEnrollment} className="flex gap-3">
+              <form onSubmit={handleAssignEnrollment} className="flex flex-col sm:flex-row gap-3">
                 <select
                   value={newEnrollmentType}
                   onChange={(e) => {
@@ -467,7 +467,7 @@ export default function ClassEnrollments() {
                 <button
                   type="submit"
                   disabled={!newEnrollmentId}
-                  className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-lg font-bold transition-colors disabled:opacity-50"
+                  className="bg-slate-900 w-full sm:w-auto hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg font-bold transition-colors disabled:opacity-50"
                 >
                   Assign
                 </button>
