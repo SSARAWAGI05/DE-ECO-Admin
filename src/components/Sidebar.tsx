@@ -10,7 +10,8 @@ import {
   X,
   Mail,
   DollarSign,
-  History
+  History,
+  BarChart
 } from 'lucide-react'
 
 type Section =
@@ -25,6 +26,7 @@ type Section =
   | 'contact_messages'
   | 'billing'
   | 'past_history'
+  | 'earnings_analytics'
 
 interface SidebarProps {
   activeSection: Section
@@ -50,6 +52,7 @@ export default function Sidebar({
     { id: 'market_pulse' as Section, label: 'Market Pulse', icon: TrendingUp },
     { id: 'contact_messages' as Section, label: 'Contact Messages', icon: Mail },
     { id: 'billing' as Section, label: 'Student Billing', icon: DollarSign },
+    { id: 'earnings_analytics' as Section, label: 'Earnings Analytics', icon: BarChart },
     { id: 'past_history' as Section, label: 'Past Class History', icon: History },
   ]
 

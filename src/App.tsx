@@ -12,6 +12,7 @@ import AdminContactMessages from './components/AdminContactMessages'
 import AdminCourses from './components/AdminCourses'
 import StudentBilling from './components/StudentBilling' // ✅ NEW
 import PastClassHistory from './components/PastClassHistory'
+import EarningsAnalytics from './components/EarningsAnalytics'
 
 type Section =
   | 'dashboard'
@@ -25,6 +26,7 @@ type Section =
   | 'contact_messages'
   | 'billing'           // ✅ NEW
   | 'past_history'
+  | 'earnings_analytics'
 
 function App() {
   const [activeSection, setActiveSection] =
@@ -55,6 +57,8 @@ function App() {
         return <StudentBilling />
       case 'past_history':
         return <PastClassHistory />
+      case 'earnings_analytics':
+        return <EarningsAnalytics />
       default:
         return <Dashboard />
     }
