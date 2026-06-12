@@ -178,32 +178,6 @@ export default function EarningsAnalytics() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          {timeframe === 'daily' ? (
-            <div className="flex items-center gap-3 bg-white border border-slate-200 p-1.5 rounded-lg shadow-sm">
-              <Calendar size={18} className="text-slate-400 ml-2" />
-              <input 
-                type="date"
-                value={selectedDateKey || ''}
-                onChange={(e) => setSelectedDateKey(e.target.value)}
-                className="bg-transparent text-sm font-bold text-slate-700 outline-none pr-2 cursor-pointer"
-              />
-            </div>
-          ) : (
-            <div className="flex items-center gap-3 bg-white border border-slate-200 p-1.5 rounded-lg shadow-sm">
-              <Calendar size={18} className="text-slate-400 ml-2" />
-              <select 
-                value={selectedDateKey || ''}
-                onChange={(e) => setSelectedDateKey(e.target.value)}
-                className="bg-transparent text-sm font-bold text-slate-700 outline-none pr-2 cursor-pointer"
-              >
-                <option value="" disabled>Select {timeframe}</option>
-                {chartData.map(d => (
-                  <option key={d.key} value={d.key}>{d.label}</option>
-                ))}
-              </select>
-            </div>
-          )}
-          
           <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-lg shadow-inner">
             {(['daily', 'weekly', 'monthly'] as Timeframe[]).map((tf) => (
               <button
@@ -233,14 +207,32 @@ export default function EarningsAnalytics() {
             ₹{selectedDetails ? Math.round(selectedDetails.totalINR).toLocaleString() : '0'}
           </div>
         </div>
-        <div className="relative z-10 flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-          <div className="p-3 bg-emerald-500/20 text-emerald-400 rounded-lg">
-            <DollarSign size={24} />
-          </div>
-          <div>
-            <div className="text-xs text-slate-400 font-bold uppercase">Total All-Time</div>
-            <div className="text-xl font-bold text-slate-200">₹{Math.round(totalAllTime).toLocaleString()}</div>
-          </div>
+        <div className="relative z-10 flex items-center">
+          {timeframe === 'daily' ? (
+            <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-lg shadow-sm">
+              <Calendar size={18} className="text-slate-400 ml-2" />
+              <input 
+                type="date"
+                value={selectedDateKey || ''}
+                onChange={(e) => setSelectedDateKey(e.target.value)}
+                className="bg-transparent text-sm font-bold text-slate-900 outline-none pr-2 cursor-pointer"
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-lg shadow-sm">
+              <Calendar size={18} className="text-slate-400 ml-2" />
+              <select 
+                value={selectedDateKey || ''}
+                onChange={(e) => setSelectedDateKey(e.target.value)}
+                className="bg-transparent text-sm font-bold text-slate-900 outline-none pr-8 cursor-pointer"
+              >
+                <option value="" disabled>Select {timeframe}</option>
+                {chartData.map(d => (
+                  <option key={d.key} value={d.key}>{d.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
         
         {/* Decorative background circle */}

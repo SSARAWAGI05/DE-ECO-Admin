@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Search, History, Clock } from 'lucide-react'
+import { Search, History, Clock, ArrowLeft } from 'lucide-react'
 
 interface Profile {
   id: string
@@ -86,7 +86,7 @@ export default function PastClassHistory() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Student List */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[600px]">
+        <div className={`${selectedProfile ? 'hidden lg:flex' : 'flex'} bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex-col h-[600px] lg:h-[650px]`}>
           <div className="p-4 border-b border-slate-100 bg-slate-50">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -133,7 +133,7 @@ export default function PastClassHistory() {
         </div>
 
         {/* Right Col: Class History */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8 h-[600px] flex flex-col">
+        <div className={`${!selectedProfile ? 'hidden lg:flex' : 'flex'} lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8 h-[600px] lg:h-[650px] flex-col`}>
           {!selectedProfile ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400">
               <History className="w-16 h-16 mb-4 opacity-50" />
@@ -142,11 +142,23 @@ export default function PastClassHistory() {
             </div>
           ) : (
             <>
-              <div className="mb-6 pb-4 border-b border-slate-100">
-                <h3 className="text-xl font-bold text-slate-900">
-                  {selectedProfile.first_name} {selectedProfile.last_name}'s History
-                </h3>
-                <p className="text-sm text-slate-500">{selectedProfile.email}</p>
+              {/* Mobile Back Button */}
+              <div className="lg:hidden mb-4">
+                <button 
+                  onClick={() => setSelectedProfile(null)} 
+                  className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+                >
+                  <ArrowLeft size={16} /> Back to Students
+                </button>
+              </div>
+
+              <div className="mb-6 pb-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    {selectedProfile.first_name} {selectedProfile.last_name}'s History
+                  </h3>
+                  <p className="text-sm text-slate-500">{selectedProfile.email}</p>
+                </div>
               </div>
 
               {loadingClasses ? (
