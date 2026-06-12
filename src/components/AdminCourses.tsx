@@ -7,6 +7,7 @@ import {
   Clock,
   Users,
   Calendar,
+  Star,
 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 
@@ -25,6 +26,7 @@ interface Course {
   what_you_learn: string[] | null
   prerequisites: string[] | null
   is_active: boolean
+  featured: boolean
   created_at: string
 }
 
@@ -47,6 +49,7 @@ export default function AdminCourses() {
     what_you_learn: '',
     prerequisites: '',
     is_active: true,
+    featured: false,
   })
 
   /* ================= FETCH ================= */
@@ -92,6 +95,7 @@ export default function AdminCourses() {
         ? formData.prerequisites.split('\n').filter(Boolean)
         : [],
       is_active: formData.is_active,
+      featured: formData.featured,
     }
 
     const { error } = editingId
@@ -122,6 +126,7 @@ export default function AdminCourses() {
       what_you_learn: course.what_you_learn?.join('\n') ?? '',
       prerequisites: course.prerequisites?.join('\n') ?? '',
       is_active: course.is_active,
+      featured: course.featured || false,
     })
 
     setEditingId(course.id)
@@ -160,6 +165,7 @@ export default function AdminCourses() {
       what_you_learn: '',
       prerequisites: '',
       is_active: true,
+      featured: false,
     })
   }
 
@@ -306,17 +312,31 @@ export default function AdminCourses() {
                 }
               />
 
-              <label className="flex items-center gap-3 cursor-pointer text-slate-700 font-medium">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
-                  checked={formData.is_active}
-                  onChange={(e) =>
-                    setFormData({ ...formData, is_active: e.target.checked })
-                  }
-                />
-                Active
-              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-3 cursor-pointer text-slate-700 font-medium">
+                  <input
+                    type="checkbox"
+                    className="w-5 h-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
+                    checked={formData.is_active}
+                    onChange={(e) =>
+                      setFormData({ ...formData, is_active: e.target.checked })
+                    }
+                  />
+                  Active
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer text-slate-700 font-medium">
+                  <input
+                    type="checkbox"
+                    className="w-5 h-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
+                    checked={formData.featured}
+                    onChange={(e) =>
+                      setFormData({ ...formData, featured: e.target.checked })
+                    }
+                  />
+                  Featured
+                </label>
+              </div>
 
               <div className="pt-4">
                 <button
@@ -341,7 +361,10 @@ export default function AdminCourses() {
           >
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-bold text-xl text-slate-900">{c.title}</h3>
+                <h3 className="font-bold text-xl text-slate-900 flex items-center gap-2">
+                  {c.title}
+                  {c.featured && <Star size={16} className="text-amber-400 fill-amber-400" title="Featured Course" />}
+                </h3>
                 {!c.is_active && (
                   <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
                     Draft
