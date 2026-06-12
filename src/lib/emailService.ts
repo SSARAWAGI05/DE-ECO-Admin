@@ -11,7 +11,9 @@ export const sendClassEmail = async (
   studentName: string,
   classTitle: string,
   scheduledTime: string,
-  meetLink: string
+  meetLink: string,
+  instructorName: string,
+  durationMinutes: number
 ) => {
   if (EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
     console.log('EmailJS not configured yet. Would have sent Class email to:', studentEmail);
@@ -28,6 +30,8 @@ export const sendClassEmail = async (
         class_title: classTitle,
         scheduled_time: scheduledTime,
         meet_link: meetLink,
+        instructor_name: instructorName,
+        duration_minutes: durationMinutes,
       },
       EMAILJS_PUBLIC_KEY
     );

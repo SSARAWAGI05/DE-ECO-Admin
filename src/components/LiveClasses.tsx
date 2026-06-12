@@ -194,7 +194,7 @@ export default function LiveClasses() {
       if (student && student.email) {
         const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
         const dateStr = new Date(formData.scheduled_datetime).toLocaleString()
-        sendClassEmail(student.email, studentName, formData.title, dateStr, formData.meeting_link)
+        sendClassEmail(student.email, studentName, formData.title, dateStr, formData.meeting_link, formData.instructor_name, Number(formData.duration_minutes))
       } else {
         alert("Warning: Could not send email because this student does not have an email address in the system.");
       }
