@@ -28,6 +28,7 @@ interface Profile {
   billing_currency: string
   is_active: boolean
   total_paid: number // Added to track manual settlements
+  manual_outstanding: number // Track manual extra charges
 }
 
 interface LiveClass {
@@ -59,6 +60,11 @@ export default function StudentBilling() {
   const [settleAmount, setSettleAmount] = useState('')
   const [isSettling, setIsSettling] = useState(false)
 
+  // Add Charge Modal State
+  const [chargeProfile, setChargeProfile] = useState<Profile | null>(null)
+  const [chargeAmount, setChargeAmount] = useState('')
+  const [isCharging, setIsCharging] = useState(false)
+
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
     fetchData()
@@ -68,7 +74,7 @@ export default function StudentBilling() {
   const fetchData = async () => {
     const { data: profilesData, error: profilesErr } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active, total_paid')
+      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active, total_paid, manual_outstanding')
       .order('first_name')
 
     if (profilesErr) console.error('Failed to fetch profiles:', profilesErr)
@@ -117,7 +123,7 @@ export default function StudentBilling() {
   }
 
   // Calculate stats for a single user
-  const getUserStats = (userId: string, rate: number, isActiveProfile: boolean, totalPaid: number) => {
+  const getUserStats = (userId: string, rate: number, isActiveProfile: boolean, totalPaid: number, manualOutstanding: number) => {
     const studentClasses = filteredClasses.filter(c => c.user_id === userId)
     const allTimeClasses = classes.filter(c => c.user_id === userId && new Date(c.scheduled_datetime) >= BILLING_START_DATE)
     
@@ -129,7 +135,7 @@ export default function StudentBilling() {
     const allTimeMinutes = allTimeClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
     const allTimeHours = allTimeMinutes / 60
     
-    const allTimeDue = (allTimeHours * (rate || 0)) - (totalPaid || 0)
+    const allTimeDue = (allTimeHours * (rate || 0)) + (manualOutstanding || 0) - (totalPaid || 0)
 
     return {
       classCount: studentClasses.length,
@@ -144,7 +150,7 @@ export default function StudentBilling() {
   const profilesWithStats = useMemo(() => {
     return profiles.map(p => ({
       ...p,
-      stats: getUserStats(p.id, p.hourly_rate, p.is_active, p.total_paid)
+      stats: getUserStats(p.id, p.hourly_rate, p.is_active, p.total_paid, p.manual_outstanding)
     }))
   }, [profiles, filteredClasses, classes])
 
@@ -233,6 +239,37 @@ export default function StudentBilling() {
 
     setSettleProfile(null)
     setSettleAmount('')
+    fetchData() // Refresh data
+  }
+
+  const handleAddChargeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!chargeProfile) return
+    
+    const amount = parseFloat(chargeAmount)
+    if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid positive amount.")
+      return
+    }
+
+    setIsCharging(true)
+    const newManualOutstanding = (chargeProfile.manual_outstanding || 0) + amount
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ manual_outstanding: newManualOutstanding })
+      .eq('id', chargeProfile.id)
+
+    setIsCharging(false)
+
+    if (error) {
+      console.error("Failed to add charge:", error)
+      alert("Failed to add charge: Make sure 'manual_outstanding' column exists in 'profiles' table.")
+      return
+    }
+
+    setChargeProfile(null)
+    setChargeAmount('')
     fetchData() // Refresh data
   }
 
@@ -438,13 +475,21 @@ export default function StudentBilling() {
                       
                       {/* Actions */}
                       <td className="p-4 whitespace-nowrap text-right">
-                         <button 
-                           onClick={() => setSettleProfile(profile)}
-                           disabled={stats.totalDue <= 0}
-                           className="bg-slate-900 border border-slate-800 text-white hover:bg-slate-800 px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                         >
-                           Settle Due
-                         </button>
+                        <div className="flex justify-end gap-2">
+                           <button 
+                             onClick={() => setSettleProfile(profile)}
+                             disabled={stats.totalDue <= 0}
+                             className="bg-slate-900 border border-slate-800 text-white hover:bg-slate-800 px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                           >
+                             Settle Due
+                           </button>
+                           <button 
+                             onClick={() => setChargeProfile(profile)}
+                             className="bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 px-4 py-2 rounded-lg font-bold text-xs transition-colors"
+                           >
+                             Add Charge
+                           </button>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -495,6 +540,53 @@ export default function StudentBilling() {
                   className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-70"
                 >
                   {isSettling ? 'Saving...' : 'Confirm'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD CHARGE MODAL */}
+      {chargeProfile && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-sm shadow-2xl border border-slate-200 p-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Add Manual Charge</h2>
+            <p className="text-sm text-slate-500 mb-6 font-medium">
+              Add an outstanding balance for <span className="font-bold text-slate-800">{chargeProfile.first_name}</span>.
+            </p>
+
+            <form onSubmit={handleAddChargeSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Charge Amount ({getCurrencySymbol(chargeProfile.billing_currency)})</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  required
+                  placeholder="e.g. 1500.00"
+                  value={chargeAmount}
+                  onChange={(e) => setChargeAmount(e.target.value)}
+                  className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 font-medium"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setChargeProfile(null)
+                    setChargeAmount('')
+                  }}
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCharging}
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-70"
+                >
+                  {isCharging ? 'Adding...' : 'Add Charge'}
                 </button>
               </div>
             </form>
