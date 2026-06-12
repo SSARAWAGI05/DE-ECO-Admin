@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Plus, Edit2, Trash2, X, Download, FileText, UploadCloud } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 import { useGoogleLogin } from '@react-oauth/google'
+import { sendNotesEmail } from '../lib/emailService'
 
 /* ================= TYPES ================= */
 
@@ -126,6 +127,15 @@ export default function ClassNotes() {
       console.error('Save failed:', error)
       alert(error.message)
       return
+    }
+
+    // Trigger email if it's a new note
+    if (!editingId) {
+      const student = users.find(u => u.id === formData.user_id)
+      if (student && student.email) {
+        const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+        sendNotesEmail(student.email, studentName, formData.title, fileUrl)
+      }
     }
 
     closeForm()

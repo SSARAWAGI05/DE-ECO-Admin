@@ -10,6 +10,7 @@ import {
   Link as LinkIcon,
 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
+import { sendClassEmail } from '../lib/emailService'
 
 /* ================= CONSTANTS ================= */
 
@@ -33,6 +34,7 @@ interface UserFromDB {
   id: string
   first_name: string | null
   last_name: string | null
+  email: string | null
   is_active: boolean
 }
 
@@ -96,7 +98,7 @@ export default function LiveClasses() {
     // 2️⃣ Fetch only those users from profiles
     const { data: usersData, error: usersErr } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, is_active')
+      .select('id, first_name, last_name, email, is_active')
       .in('id', userIds)
       .order('first_name')
 
@@ -185,6 +187,17 @@ export default function LiveClasses() {
       : supabase.from('live_classes').insert(payload)
 
     await query
+    
+    // Trigger email if it's a new class
+    if (!editingId) {
+      const student = users.find(u => u.id === formData.user_id)
+      if (student && student.email) {
+        const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+        const dateStr = new Date(formData.scheduled_datetime).toLocaleString()
+        sendClassEmail(student.email, studentName, formData.title, dateStr, formData.meeting_link)
+      }
+    }
+
     setPanelOpen(false)
     fetchClasses()
   }
