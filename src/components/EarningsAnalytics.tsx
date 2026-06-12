@@ -306,9 +306,22 @@ export default function EarningsAnalytics() {
               <Calendar size={18} className="text-slate-400" />
               Contributions Breakdown
             </h2>
-            <p className="text-sm text-slate-500 font-medium mt-1">
-              {selectedDetails ? selectedDetails.label : 'Select a point on the chart'}
-            </p>
+            
+            {timeframe === 'daily' ? (
+              <div className="mt-3">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Select Date</label>
+                <input 
+                  type="date"
+                  value={selectedDateKey || ''}
+                  onChange={(e) => setSelectedDateKey(e.target.value)}
+                  className="w-full border border-slate-300 p-2 rounded-lg text-sm font-medium focus:ring-2 focus:ring-slate-900 outline-none"
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 font-medium mt-1">
+                {selectedDetails ? selectedDetails.label : 'Select a point on the chart'}
+              </p>
+            )}
           </div>
           
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
