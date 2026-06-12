@@ -133,13 +133,20 @@ export default function EarningsAnalytics() {
 
     const sortedData = Object.values(aggregated).sort((a, b) => a.key.localeCompare(b.key))
     
-    // Auto-select latest date key if none selected
-    if (sortedData.length > 0 && (!selectedDateKey || !aggregated[selectedDateKey])) {
-      setSelectedDateKey(sortedData[sortedData.length - 1].key)
-    }
-
     return sortedData
   }, [classes, profiles, timeframe])
+
+  useEffect(() => {
+    // Auto-select latest date key if none selected
+    if (chartData.length > 0) {
+      const exists = chartData.find(d => d.key === selectedDateKey)
+      if (!exists && timeframe !== 'daily') {
+        setSelectedDateKey(chartData[chartData.length - 1].key)
+      } else if (!exists && timeframe === 'daily' && !selectedDateKey) {
+        setSelectedDateKey(chartData[chartData.length - 1].key)
+      }
+    }
+  }, [chartData, selectedDateKey, timeframe])
 
   // --- DERIVED VIEW DATA ---
   const selectedDetails = useMemo(() => {
@@ -171,7 +178,7 @@ export default function EarningsAnalytics() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          {timeframe === 'daily' && (
+          {timeframe === 'daily' ? (
             <div className="flex items-center gap-3 bg-white border border-slate-200 p-1.5 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
               <input 
@@ -180,6 +187,20 @@ export default function EarningsAnalytics() {
                 onChange={(e) => setSelectedDateKey(e.target.value)}
                 className="bg-transparent text-sm font-bold text-slate-700 outline-none pr-2 cursor-pointer"
               />
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 bg-white border border-slate-200 p-1.5 rounded-lg shadow-sm">
+              <Calendar size={18} className="text-slate-400 ml-2" />
+              <select 
+                value={selectedDateKey || ''}
+                onChange={(e) => setSelectedDateKey(e.target.value)}
+                className="bg-transparent text-sm font-bold text-slate-700 outline-none pr-2 cursor-pointer"
+              >
+                <option value="" disabled>Select {timeframe}</option>
+                {chartData.map(d => (
+                  <option key={d.key} value={d.key}>{d.label}</option>
+                ))}
+              </select>
             </div>
           )}
           
