@@ -224,17 +224,17 @@ export default function EarningsAnalytics() {
         </div>
       </div>
 
-      {/* MAIN CONTENT SPLIT */}
-      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-[500px]">
+      {/* MAIN CONTENT STACK */}
+      <div className="flex flex-col gap-6">
         
         {/* CHART SECTION */}
-        <div className="lg:w-2/3 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col">
           <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-slate-400" />
             Revenue Trend ({timeframe})
           </h2>
           
-          <div className="flex-1 min-h-[300px] w-full">
+          <div className="w-full h-[240px]">
             {chartData.length === 0 ? (
               <div className="h-full flex items-center justify-center text-slate-400 font-medium">No data available</div>
             ) : (
@@ -295,13 +295,13 @@ export default function EarningsAnalytics() {
             )}
           </div>
           <p className="text-center text-xs text-slate-400 mt-4 font-medium">
-            *Click on a data point to see the breakdown on the right. Foreign currencies are roughly converted to INR.
+            *Click on a data point to see the breakdown below. Foreign currencies are roughly converted to INR.
           </p>
         </div>
 
         {/* DETAILS SECTION */}
-        <div className="lg:w-1/3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[500px] lg:h-auto overflow-hidden">
-          <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50 shrink-0">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+          <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Calendar size={18} className="text-slate-400" />
               Contributions Breakdown
@@ -324,16 +324,16 @@ export default function EarningsAnalytics() {
             )}
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+          <div className="p-4 sm:p-6 bg-white">
             {!selectedDetails || selectedDetails.classes.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-3">
+              <div className="py-10 flex flex-col items-center justify-center text-slate-400 space-y-3">
                 <Users size={32} className="opacity-20" />
                 <p className="font-medium text-sm">No classes for this period.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {selectedDetails.classes.map((cls, idx) => (
-                  <div key={idx} className="flex flex-col gap-2 p-4 rounded-xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div key={idx} className="flex flex-col gap-2 p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm">
                     <div className="flex justify-between items-start gap-2">
                       <div className="font-bold text-slate-900">{cls.studentName}</div>
                       <div className="text-right shrink-0">
@@ -342,11 +342,11 @@ export default function EarningsAnalytics() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex justify-between items-end text-xs font-medium">
+                    <div className="flex justify-between items-end text-xs font-medium mt-1">
                       <div className="text-slate-500 truncate pr-2">
                         {cls.title}
                       </div>
-                      <div className="text-slate-400 shrink-0 bg-slate-100 px-2 py-1 rounded">
+                      <div className="text-slate-400 shrink-0 bg-white border border-slate-200 px-2 py-1 rounded">
                         {cls.duration_minutes}m
                       </div>
                     </div>
