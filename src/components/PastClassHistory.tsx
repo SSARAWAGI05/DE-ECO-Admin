@@ -11,12 +11,9 @@ interface Profile {
 
 interface PastClass {
   id: string
-  live_classes: {
-    id: string
-    title: string
-    scheduled_datetime: string
-    end_datetime: string
-  }
+  title: string
+  scheduled_datetime: string
+  end_datetime: string
 }
 
 export default function PastClassHistory() {
@@ -47,16 +44,16 @@ export default function PastClassHistory() {
   const fetchPastClasses = async (userId: string) => {
     setLoadingClasses(true)
     const { data } = await supabase
-      .from('class_enrollments')
-      .select('id, live_classes(id, title, scheduled_datetime, end_datetime)')
+      .from('live_classes')
+      .select('id, title, scheduled_datetime, end_datetime')
       .eq('user_id', userId)
 
     if (data) {
-      const past = data.filter((ce: any) => {
-        if (!ce.live_classes || !ce.live_classes.scheduled_datetime) return false
-        return new Date(ce.live_classes.scheduled_datetime) < new Date()
+      const past = data.filter((c: any) => {
+        if (!c.scheduled_datetime) return false
+        return new Date(c.scheduled_datetime) < new Date()
       }).sort((a: any, b: any) => 
-        new Date(b.live_classes.scheduled_datetime).getTime() - new Date(a.live_classes.scheduled_datetime).getTime()
+        new Date(b.scheduled_datetime).getTime() - new Date(a.scheduled_datetime).getTime()
       )
       setPastClasses(past)
     } else {
@@ -173,13 +170,13 @@ export default function PastClassHistory() {
               ) : (
                 <div className="flex-1 overflow-y-auto -mx-2 px-2">
                   <div className="space-y-3">
-                    {pastClasses.map(ce => (
-                      <div key={ce.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    {pastClasses.map(c => (
+                      <div key={c.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                          <h4 className="font-bold text-slate-900">{ce.live_classes?.title || 'Unknown Class'}</h4>
+                          <h4 className="font-bold text-slate-900">{c.title || 'Unknown Class'}</h4>
                           <p className="text-sm text-slate-500 flex items-center gap-2 mt-1">
                             <Clock className="w-4 h-4" />
-                            {ce.live_classes?.scheduled_datetime ? new Date(ce.live_classes.scheduled_datetime).toLocaleString() : 'N/A'}
+                            {c.scheduled_datetime ? new Date(c.scheduled_datetime).toLocaleString() : 'N/A'}
                           </p>
                         </div>
                         <div className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold uppercase">
