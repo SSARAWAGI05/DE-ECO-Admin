@@ -33,7 +33,7 @@ const CURRENCY_SYMBOL: Record<string, string> = {
 export default function EarningsAnalytics() {
   const [profiles, setProfiles] = useState<Record<string, Profile>>({})
   const [classes, setClasses] = useState<LiveClass[]>([])
-  const [timeframe, setTimeframe] = useState<Timeframe>('monthly')
+  const [timeframe, setTimeframe] = useState<Timeframe>('daily')
   const [loading, setLoading] = useState(true)
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
 
@@ -226,7 +226,65 @@ export default function EarningsAnalytics() {
 
       {/* MAIN CONTENT STACK */}
       <div className="flex flex-col gap-6">
-        
+
+        {/* DETAILS SECTION */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+          <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Calendar size={18} className="text-slate-400" />
+              Contributions Breakdown
+            </h2>
+            
+            {timeframe === 'daily' ? (
+              <div className="mt-3 sm:mt-0">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Select Date</label>
+                <input 
+                  type="date"
+                  value={selectedDateKey || ''}
+                  onChange={(e) => setSelectedDateKey(e.target.value)}
+                  className="w-full border border-slate-300 p-2 rounded-lg text-sm font-medium focus:ring-2 focus:ring-slate-900 outline-none"
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 font-medium mt-1">
+                {selectedDetails ? selectedDetails.label : 'Select a point on the chart'}
+              </p>
+            )}
+          </div>
+          
+          <div className="p-4 sm:p-6 bg-white">
+            {!selectedDetails || selectedDetails.classes.length === 0 ? (
+              <div className="py-10 flex flex-col items-center justify-center text-slate-400 space-y-3">
+                <Users size={32} className="opacity-20" />
+                <p className="font-medium text-sm">No classes for this period.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {selectedDetails.classes.map((cls, idx) => (
+                  <div key={idx} className="flex flex-col gap-2 p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="font-bold text-slate-900">{cls.studentName}</div>
+                      <div className="text-right shrink-0">
+                        <div className="font-bold text-emerald-600">
+                          {CURRENCY_SYMBOL[cls.currency] || cls.currency}{Math.round(cls.earnedOriginal).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-end text-xs font-medium mt-1">
+                      <div className="text-slate-500 truncate pr-2">
+                        {cls.title}
+                      </div>
+                      <div className="text-slate-400 shrink-0 bg-white border border-slate-200 px-2 py-1 rounded">
+                        {cls.duration_minutes}m
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* CHART SECTION */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col">
           <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -297,64 +355,6 @@ export default function EarningsAnalytics() {
           <p className="text-center text-xs text-slate-400 mt-4 font-medium">
             *Click on a data point to see the breakdown below. Foreign currencies are roughly converted to INR.
           </p>
-        </div>
-
-        {/* DETAILS SECTION */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-          <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Calendar size={18} className="text-slate-400" />
-              Contributions Breakdown
-            </h2>
-            
-            {timeframe === 'daily' ? (
-              <div className="mt-3">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Select Date</label>
-                <input 
-                  type="date"
-                  value={selectedDateKey || ''}
-                  onChange={(e) => setSelectedDateKey(e.target.value)}
-                  className="w-full border border-slate-300 p-2 rounded-lg text-sm font-medium focus:ring-2 focus:ring-slate-900 outline-none"
-                />
-              </div>
-            ) : (
-              <p className="text-sm text-slate-500 font-medium mt-1">
-                {selectedDetails ? selectedDetails.label : 'Select a point on the chart'}
-              </p>
-            )}
-          </div>
-          
-          <div className="p-4 sm:p-6 bg-white">
-            {!selectedDetails || selectedDetails.classes.length === 0 ? (
-              <div className="py-10 flex flex-col items-center justify-center text-slate-400 space-y-3">
-                <Users size={32} className="opacity-20" />
-                <p className="font-medium text-sm">No classes for this period.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {selectedDetails.classes.map((cls, idx) => (
-                  <div key={idx} className="flex flex-col gap-2 p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm">
-                    <div className="flex justify-between items-start gap-2">
-                      <div className="font-bold text-slate-900">{cls.studentName}</div>
-                      <div className="text-right shrink-0">
-                        <div className="font-bold text-emerald-600">
-                          {CURRENCY_SYMBOL[cls.currency] || cls.currency}{Math.round(cls.earnedOriginal).toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-end text-xs font-medium mt-1">
-                      <div className="text-slate-500 truncate pr-2">
-                        {cls.title}
-                      </div>
-                      <div className="text-slate-400 shrink-0 bg-white border border-slate-200 px-2 py-1 rounded">
-                        {cls.duration_minutes}m
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
       </div>
