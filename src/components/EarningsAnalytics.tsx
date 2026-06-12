@@ -109,10 +109,16 @@ export default function EarningsAnalytics() {
         label = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
       } else if (timeframe === 'weekly') {
         // Find start of week (Sunday)
-        const d = new Date(date)
-        d.setDate(d.getDate() - d.getDay())
-        key = d.toISOString().split('T')[0]
-        label = `Week of ${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
+        const start = new Date(date)
+        start.setDate(start.getDate() - start.getDay())
+        
+        // Find end of week (Saturday)
+        const end = new Date(start)
+        end.setDate(end.getDate() + 6)
+        
+        key = start.toISOString().split('T')[0]
+        const formatOpts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
+        label = `${start.toLocaleDateString(undefined, formatOpts)} - ${end.toLocaleDateString(undefined, formatOpts)}`
       } else if (timeframe === 'monthly') {
         key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`
         label = date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
