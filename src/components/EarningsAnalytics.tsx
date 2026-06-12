@@ -161,7 +161,6 @@ export default function EarningsAnalytics() {
   }
 
   return (
-  return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full flex flex-col min-h-screen">
       
       {/* HEADER & CONTROLS */}
