@@ -487,7 +487,7 @@ export default function StudentBilling() {
                              onClick={() => setChargeProfile(profile)}
                              className="bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 px-4 py-2 rounded-lg font-bold text-xs transition-colors"
                            >
-                             Add Charge
+                             Add Manually
                            </button>
                         </div>
                       </td>
