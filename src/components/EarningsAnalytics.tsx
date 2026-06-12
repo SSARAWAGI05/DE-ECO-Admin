@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area
 } from 'recharts'
-import { Calendar, TrendingUp, DollarSign, Users, ChevronDown } from 'lucide-react'
+import { Calendar, TrendingUp, DollarSign, Users, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
 // --- TYPES ---
 interface Profile {
@@ -167,6 +167,34 @@ export default function EarningsAnalytics() {
     )
   }
 
+  const handlePrev = () => {
+    if (timeframe === 'daily') {
+      if (!selectedDateKey) return
+      const d = new Date(selectedDateKey)
+      d.setDate(d.getDate() - 1)
+      setSelectedDateKey(d.toISOString().split('T')[0])
+    } else {
+      const idx = chartData.findIndex(d => d.key === selectedDateKey)
+      if (idx > 0) {
+        setSelectedDateKey(chartData[idx - 1].key)
+      }
+    }
+  }
+
+  const handleNext = () => {
+    if (timeframe === 'daily') {
+      if (!selectedDateKey) return
+      const d = new Date(selectedDateKey)
+      d.setDate(d.getDate() + 1)
+      setSelectedDateKey(d.toISOString().split('T')[0])
+    } else {
+      const idx = chartData.findIndex(d => d.key === selectedDateKey)
+      if (idx !== -1 && idx < chartData.length - 1) {
+        setSelectedDateKey(chartData[idx + 1].key)
+      }
+    }
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full flex flex-col min-h-screen">
       
@@ -207,7 +235,11 @@ export default function EarningsAnalytics() {
             ₹{selectedDetails ? Math.round(selectedDetails.totalINR).toLocaleString() : '0'}
           </div>
         </div>
-        <div className="relative z-10 flex items-center">
+        <div className="relative z-10 flex items-center gap-2">
+          <button onClick={handlePrev} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700/50">
+            <ChevronLeft size={18} />
+          </button>
+          
           {timeframe === 'daily' ? (
             <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
@@ -233,6 +265,10 @@ export default function EarningsAnalytics() {
               </select>
             </div>
           )}
+
+          <button onClick={handleNext} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700/50">
+            <ChevronRight size={18} />
+          </button>
         </div>
         
         {/* Decorative background circle */}

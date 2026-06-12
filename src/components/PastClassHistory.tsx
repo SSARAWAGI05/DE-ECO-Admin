@@ -76,7 +76,7 @@ export default function PastClassHistory() {
   }, [profiles, searchTerm])
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full flex flex-col min-h-screen space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Past Class History</h2>
