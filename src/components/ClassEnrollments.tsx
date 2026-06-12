@@ -218,7 +218,7 @@ export default function ClassEnrollments() {
       {/* TABLE */}
       <div className="bg-white rounded-b-xl border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[400px]">
         <div className="overflow-auto flex-1 relative">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+          <table className="hidden md:table w-full text-left border-collapse min-w-[900px]">
             <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Student Details</th>
@@ -318,6 +318,98 @@ export default function ClassEnrollments() {
               )}
             </tbody>
           </table>
+
+          {/* MOBILE VIEW */}
+          <div className="md:hidden flex flex-col gap-4 p-4">
+            {filteredProfiles.length === 0 ? (
+              <div className="p-12 text-center">
+                <p className="text-lg font-bold text-slate-900">No students found</p>
+              </div>
+            ) : (
+              filteredProfiles.map((profile) => (
+                <div key={profile.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-bold text-slate-900 text-lg">
+                        {profile.first_name} {profile.last_name}
+                      </div>
+                      <div className="text-sm font-medium text-slate-500 mt-0.5">{profile.email}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-bold text-slate-500 uppercase">Account Status</span>
+                    <button
+                      onClick={() => handleUpdateProfile(profile.id, { is_active: !profile.is_active })}
+                      disabled={isSaving === profile.id}
+                      className={`
+                        relative inline-flex items-center w-28 h-8 rounded-full transition-colors focus:outline-none shadow-sm
+                        ${profile.is_active ? 'bg-emerald-50 border border-emerald-200' : 'bg-slate-100 border border-slate-200'}
+                        ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      `}
+                    >
+                      <div
+                        className={`
+                          absolute left-1 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-300 border border-slate-100
+                          ${profile.is_active ? 'translate-x-20 text-emerald-600' : 'translate-x-0 text-slate-400'}
+                        `}
+                      >
+                        {profile.is_active ? <UserCheck size={12} /> : <UserX size={12} />}
+                      </div>
+                      <span 
+                        className={`
+                          w-full text-center text-[10px] font-bold transition-colors tracking-wide
+                          ${profile.is_active ? 'pr-6 pl-2 text-emerald-700' : 'pl-6 pr-2 text-slate-500'}
+                        `}
+                      >
+                        {profile.is_active ? 'ACTIVE' : 'INACTIVE'}
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <span className="text-sm font-bold text-slate-500 uppercase">Hourly Rate & Currency</span>
+                    <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-300 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
+                      <select 
+                        className="bg-transparent border-r border-slate-200 pr-2 py-1 text-sm font-bold text-slate-700 focus:outline-none cursor-pointer outline-none"
+                        value={profile.billing_currency || 'INR'}
+                        onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
+                        disabled={isSaving === profile.id}
+                      >
+                        {CURRENCIES.map(c => (
+                          <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                        ))}
+                      </select>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        className="w-full bg-transparent border-none p-1 text-sm font-bold text-slate-900 outline-none focus:ring-0 disabled:opacity-50"
+                        value={profile.hourly_rate ?? 0}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value)
+                          if (!isNaN(val)) {
+                            handleUpdateProfile(profile.id, { hourly_rate: val })
+                          }
+                        }}
+                        disabled={isSaving === profile.id}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      onClick={() => setSelectedProfile(profile)}
+                      className="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-lg font-semibold transition-colors text-sm"
+                    >
+                      <Settings size={16} /> Manage Enrollments
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 

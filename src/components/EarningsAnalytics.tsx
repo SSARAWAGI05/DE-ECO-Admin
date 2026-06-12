@@ -187,42 +187,7 @@ export default function EarningsAnalytics() {
         </div>
       </div>
 
-      {/* TOP STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 shrink-0">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-500 font-medium mb-3">
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-              <DollarSign size={20} />
-            </div>
-            Total Earnings (Est. INR)
-          </div>
-          <div className="text-3xl font-black text-slate-900">₹{Math.round(totalAllTime).toLocaleString()}</div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-500 font-medium mb-3">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-              <TrendingUp size={20} />
-            </div>
-            Selected Period ({selectedDetails?.label || '-'})
-          </div>
-          <div className="text-3xl font-black text-slate-900">
-            ₹{selectedDetails ? Math.round(selectedDetails.totalINR).toLocaleString() : '0'}
-          </div>
-        </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-500 font-medium mb-3">
-            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-              <Users size={20} />
-            </div>
-            Active Students
-          </div>
-          <div className="text-3xl font-black text-slate-900">
-            {Object.keys(profiles).length}
-          </div>
-        </div>
-      </div>
 
       {/* MAIN CONTENT STACK */}
       <div className="flex flex-col gap-6">
