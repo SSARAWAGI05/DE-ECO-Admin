@@ -32,8 +32,10 @@ export const sendClassEmail = async (
       EMAILJS_PUBLIC_KEY
     );
     console.log('Class email sent successfully');
-  } catch (error) {
+    alert(`Email successfully sent to ${studentEmail}!`);
+  } catch (error: any) {
     console.error('Failed to send class email:', error);
+    alert(`Failed to send email to ${studentEmail}. Error: ${error?.text || error?.message || JSON.stringify(error)}`);
   }
 };
 
@@ -61,7 +63,9 @@ export const sendNotesEmail = async (
       EMAILJS_PUBLIC_KEY
     );
     console.log('Notes email sent successfully');
-  } catch (error) {
+    alert(`Notes email successfully sent to ${studentEmail}!`);
+  } catch (error: any) {
     console.error('Failed to send notes email:', error);
+    alert(`Failed to send notes email to ${studentEmail}. Error: ${error?.text || error?.message || JSON.stringify(error)}`);
   }
 };
