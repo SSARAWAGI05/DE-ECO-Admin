@@ -117,12 +117,14 @@ export default function LiveClasses() {
    * Fetch only upcoming / ongoing classes
    */
   const fetchClasses = async () => {
-    const now = new Date().toISOString()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const startOfToday = today.toISOString()
 
     const { data } = await supabase
       .from('live_classes')
       .select('*')
-      .gte('end_datetime', now)
+      .gte('scheduled_datetime', startOfToday)
       .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
       .order('scheduled_datetime', { ascending: true })
 
@@ -176,6 +178,12 @@ export default function LiveClasses() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const scheduledDate = new Date(formData.scheduled_datetime)
+    if (scheduledDate < new Date() && !editingId) {
+      alert("You cannot schedule a new class in the past!")
+      return
+    }
 
     const payload = {
       user_id: formData.user_id,

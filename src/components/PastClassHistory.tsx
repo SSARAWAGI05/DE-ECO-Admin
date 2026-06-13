@@ -68,6 +68,16 @@ export default function PastClassHistory() {
     setLoadingClasses(false)
   }
 
+  const handleCancelClass = async (classId: string) => {
+    if (!confirm('Are you sure you want to cancel and delete this past class? This will also revert the earnings for this class.')) return
+    
+    await supabase.from('live_classes').delete().eq('id', classId)
+    
+    if (selectedProfile) {
+      fetchPastClasses(selectedProfile.id)
+    }
+  }
+
   const filteredProfiles = useMemo(() => {
     let result = profiles
     if (showActiveOnly) {
@@ -205,8 +215,16 @@ export default function PastClassHistory() {
                               Duration: {c.duration_minutes} mins • Earned: {selectedProfile.billing_currency || 'INR'} {earned.toFixed(2)}
                             </p>
                           </div>
-                          <div className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold uppercase">
-                            Completed
+                          <div className="shrink-0 flex items-center gap-3">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold uppercase">
+                              Completed
+                            </span>
+                            <button
+                              onClick={() => handleCancelClass(c.id)}
+                              className="text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-full transition-colors"
+                            >
+                              Cancel Class
+                            </button>
                           </div>
                         </div>
                       )
