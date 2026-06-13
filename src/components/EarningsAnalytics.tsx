@@ -108,7 +108,10 @@ export default function EarningsAnalytics() {
       let label = ''
 
       if (timeframe === 'daily') {
-        key = date.toISOString().split('T')[0] // YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        key = `${year}-${month}-${day}`
         label = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
       } else if (timeframe === 'weekly') {
         // Find start of week (Sunday)
@@ -119,7 +122,10 @@ export default function EarningsAnalytics() {
         const end = new Date(start)
         end.setDate(end.getDate() + 6)
         
-        key = start.toISOString().split('T')[0]
+        const year = start.getFullYear();
+        const month = String(start.getMonth() + 1).padStart(2, '0');
+        const day = String(start.getDate()).padStart(2, '0');
+        key = `${year}-${month}-${day}`
         const formatOpts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
         label = `${start.toLocaleDateString(undefined, formatOpts)} - ${end.toLocaleDateString(undefined, formatOpts)}`
       } else if (timeframe === 'monthly') {
@@ -185,9 +191,13 @@ export default function EarningsAnalytics() {
   const handlePrev = () => {
     if (timeframe === 'daily') {
       if (!selectedDateKey) return
-      const d = new Date(selectedDateKey)
+      const [y, m, d_num] = selectedDateKey.split('-').map(Number)
+      const d = new Date(y, m - 1, d_num)
       d.setDate(d.getDate() - 1)
-      setSelectedDateKey(d.toISOString().split('T')[0])
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      setSelectedDateKey(`${year}-${month}-${day}`)
     } else {
       const idx = chartData.findIndex(d => d.key === selectedDateKey)
       if (idx > 0) {
@@ -199,9 +209,13 @@ export default function EarningsAnalytics() {
   const handleNext = () => {
     if (timeframe === 'daily') {
       if (!selectedDateKey) return
-      const d = new Date(selectedDateKey)
+      const [y, m, d_num] = selectedDateKey.split('-').map(Number)
+      const d = new Date(y, m - 1, d_num)
       d.setDate(d.getDate() + 1)
-      setSelectedDateKey(d.toISOString().split('T')[0])
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      setSelectedDateKey(`${year}-${month}-${day}`)
     } else {
       const idx = chartData.findIndex(d => d.key === selectedDateKey)
       if (idx !== -1 && idx < chartData.length - 1) {
