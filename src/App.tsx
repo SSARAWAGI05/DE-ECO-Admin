@@ -37,7 +37,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('admin_auth')
+    const auth = localStorage.getItem('admin_auth')
     if (auth === 'true') {
       setIsAuthenticated(true)
     }
@@ -47,7 +47,7 @@ function App() {
     e.preventDefault()
     if (passcode === '7056') {
       setIsAuthenticated(true)
-      sessionStorage.setItem('admin_auth', 'true')
+      localStorage.setItem('admin_auth', 'true')
     } else {
       setErrorMsg('Incorrect passcode')
       setPasscode('')
