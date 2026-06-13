@@ -247,14 +247,15 @@ export default function LiveClasses() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSettingsOpen(true)}
-              className="flex items-center justify-center p-4 sm:p-3 bg-white border-2 border-slate-200 hover:border-slate-300 transition-colors text-slate-600 rounded-xl shadow-sm"
-              title="Settings"
+              className="flex items-center justify-center gap-2 bg-white border-2 border-slate-200 hover:border-slate-300 transition-colors text-slate-700 px-5 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm"
+              title="Edit Default Meeting Link"
             >
-              <Settings className="w-5 h-5" />
+              <LinkIcon className="w-5 h-5 text-slate-400" />
+              Default Link
             </button>
             <button
               onClick={openCreate}
-              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-6 py-4 sm:py-3 rounded-xl font-bold text-base shadow-sm hover:shadow-md"
+              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-6 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm hover:shadow-md"
             >
               <Plus className="w-5 h-5" />
               New Class
@@ -564,7 +565,7 @@ export default function LiveClasses() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-slate-900 text-xl">Default Settings</h3>
+              <h3 className="font-bold text-slate-900 text-xl">Default Meeting Link</h3>
               <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 p-1.5 rounded-full transition-colors">
                 <X size={20} />
               </button>
@@ -582,7 +583,6 @@ export default function LiveClasses() {
               <button
                 onClick={() => {
                   localStorage.setItem('default_meeting_link', defaultLink)
-                  // Immediately update any open empty form
                   if (!editingId) {
                     setFormData(prev => ({...prev, meeting_link: defaultLink}))
                   }
@@ -590,7 +590,7 @@ export default function LiveClasses() {
                 }}
                 className="w-full mt-6 bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-colors"
               >
-                Save Defaults
+                Save Default
               </button>
             </div>
           </div>
