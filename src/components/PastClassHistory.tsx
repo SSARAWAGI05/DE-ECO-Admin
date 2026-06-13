@@ -7,6 +7,9 @@ interface Profile {
   first_name: string | null
   last_name: string | null
   email: string | null
+  hourly_rate: number
+  billing_currency: string
+  is_active: boolean
 }
 
 interface PastClass {
@@ -14,6 +17,7 @@ interface PastClass {
   title: string
   scheduled_datetime: string
   end_datetime: string
+  duration_minutes: number
 }
 
 export default function PastClassHistory() {
@@ -22,6 +26,7 @@ export default function PastClassHistory() {
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
   const [pastClasses, setPastClasses] = useState<PastClass[]>([])
   const [loadingClasses, setLoadingClasses] = useState(false)
+  const [showActiveOnly, setShowActiveOnly] = useState(true)
 
   useEffect(() => {
     fetchUsers()
@@ -30,7 +35,7 @@ export default function PastClassHistory() {
   const fetchUsers = async () => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email')
+      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
       .order('first_name')
     if (!error) setProfiles(data ?? [])
   }
@@ -45,8 +50,9 @@ export default function PastClassHistory() {
     setLoadingClasses(true)
     const { data } = await supabase
       .from('live_classes')
-      .select('id, title, scheduled_datetime, end_datetime')
+      .select('id, title, scheduled_datetime, end_datetime, duration_minutes')
       .eq('user_id', userId)
+      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
 
     if (data) {
       const past = data.filter((c: any) => {
@@ -63,14 +69,20 @@ export default function PastClassHistory() {
   }
 
   const filteredProfiles = useMemo(() => {
-    if (!searchTerm) return profiles
-    const s = searchTerm.toLowerCase()
-    return profiles.filter(p => 
-      (p.first_name?.toLowerCase() || '').includes(s) ||
-      (p.last_name?.toLowerCase() || '').includes(s) ||
-      (p.email?.toLowerCase() || '').includes(s)
-    )
-  }, [profiles, searchTerm])
+    let result = profiles
+    if (showActiveOnly) {
+      result = result.filter(p => p.is_active)
+    }
+    if (searchTerm) {
+      const s = searchTerm.toLowerCase()
+      result = result.filter(p => 
+        (p.first_name?.toLowerCase() || '').includes(s) ||
+        (p.last_name?.toLowerCase() || '').includes(s) ||
+        (p.email?.toLowerCase() || '').includes(s)
+      )
+    }
+    return result
+  }, [profiles, searchTerm, showActiveOnly])
 
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full flex flex-col min-h-screen space-y-6">
@@ -95,6 +107,15 @@ export default function PastClassHistory() {
                 className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
               />
             </div>
+            <label className="flex items-center gap-2 mt-3 text-sm text-slate-700 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={showActiveOnly}
+                onChange={(e) => setShowActiveOnly(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+              />
+              Show Active Students Only
+            </label>
           </div>
           <div className="overflow-y-auto flex-1 p-2">
             {filteredProfiles.length === 0 ? (
@@ -170,20 +191,26 @@ export default function PastClassHistory() {
               ) : (
                 <div className="flex-1 overflow-y-auto -mx-2 px-2">
                   <div className="space-y-3">
-                    {pastClasses.map(c => (
-                      <div key={c.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                          <h4 className="font-bold text-slate-900">{c.title || 'Unknown Class'}</h4>
-                          <p className="text-sm text-slate-500 flex items-center gap-2 mt-1">
-                            <Clock className="w-4 h-4" />
-                            {c.scheduled_datetime ? new Date(c.scheduled_datetime).toLocaleString() : 'N/A'}
-                          </p>
+                    {pastClasses.map(c => {
+                      const earned = ((c.duration_minutes || 0) / 60) * (selectedProfile.hourly_rate || 0)
+                      return (
+                        <div key={c.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div>
+                            <h4 className="font-bold text-slate-900">{c.title || 'Unknown Class'}</h4>
+                            <p className="text-sm text-slate-500 flex items-center gap-2 mt-1">
+                              <Clock className="w-4 h-4" />
+                              {c.scheduled_datetime ? new Date(c.scheduled_datetime).toLocaleString() : 'N/A'}
+                            </p>
+                            <p className="text-sm text-slate-600 mt-2 font-medium">
+                              Duration: {c.duration_minutes} mins • Earned: {selectedProfile.billing_currency || 'INR'} {earned.toFixed(2)}
+                            </p>
+                          </div>
+                          <div className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold uppercase">
+                            Completed
+                          </div>
                         </div>
-                        <div className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold uppercase">
-                          Completed
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               )}

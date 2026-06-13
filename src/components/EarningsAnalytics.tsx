@@ -23,7 +23,7 @@ interface LiveClass {
   scheduled_datetime: string
 }
 
-type Timeframe = 'daily' | 'weekly' | 'monthly'
+type Timeframe = 'daily' | 'weekly' | 'monthly' | 'custom'
 
 // Constants
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -36,6 +36,8 @@ export default function EarningsAnalytics() {
   const [timeframe, setTimeframe] = useState<Timeframe>('daily')
   const [loading, setLoading] = useState(true)
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
+  const [customStart, setCustomStart] = useState('')
+  const [customEnd, setCustomEnd] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -62,6 +64,7 @@ export default function EarningsAnalytics() {
       .from('live_classes')
       .select('id, user_id, title, duration_minutes, scheduled_datetime, status')
       .neq('status', 'cancelled')
+      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
       .order('scheduled_datetime', { ascending: true })
 
     if (classesData) {
@@ -122,6 +125,11 @@ export default function EarningsAnalytics() {
       } else if (timeframe === 'monthly') {
         key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`
         label = date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
+      } else if (timeframe === 'custom') {
+        if (customStart && date < new Date(customStart)) return
+        if (customEnd && date > new Date(customEnd + 'T23:59:59.999Z')) return
+        key = 'custom'
+        label = `${customStart || 'Start'} to ${customEnd || 'End'}`
       }
 
       if (!aggregated[key]) {
@@ -140,11 +148,12 @@ export default function EarningsAnalytics() {
     const sortedData = Object.values(aggregated).sort((a, b) => a.key.localeCompare(b.key))
     
     return sortedData
-  }, [classes, profiles, timeframe])
+  }, [classes, profiles, timeframe, customStart, customEnd])
 
   useEffect(() => {
-    // Auto-select latest date key if none selected
-    if (chartData.length > 0) {
+    if (timeframe === 'custom') {
+      setSelectedDateKey('custom')
+    } else if (chartData.length > 0) {
       const exists = chartData.find(d => d.key === selectedDateKey)
       if (!exists && timeframe !== 'daily') {
         setSelectedDateKey(chartData[chartData.length - 1].key)
@@ -212,8 +221,8 @@ export default function EarningsAnalytics() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-lg shadow-inner">
-            {(['daily', 'weekly', 'monthly'] as Timeframe[]).map((tf) => (
+          <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1.5 rounded-lg shadow-inner">
+            {(['daily', 'weekly', 'monthly', 'custom'] as Timeframe[]).map((tf) => (
               <button
                 key={tf}
                 onClick={() => {
@@ -241,12 +250,30 @@ export default function EarningsAnalytics() {
             ₹{selectedDetails ? Math.round(selectedDetails.totalINR).toLocaleString() : '0'}
           </div>
         </div>
-        <div className="relative z-10 flex items-center gap-2">
-          <button onClick={handlePrev} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700/50">
-            <ChevronLeft size={18} />
-          </button>
+        <div className="relative z-10 flex flex-wrap items-center gap-2">
+          {timeframe !== 'custom' && (
+            <button onClick={handlePrev} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700/50">
+              <ChevronLeft size={18} />
+            </button>
+          )}
           
-          {timeframe === 'daily' ? (
+          {timeframe === 'custom' ? (
+            <div className="flex items-center gap-2">
+              <input 
+                type="date"
+                value={customStart}
+                onChange={(e) => setCustomStart(e.target.value)}
+                className="bg-white text-sm font-bold text-slate-900 outline-none p-2 rounded-lg cursor-pointer"
+              />
+              <span className="text-slate-400">to</span>
+              <input 
+                type="date"
+                value={customEnd}
+                onChange={(e) => setCustomEnd(e.target.value)}
+                className="bg-white text-sm font-bold text-slate-900 outline-none p-2 rounded-lg cursor-pointer"
+              />
+            </div>
+          ) : timeframe === 'daily' ? (
             <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
               <input 
@@ -272,9 +299,11 @@ export default function EarningsAnalytics() {
             </div>
           )}
 
-          <button onClick={handleNext} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700/50">
-            <ChevronRight size={18} />
-          </button>
+          {timeframe !== 'custom' && (
+            <button onClick={handleNext} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700/50">
+              <ChevronRight size={18} />
+            </button>
+          )}
         </div>
         
         {/* Decorative background circle */}

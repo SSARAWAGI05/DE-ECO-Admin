@@ -120,6 +120,7 @@ export default function LiveClasses() {
       .from('live_classes')
       .select('*')
       .gte('end_datetime', now)
+      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
       .order('scheduled_datetime', { ascending: true })
 
     setClasses(data ?? [])
