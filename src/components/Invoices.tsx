@@ -52,12 +52,12 @@ export default function Invoices() {
 
   // Date Range
   const [startDate, setStartDate] = useState(() => {
-    const d = getWeekStart(-1)
+    const d = getWeekStart(0)
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   })
   
   const [endDate, setEndDate] = useState(() => {
-    const d = getWeekStart(0)
+    const d = getWeekStart(1)
     d.setDate(d.getDate() - 1)
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   })
@@ -175,7 +175,7 @@ export default function Invoices() {
         <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.02] z-0 print:opacity-[0.03]">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
             <img src="/logo.png" alt="" className="w-[80%] max-w-lg object-contain grayscale" />
           </div>
 
