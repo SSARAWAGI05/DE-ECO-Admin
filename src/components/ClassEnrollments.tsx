@@ -88,12 +88,13 @@ export default function ClassEnrollments() {
     setLoadingEnrollments(true)
     
     // Fetch course enrollments
-    const { data: coursesData } = await supabase
+    const { data: coursesData, error: courseError } = await supabase
       .from('course_enrollments')
       .select('id, status, enrolled_at, custom_hourly_rate, courses(id, title)')
       .eq('user_id', userId)
       .order('enrolled_at', { ascending: false })
 
+    if (courseError) console.error("Error fetching courses:", courseError)
     setUserCourseEnrollments(coursesData ?? [])
 
     // Fetch class enrollments
