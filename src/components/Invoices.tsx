@@ -173,65 +173,66 @@ export default function Invoices() {
         </div>
 
         {/* The Printable A4 Invoice Document */}
-        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-0 mx-auto print:shadow-none print:m-0 print:p-0 flex flex-col font-sans">
+        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 print:p-0 flex flex-col font-sans relative overflow-hidden">
           
-          {/* Solid Top Banner */}
-          <div className="h-4 bg-zinc-900 w-full mb-12"></div>
+          {/* Watermark */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 print:opacity-[0.05]">
+            <img src="/logo.png" alt="" className="w-[80%] max-w-lg object-contain grayscale" />
+          </div>
 
-          <div className="px-12 sm:px-16 flex-1 flex flex-col">
-            {/* Header: Logo and Invoice Text */}
+          <div className="relative z-10 flex flex-col h-full">
+            {/* Header */}
             <div className="flex justify-between items-start mb-16">
-              <div className="flex items-center gap-6">
-                <img src="/logo.png" alt="DEECO Logo" className="w-20 h-20 object-contain" />
+              <div className="flex flex-col gap-4">
+                <img src="/logo.png" alt="DEECO Logo" className="w-16 h-16 object-contain" />
                 <div>
-                  <h1 className="text-4xl font-serif font-bold text-zinc-900 tracking-tight">DE-ECO</h1>
-                  <h2 className="text-xl font-serif text-zinc-500 uppercase tracking-widest mt-1">Education</h2>
+                  <h1 className="text-xl font-bold text-slate-900 tracking-tight">DE-ECO Education</h1>
+                  <p className="text-slate-500 text-sm mt-2 leading-relaxed">
+                    6/1A Moira Street<br/>
+                    Mangaldeep Building<br/>
+                    Kolkata - 700017<br/>
+                    +91 9903996663<br/>
+                    www.deecobyrishika.com
+                  </p>
                 </div>
               </div>
+              
               <div className="text-right">
-                <h2 className="text-5xl font-serif font-black text-zinc-900 uppercase tracking-widest mb-4">Invoice</h2>
-                <p className="text-sm font-bold text-zinc-500 tracking-widest uppercase">INV-{new Date().getTime().toString().slice(-6)}</p>
+                <h2 className="text-4xl font-light text-slate-400 uppercase tracking-widest mb-6">Invoice</h2>
+                <table className="ml-auto text-sm">
+                  <tbody>
+                    <tr>
+                      <td className="pr-4 py-1 text-slate-500 font-medium text-right">Invoice No:</td>
+                      <td className="font-semibold text-slate-900 text-right">#INV-{new Date().getTime().toString().slice(-6)}</td>
+                    </tr>
+                    <tr>
+                      <td className="pr-4 py-1 text-slate-500 font-medium text-right">Date:</td>
+                      <td className="font-semibold text-slate-900 text-right">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                    </tr>
+                    <tr>
+                      <td className="pr-4 py-1 text-slate-500 font-medium text-right">Period:</td>
+                      <td className="font-semibold text-slate-900 text-right">{new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            {/* Address and Bill To Grid */}
-            <div className="grid grid-cols-2 gap-12 mb-16">
-              <div>
-                <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-200 pb-2 mb-4">From</h3>
-                <p className="font-bold text-zinc-900">DE-ECO Education</p>
-                <p className="text-zinc-600 text-sm leading-relaxed mt-1">
-                  6/1A Moira Street, Mangaldeep Building<br/>
-                  Kolkata - 700017<br/>
-                  +91 9903996663<br/>
-                  www.deecobyrishika.com
-                </p>
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-200 pb-2 mb-4">Bill To</h3>
-                <p className="font-bold text-lg text-zinc-900">{profile.first_name} {profile.last_name}</p>
-                <p className="text-zinc-600 text-sm mt-1">{profile.email}</p>
-                
-                <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="font-bold text-zinc-400 uppercase text-xs">Date of Issue</p>
-                    <p className="font-semibold text-zinc-900 mt-1">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold text-zinc-400 uppercase text-xs">Billing Period</p>
-                    <p className="font-semibold text-zinc-900 mt-1">{new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</p>
-                  </div>
-                </div>
-              </div>
+            {/* Bill To */}
+            <div className="mb-12">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Bill To:</h3>
+              <p className="font-bold text-lg text-slate-900">{profile.first_name} {profile.last_name}</p>
+              <p className="text-slate-600 text-sm mt-1">{profile.email}</p>
             </div>
 
-            {/* Strict Data Table */}
+            {/* Table */}
             <table className="w-full text-left mb-12 border-collapse">
               <thead>
-                <tr className="bg-zinc-900 text-white">
-                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Date</th>
-                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Description</th>
-                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs text-right">Duration</th>
-                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs text-right">Amount</th>
+                <tr className="border-y-2 border-slate-200 text-slate-900">
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500">Date</th>
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500">Description</th>
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 text-right">Duration</th>
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 text-right">Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -240,13 +241,13 @@ export default function Invoices() {
                   const hours = (c.duration_minutes || 0) / 60
                   const amt = hours * (profile.hourly_rate || 0)
                   return (
-                    <tr key={c.id} className="border-b border-zinc-200 text-sm">
-                      <td className="py-4 px-4 text-zinc-600 font-medium">
+                    <tr key={c.id} className="border-b border-slate-100 text-sm">
+                      <td className="py-4 text-slate-600">
                         {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td className="py-4 px-4 font-bold text-zinc-900">{c.title || 'Live Class'}</td>
-                      <td className="py-4 px-4 text-zinc-600 text-right">{c.duration_minutes} mins</td>
-                      <td className="py-4 px-4 font-bold text-zinc-900 text-right">{currencySym}{amt.toFixed(2)}</td>
+                      <td className="py-4 font-medium text-slate-800">{c.title || 'Live Class'}</td>
+                      <td className="py-4 text-slate-600 text-right">{c.duration_minutes} mins</td>
+                      <td className="py-4 font-medium text-slate-900 text-right">{currencySym}{amt.toFixed(2)}</td>
                     </tr>
                   )
                 })}
@@ -255,32 +256,27 @@ export default function Invoices() {
 
             {/* Totals Section */}
             <div className="flex justify-end mb-16">
-              <div className="w-80">
-                <div className="flex justify-between py-2 border-b border-zinc-200 text-sm">
-                  <span className="font-bold text-zinc-500 uppercase tracking-widest">Total Hours</span>
-                  <span className="font-bold text-zinc-900">{(totalMins / 60).toFixed(2)} hrs</span>
+              <div className="w-72">
+                <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
+                  <span className="text-slate-600">Total Hours</span>
+                  <span className="font-medium text-slate-900">{(totalMins / 60).toFixed(2)} hrs</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-zinc-200 text-sm">
-                  <span className="font-bold text-zinc-500 uppercase tracking-widest">Hourly Rate</span>
-                  <span className="font-bold text-zinc-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
+                <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
+                  <span className="text-slate-600">Hourly Rate</span>
+                  <span className="font-medium text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
                 </div>
-                <div className="flex justify-between py-5 mt-4 border-t-4 border-zinc-900 bg-zinc-50 px-4">
-                  <span className="font-black text-xl text-zinc-900 uppercase tracking-widest">Total Due</span>
-                  <span className="font-black text-2xl text-zinc-900">{currencySym}{totalAmount.toFixed(2)}</span>
+                <div className="flex justify-between py-4 mt-2">
+                  <span className="font-bold text-lg text-slate-900">Total Due</span>
+                  <span className="font-bold text-xl text-slate-900">{currencySym}{totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="mt-auto border-t border-zinc-200 pt-8 pb-12 text-zinc-500 text-xs flex justify-between items-start">
-              <div>
-                <p className="font-bold text-zinc-800 uppercase tracking-wider mb-2">Payment Terms</p>
-                <p>1. Please pay within 15 days of receiving this invoice.</p>
-                <p>2. Make all payments payable to DE-ECO Education.</p>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-zinc-800 uppercase tracking-wider mb-2">Thank you for your business.</p>
-              </div>
+            <div className="mt-auto border-t border-slate-200 pt-8 pb-8 text-slate-500 text-xs">
+              <p className="font-bold text-slate-800 uppercase tracking-wider mb-2">Payment Terms</p>
+              <p className="mb-2">Due on receipt. Please make all payments payable to DE-ECO Education.</p>
+              <p>Thank you for your business!</p>
             </div>
           </div>
         </div>
