@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Receipt, Printer, ArrowLeft } from 'lucide-react'
+import { Receipt, Printer, ArrowLeft, Calendar } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
 
