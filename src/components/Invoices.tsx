@@ -181,12 +181,23 @@ export default function Invoices() {
       let position = 0
       
       pdf.addImage(imgData, 'PNG', margin, margin, printWidth, totalImgHeightInMM)
+      
+      // Mask bottom margin of first page
+      pdf.setFillColor(255, 255, 255)
+      pdf.rect(0, pdfHeight - margin, pdfWidth, margin, 'F')
+
       let heightLeft = totalImgHeightInMM - printHeight
 
       while (heightLeft > 0) {
         position -= printHeight
         pdf.addPage()
         pdf.addImage(imgData, 'PNG', margin, margin + position, printWidth, totalImgHeightInMM)
+        
+        // Mask top and bottom margins of subsequent pages
+        pdf.setFillColor(255, 255, 255)
+        pdf.rect(0, 0, pdfWidth, margin, 'F')
+        pdf.rect(0, pdfHeight - margin, pdfWidth, margin, 'F')
+        
         heightLeft -= printHeight
       }
       return pdf.output('blob')
