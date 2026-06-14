@@ -137,7 +137,19 @@ export default function Invoices() {
   }, [classes, profiles, startDate, endDate])
 
   const handlePrint = () => {
-    window.print()
+    const summary = studentSummaries.find(s => s.profile.id === viewInvoiceFor)
+    if (summary) {
+      const originalTitle = document.title
+      const firstName = summary.profile.first_name?.toUpperCase().trim() || ''
+      const lastName = summary.profile.last_name?.toUpperCase().trim() || ''
+      const fullName = `${firstName}_${lastName}`.replace(/_+/g, '_').replace(/^_|_$/g, '')
+      
+      document.title = fullName ? `DEECO_${fullName}` : 'DEECO_INVOICE'
+      window.print()
+      document.title = originalTitle
+    } else {
+      window.print()
+    }
   }
 
   // --- PRINTABLE INVOICE VIEW ---

@@ -36,6 +36,16 @@ interface LiveClass {
   status: string
 }
 
+interface BillingHistory {
+  id: string
+  user_id: string
+  type: 'SETTLEMENT' | 'CHARGE'
+  amount: number
+  description: string | null
+  created_at: string
+  undone: boolean
+}
+
 type FilterPeriod = 'current_month' | 'last_month' | 'all_time'
 type SortOption = 'name_asc' | 'amount_desc' | 'hours_desc'
 
@@ -62,6 +72,11 @@ export default function StudentBilling() {
   const [chargeAmount, setChargeAmount] = useState('')
   const [isCharging, setIsCharging] = useState(false)
 
+  // History Modal State
+  const [historyProfile, setHistoryProfile] = useState<Profile | null>(null)
+  const [historyData, setHistoryData] = useState<BillingHistory[]>([])
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
     fetchData()
@@ -231,6 +246,14 @@ export default function StudentBilling() {
       return
     }
 
+    // Insert history record
+    await supabase.from('billing_history').insert({
+      user_id: settleProfile.id,
+      type: 'SETTLEMENT',
+      amount: amount,
+      description: 'Manual settlement added'
+    })
+
     setSettleProfile(null)
     setSettleAmount('')
     fetchData() // Refresh data
@@ -262,9 +285,70 @@ export default function StudentBilling() {
       return
     }
 
+    // Insert history record
+    await supabase.from('billing_history').insert({
+      user_id: chargeProfile.id,
+      type: 'CHARGE',
+      amount: amount,
+      description: 'Manual charge added'
+    })
+
     setChargeProfile(null)
     setChargeAmount('')
     fetchData() // Refresh data
+  }
+
+  const handleViewHistory = async (profile: Profile) => {
+    setHistoryProfile(profile)
+    setIsLoadingHistory(true)
+    
+    const { data, error } = await supabase
+      .from('billing_history')
+      .select('*')
+      .eq('user_id', profile.id)
+      .order('created_at', { ascending: false })
+      
+    if (error) {
+      console.error("Error fetching history", error)
+      alert("Make sure you created the billing_history table in Supabase!")
+    } else {
+      setHistoryData(data as BillingHistory[])
+    }
+    
+    setIsLoadingHistory(false)
+  }
+
+  const handleUndo = async (record: BillingHistory) => {
+    if (!historyProfile || record.undone) return
+    if (!confirm(`Are you sure you want to undo this ${record.type}?`)) return
+    
+    setIsLoadingHistory(true)
+    
+    // Reverse the amount in profiles
+    if (record.type === 'SETTLEMENT') {
+      const newTotalPaid = (historyProfile.total_paid || 0) - record.amount
+      await supabase.from('profiles').update({ total_paid: newTotalPaid }).eq('id', historyProfile.id)
+      historyProfile.total_paid = newTotalPaid // local update
+    } else if (record.type === 'CHARGE') {
+      const newManualOutstanding = (historyProfile.manual_outstanding || 0) - record.amount
+      await supabase.from('profiles').update({ manual_outstanding: newManualOutstanding }).eq('id', historyProfile.id)
+      historyProfile.manual_outstanding = newManualOutstanding // local update
+    }
+
+    // Mark as undone
+    await supabase.from('billing_history').update({ undone: true }).eq('id', record.id)
+    
+    fetchData() // Refresh overall data
+    
+    // Refresh modal
+    const { data } = await supabase
+      .from('billing_history')
+      .select('*')
+      .eq('user_id', historyProfile.id)
+      .order('created_at', { ascending: false })
+      
+    setHistoryData((data as BillingHistory[]) || [])
+    setIsLoadingHistory(false)
   }
 
   /* ================= UI ================= */
@@ -392,8 +476,8 @@ export default function StudentBilling() {
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Student</th>
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Base Rate</th>
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Activity</th>
-                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Period Hours</th>
-                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Total Due</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Period</th>
+                <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50">Outstanding</th>
                 <th className="p-4 font-bold text-slate-500 text-xs uppercase tracking-wider bg-slate-50 text-right">Action</th>
               </tr>
             </thead>
@@ -452,12 +536,17 @@ export default function StudentBilling() {
                         )}
                       </td>
 
-                      {/* Period Hours */}
+                      {/* Period Hours & Due */}
                       <td className="p-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1.5 font-bold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800' : 'text-slate-400'}`}>
+                        <div className={`inline-flex items-center gap-1.5 font-bold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800' : 'text-slate-400'}`}>
                           <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-slate-600" : "text-slate-300"} />
                           {stats.totalHours.toFixed(1)} <span className="text-sm font-medium text-slate-500">hrs</span>
-                        </span>
+                        </div>
+                        {hasClasses && (
+                          <div className="text-xs text-slate-500 font-medium mt-1.5">
+                            Due: <span className="text-slate-700">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
+                          </div>
+                        )}
                       </td>
 
                       {/* Total Amount Due */}
@@ -471,6 +560,12 @@ export default function StudentBilling() {
                       <td className="p-4 whitespace-nowrap text-right">
                         <div className="flex justify-end gap-2">
                            <button 
+                             onClick={() => handleViewHistory(profile)}
+                             className="bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg font-bold text-xs transition-colors"
+                           >
+                             History
+                           </button>
+                           <button 
                              onClick={() => setSettleProfile(profile)}
                              disabled={stats.totalDue <= 0}
                              className="bg-slate-900 border border-slate-800 text-white hover:bg-slate-800 px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -483,7 +578,7 @@ export default function StudentBilling() {
                            >
                              Add Manually
                            </button>
-                        </div>
+                         </div>
                       </td>
                     </tr>
                   )
@@ -584,6 +679,79 @@ export default function StudentBilling() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* HISTORY MODAL */}
+      {historyProfile && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl border border-slate-200 flex flex-col max-h-[80vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Billing History</h2>
+                <p className="text-sm text-slate-500 font-medium mt-0.5">{historyProfile.first_name} {historyProfile.last_name}</p>
+              </div>
+              <button onClick={() => setHistoryProfile(null)} className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1">
+              {isLoadingHistory ? (
+                <div className="flex justify-center py-8">
+                  <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+                </div>
+              ) : historyData.length === 0 ? (
+                <div className="text-center py-8 text-slate-500">
+                  <p className="font-medium text-lg text-slate-700">No history found</p>
+                  <p className="text-sm mt-1">Manual charges and settlements will appear here.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {historyData.map(record => (
+                    <div key={record.id} className={`p-4 rounded-xl border ${record.undone ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 shadow-sm'}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                            record.type === 'SETTLEMENT' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                          }`}>
+                            {record.type}
+                          </span>
+                          {record.undone && (
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">
+                              UNDONE
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-semibold text-slate-500">
+                          {new Date(record.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      
+                      <div className="flex justify-between items-center mt-3">
+                        <div className="font-medium text-slate-800 text-sm">
+                          {record.description}
+                        </div>
+                        <div className="text-right">
+                          <div className={`font-black text-lg ${record.type === 'SETTLEMENT' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                            {getCurrencySymbol(historyProfile.billing_currency)} {record.amount.toFixed(2)}
+                          </div>
+                          {!record.undone && (
+                            <button 
+                              onClick={() => handleUndo(record)}
+                              className="text-xs text-rose-600 hover:text-rose-800 font-bold mt-1 underline decoration-rose-300 underline-offset-2 transition-colors"
+                            >
+                              Undo
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
