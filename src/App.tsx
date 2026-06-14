@@ -13,6 +13,7 @@ import AdminCourses from './components/AdminCourses'
 import StudentBilling from './components/StudentBilling' // ✅ NEW
 import PastClassHistory from './components/PastClassHistory'
 import EarningsAnalytics from './components/EarningsAnalytics'
+import Invoices from './components/Invoices'
 
 type Section =
   | 'dashboard'
@@ -25,6 +26,7 @@ type Section =
   | 'market_pulse'
   | 'contact_messages'
   | 'billing'           // ✅ NEW
+  | 'invoices'
   | 'past_history'
   | 'earnings_analytics'
 
@@ -112,6 +114,8 @@ function App() {
         return <AdminContactMessages />
       case 'billing':               // ✅ NEW
         return <StudentBilling />
+      case 'invoices':
+        return <Invoices />
       case 'past_history':
         return <PastClassHistory />
       case 'earnings_analytics':
