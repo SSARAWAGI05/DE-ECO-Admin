@@ -175,7 +175,7 @@ export default function Invoices() {
         <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 print:opacity-[0.05]">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.02] z-0 print:opacity-[0.03]">
             <img src="/logo.png" alt="" className="w-[80%] max-w-lg object-contain grayscale" />
           </div>
 
@@ -274,8 +274,7 @@ export default function Invoices() {
             {/* Footer */}
             <div className="mt-auto border-t border-slate-200 pt-8 pb-8 text-slate-500 text-xs">
               <p className="font-bold text-slate-800 uppercase tracking-wider mb-2">Payment Terms</p>
-              <p className="mb-2">Due on receipt. Please make all payments payable to DE-ECO Education.</p>
-              <p>Thank you for your business!</p>
+              <p>Due on receipt. Please make all payments payable to DE-ECO Education. Thank you for your business!</p>
             </div>
           </div>
         </div>
