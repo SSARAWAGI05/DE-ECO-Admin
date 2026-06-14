@@ -17,6 +17,7 @@ interface Profile {
   first_name: string | null
   last_name: string | null
   email: string | null
+  guardian_email?: string | null
   hourly_rate: number
   billing_currency: string
   is_active: boolean
@@ -61,7 +62,7 @@ export default function ClassEnrollments() {
   const fetchUsers = async () => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active')
+      .select('id, first_name, last_name, email, guardian_email, hourly_rate, billing_currency, is_active')
       .order('first_name')
     if (!error) setProfiles(data ?? [])
   }
@@ -242,7 +243,23 @@ export default function ClassEnrollments() {
                       <div className="font-bold text-slate-900">
                         {profile.first_name} {profile.last_name}
                       </div>
-                      <div className="text-xs font-medium text-slate-500 mt-0.5">{profile.email}</div>
+                      <div className="text-xs font-medium text-slate-500 mt-0.5 mb-2">{profile.email}</div>
+                      
+                      <div className="text-xs flex flex-col gap-1 max-w-[200px]">
+                        <label className="font-semibold text-slate-600">Guardian Email</label>
+                        <input
+                          type="email"
+                          placeholder="guardian@example.com"
+                          className="bg-slate-50 border border-slate-200 px-2 py-1.5 rounded text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-shadow disabled:opacity-50"
+                          defaultValue={profile.guardian_email || ''}
+                          onBlur={(e) => {
+                            if (e.target.value !== (profile.guardian_email || '')) {
+                              handleUpdateProfile(profile.id, { guardian_email: e.target.value })
+                            }
+                          }}
+                          disabled={isSaving === profile.id}
+                        />
+                      </div>
                     </td>
 
                     <td className="p-4 whitespace-nowrap">
