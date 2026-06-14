@@ -173,59 +173,63 @@ export default function Invoices() {
         </div>
 
         {/* The Printable A4 Invoice Document */}
-        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-10 sm:p-16 text-slate-900 mx-auto print:shadow-none print:m-0 print:p-0">
+        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 print:p-0 text-sm flex flex-col">
           
-          {/* Invoice Header */}
-          <div className="flex justify-between items-start border-b-2 border-slate-900 pb-8 mb-8">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-12">
             <div className="flex items-center gap-4">
-              <img src="/logo.png" alt="De-Eco" className="w-16 h-16 object-contain" />
+              <img src="/logo.png" alt="DEECO Logo" className="w-16 h-16 object-contain" />
               <div>
-                <h1 className="text-3xl font-black tracking-tighter">DEECO</h1>
-                <p className="text-sm font-semibold tracking-widest text-slate-500 uppercase mt-1">Education</p>
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900">DE-ECO Education</h1>
+                <p className="text-slate-500 mt-1 leading-relaxed">
+                  6/1A Moira Street, Mangaldeep Building<br/>
+                  Kolkata - 700017<br/>
+                  +91 9903996663 | www.deecobyrishika.com
+                </p>
               </div>
             </div>
             <div className="text-right">
-              <h2 className="text-4xl font-black text-slate-200 uppercase tracking-widest mb-2">Invoice</h2>
-              <p className="text-sm font-bold text-slate-600">
-                Period: {new Date(startDate).toLocaleDateString()} — {new Date(endDate).toLocaleDateString()}
-              </p>
-              <p className="text-sm font-bold text-slate-600 mt-1">
-                Date Issued: {new Date().toLocaleDateString()}
-              </p>
+              <h2 className="text-4xl font-light text-slate-300 uppercase tracking-widest mb-4">Invoice</h2>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-right text-slate-600">
+                <span className="font-semibold">Invoice No:</span>
+                <span>#INV-{new Date().getTime().toString().slice(-6)}</span>
+                <span className="font-semibold">Date:</span>
+                <span>{new Date().toLocaleDateString()}</span>
+                <span className="font-semibold">Period:</span>
+                <span>{new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</span>
+              </div>
             </div>
           </div>
 
           {/* Billed To */}
-          <div className="mb-10 flex justify-between">
-            <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Billed To</p>
-              <h3 className="text-xl font-bold">{profile.first_name} {profile.last_name}</h3>
-              <p className="text-slate-600">{profile.email}</p>
-            </div>
+          <div className="mb-12">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2 mb-4">Billed To</h3>
+            <p className="font-bold text-lg text-slate-900">{profile.first_name} {profile.last_name}</p>
+            <p className="text-slate-600">{profile.email}</p>
           </div>
 
           {/* Table */}
-          <table className="w-full text-left mb-10">
+          <table className="w-full text-left mb-12 border-collapse">
             <thead>
-              <tr className="border-b-2 border-slate-200">
-                <th className="py-3 font-bold text-sm text-slate-500 uppercase tracking-wider">Date</th>
-                <th className="py-3 font-bold text-sm text-slate-500 uppercase tracking-wider">Description</th>
-                <th className="py-3 font-bold text-sm text-slate-500 uppercase tracking-wider text-right">Duration</th>
-                <th className="py-3 font-bold text-sm text-slate-500 uppercase tracking-wider text-right">Amount</th>
+              <tr className="border-b-2 border-slate-800 text-slate-900">
+                <th className="py-3 font-bold uppercase tracking-wider text-xs">Date</th>
+                <th className="py-3 font-bold uppercase tracking-wider text-xs">Description</th>
+                <th className="py-3 font-bold uppercase tracking-wider text-xs text-right">Duration</th>
+                <th className="py-3 font-bold uppercase tracking-wider text-xs text-right">Amount</th>
               </tr>
             </thead>
             <tbody>
-              {studentClasses.map(c => {
+              {studentClasses.map((c, idx) => {
                 const date = new Date(c.scheduled_datetime)
                 const hours = (c.duration_minutes || 0) / 60
                 const amt = hours * (profile.hourly_rate || 0)
                 return (
-                  <tr key={c.id} className="border-b border-slate-100">
-                    <td className="py-4 font-medium text-slate-600">
+                  <tr key={c.id} className={`border-b border-slate-200 ${idx % 2 === 0 ? 'bg-slate-50/50' : 'bg-white'}`}>
+                    <td className="py-4 text-slate-600">
                       {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="py-4 font-bold text-slate-800">{c.title || 'Live Class'}</td>
-                    <td className="py-4 font-medium text-slate-600 text-right">{c.duration_minutes} mins</td>
+                    <td className="py-4 font-medium text-slate-800">{c.title || 'Live Class'}</td>
+                    <td className="py-4 text-slate-600 text-right">{c.duration_minutes} mins</td>
                     <td className="py-4 font-medium text-slate-900 text-right">{currencySym}{amt.toFixed(2)}</td>
                   </tr>
                 )
@@ -235,27 +239,26 @@ export default function Invoices() {
 
           {/* Totals */}
           <div className="flex justify-end mb-16">
-            <div className="w-64">
-              <div className="flex justify-between py-2 border-b border-slate-200">
-                <span className="font-bold text-slate-500">Total Hours</span>
-                <span className="font-bold text-slate-900">{(totalMins / 60).toFixed(2)} hrs</span>
+            <div className="w-72">
+              <div className="flex justify-between py-2 border-b border-slate-200 text-slate-600">
+                <span>Total Hours</span>
+                <span className="font-medium text-slate-900">{(totalMins / 60).toFixed(2)} hrs</span>
               </div>
-              <div className="flex justify-between py-2 border-b border-slate-200">
-                <span className="font-bold text-slate-500">Hourly Rate</span>
-                <span className="font-bold text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
+              <div className="flex justify-between py-2 border-b border-slate-200 text-slate-600">
+                <span>Hourly Rate</span>
+                <span className="font-medium text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
               </div>
-              <div className="flex justify-between py-4 mt-2 bg-slate-50 px-4 rounded-lg">
-                <span className="font-black text-lg text-slate-900">Total Due</span>
-                <span className="font-black text-2xl text-indigo-600">{currencySym}{totalAmount.toFixed(2)}</span>
+              <div className="flex justify-between py-4 mt-2 border-b-4 border-slate-800">
+                <span className="font-bold text-lg text-slate-900 uppercase">Total Due</span>
+                <span className="font-bold text-xl text-slate-900">{currencySym}{totalAmount.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="border-t border-slate-200 pt-8 mt-auto">
-            <p className="text-center text-sm font-bold text-slate-400">
-              Thank you for learning with DEECO!
-            </p>
+          <div className="mt-auto border-t border-slate-200 pt-8 text-slate-500 text-xs text-center">
+            <p className="font-bold text-slate-700 mb-1">Payment Terms: Due upon receipt.</p>
+            <p>Please make all payments payable to DE-ECO Education. Thank you for your business.</p>
           </div>
         </div>
         
