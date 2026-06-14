@@ -59,6 +59,7 @@ export default function LiveClasses() {
     meeting_link: defaultLink,
     scheduled_datetime: '',
     duration_minutes: '60',
+    send_email: true,
   })
 
   /* ---------- INITIAL LOAD ---------- */
@@ -148,6 +149,7 @@ export default function LiveClasses() {
       meeting_link: defaultLink,
       scheduled_datetime: '',
       duration_minutes: '60',
+      send_email: true,
     })
   }
 
@@ -170,7 +172,8 @@ export default function LiveClasses() {
       scheduled_datetime: new Date(c.scheduled_datetime)
         .toISOString()
         .slice(0, 16),
-      duration_minutes: c.duration_minutes.toString(),
+      duration_minutes: c.duration_minutes?.toString() || '60',
+      send_email: false,
     })
 
     setPanelOpen(true)
@@ -196,8 +199,8 @@ export default function LiveClasses() {
 
     await query
     
-    // Trigger email if it's a new class
-    if (!editingId) {
+    // Trigger email if it's a new class and send_email is true
+    if (!editingId && formData.send_email) {
       const student = users.find(u => u.id === formData.user_id)
       if (student && student.email) {
         const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
@@ -549,6 +552,23 @@ export default function LiveClasses() {
                     />
                   </div>
                 )}
+              </div>
+
+              <div className="pt-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <div className="relative flex items-center">
+                    <input
+                      type="checkbox"
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 checked:border-indigo-600 checked:bg-indigo-600 transition-all outline-none"
+                      checked={formData.send_email}
+                      onChange={(e) => setFormData({ ...formData, send_email: e.target.checked })}
+                    />
+                    <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none opacity-0 peer-checked:opacity-100 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span className="text-sm font-bold text-slate-700 select-none">Send email notification to student</span>
+                </label>
               </div>
 
               <div className="pt-6 pb-8">
