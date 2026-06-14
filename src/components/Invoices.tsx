@@ -181,7 +181,7 @@ export default function Invoices() {
 
           <div className="relative z-10 flex flex-col h-full">
             {/* Header */}
-            <div className="flex justify-between items-start mb-16">
+            <div className="flex justify-between items-start mb-8">
               <div className="flex flex-col gap-4">
                 <img src="/logo.png" alt="DEECO Logo" className="w-16 h-16 object-contain" />
                 <div>
@@ -218,14 +218,14 @@ export default function Invoices() {
             </div>
 
             {/* Bill To */}
-            <div className="mb-12">
+            <div className="mb-6">
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Bill To:</h3>
               <p className="font-bold text-lg text-slate-900">{profile.first_name} {profile.last_name}</p>
               <p className="text-slate-600 text-sm mt-1">{profile.email}</p>
             </div>
 
             {/* Table */}
-            <table className="w-full text-left mb-12 border-collapse">
+            <table className="w-full text-left mb-6 border-collapse">
               <thead>
                 <tr className="border-y-2 border-slate-200 text-slate-900">
                   <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500">Date</th>
