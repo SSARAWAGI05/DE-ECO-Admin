@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Receipt, Printer, ArrowLeft, Calendar } from 'lucide-react'
+import { Calendar, Search, Filter, ArrowUpDown, Download, ArrowLeft, Printer, AlertCircle, Share2 } from 'lucide-react'
+import html2canvas from 'html2canvas'
+import { jsPDF } from 'jspdf'
 
 /* ================= TYPES & CONSTANTS ================= */
 
@@ -136,19 +138,68 @@ export default function Invoices() {
     })
   }, [classes, profiles, startDate, endDate])
 
-  const handlePrint = () => {
+  const generatePdfBlob = async () => {
+    const element = document.getElementById('invoice-pdf-content')
+    if (!element) return null
+    try {
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true })
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      return pdf.output('blob')
+    } catch (err) {
+      console.error('Failed to generate PDF', err)
+      return null
+    }
+  }
+
+  const getPdfFilename = () => {
     const summary = studentSummaries.find(s => s.profile.id === viewInvoiceFor)
     if (summary) {
-      const originalTitle = document.title
       const firstName = summary.profile.first_name?.toUpperCase().trim() || ''
       const lastName = summary.profile.last_name?.toUpperCase().trim() || ''
-      const fullName = `${firstName}_${lastName}`.replace(/_+/g, '_').replace(/^_|_$/g, '')
-      
-      document.title = fullName ? `DEECO_${fullName}` : 'DEECO_INVOICE'
-      window.print()
-      document.title = originalTitle
+      return `${firstName}_${lastName}`.replace(/_+/g, '_').replace(/^_|_$/g, '') || 'INVOICE'
+    }
+    return 'INVOICE'
+  }
+
+  const handlePrint = async () => {
+    const blob = await generatePdfBlob()
+    if (blob) {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `DEECO_${getPdfFilename()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     } else {
-      window.print()
+      alert('Failed to generate PDF. Please try again.')
+    }
+  }
+
+  const handleShare = async () => {
+    const blob = await generatePdfBlob()
+    if (blob) {
+      const file = new File([blob], `DEECO_${getPdfFilename()}.pdf`, { type: 'application/pdf' })
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `DEECO Invoice`,
+            text: 'Here is the invoice from DE-ECO Education.'
+          })
+        } catch (err) {
+          console.error('Share failed or was cancelled', err)
+        }
+      } else {
+        alert('File sharing is not supported on this browser. Please use the Save PDF button.')
+      }
+    } else {
+      alert('Failed to generate PDF. Please try again.')
     }
   }
 
@@ -174,17 +225,25 @@ export default function Invoices() {
             <ArrowLeft size={20} /> Back to Dashboard
           </button>
           
-          <button 
-            onClick={handlePrint}
-            className="flex items-center justify-center sm:justify-start gap-2 bg-indigo-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-colors w-full sm:w-auto"
-          >
-            <Printer size={20} /> Print / Save PDF
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button 
+              onClick={handleShare}
+              className="flex items-center justify-center sm:justify-start gap-2 bg-blue-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-colors w-full sm:w-auto"
+            >
+              <Share2 size={20} /> Share
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="flex items-center justify-center sm:justify-start gap-2 bg-indigo-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-colors w-full sm:w-auto"
+            >
+              <Download size={20} /> Save PDF
+            </button>
+          </div>
         </div>
 
         {/* The Printable A4 Invoice Document */}
         <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
-          <div className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+          <div id="invoice-pdf-content" className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">

@@ -4,8 +4,10 @@ import {
   DollarSign, Clock, Users, Edit3, Check, X, 
   TrendingUp, Calendar as CalendarIcon, 
   Search, Filter, ArrowUpDown, AlertCircle, History,
-  Printer, ArrowLeft, Receipt
+  ArrowLeft, Receipt, Download, Share2
 } from 'lucide-react'
+import html2canvas from 'html2canvas'
+import { jsPDF } from 'jspdf'
 
 /* ================= TYPES & CONSTANTS ================= */
 
@@ -365,15 +367,69 @@ export default function StudentBilling() {
   /* ================= UI ================= */
 
   /* ================= PRINT RECEIPT ================= */
-  const handlePrint = () => {
-    const originalTitle = document.title
-    const firstName = receiptProfile?.first_name?.toUpperCase().trim() || ''
-    const lastName = receiptProfile?.last_name?.toUpperCase().trim() || ''
-    const fullName = `${firstName}_${lastName}`.replace(/_+/g, '_').replace(/^_|_$/g, '')
-    
-    document.title = fullName ? `DEECO_RECEIPT_${fullName}` : 'DEECO_RECEIPT'
-    window.print()
-    document.title = originalTitle
+  const generatePdfBlob = async () => {
+    const element = document.getElementById('receipt-pdf-content')
+    if (!element) return null
+    try {
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true })
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      return pdf.output('blob')
+    } catch (err) {
+      console.error('Failed to generate PDF', err)
+      return null
+    }
+  }
+
+  const getPdfFilename = () => {
+    let fullName = 'RECEIPT'
+    if (receiptProfile) {
+      const firstName = receiptProfile.first_name?.toUpperCase().trim() || ''
+      const lastName = receiptProfile.last_name?.toUpperCase().trim() || ''
+      fullName = `${firstName}_${lastName}`.replace(/_+/g, '_').replace(/^_|_$/g, '') || 'RECEIPT'
+    }
+    return fullName
+  }
+
+  const handlePrint = async () => {
+    const blob = await generatePdfBlob()
+    if (blob) {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `DEECO_${getPdfFilename()}_RECEIPT.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } else {
+      alert('Failed to generate PDF. Please try again.')
+    }
+  }
+
+  const handleShare = async () => {
+    const blob = await generatePdfBlob()
+    if (blob) {
+      const file = new File([blob], `DEECO_${getPdfFilename()}_RECEIPT.pdf`, { type: 'application/pdf' })
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `DEECO Receipt`,
+            text: 'Here is the payment receipt from DE-ECO Education.'
+          })
+        } catch (err) {
+          console.error('Share failed or was cancelled', err)
+        }
+      } else {
+        alert('File sharing is not supported on this browser. Please use the Save PDF button.')
+      }
+    } else {
+      alert('Failed to generate PDF. Please try again.')
+    }
   }
 
   // --- PRINTABLE RECEIPT VIEW ---
@@ -409,16 +465,24 @@ export default function StudentBilling() {
             <ArrowLeft size={20} /> Back to Dashboard
           </button>
           
-          <button 
-            onClick={handlePrint}
-            className="flex items-center justify-center sm:justify-start gap-2 bg-emerald-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-emerald-700 font-bold transition-colors w-full sm:w-auto"
-          >
-            <Printer size={20} /> Print / Save PDF
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button 
+              onClick={handleShare}
+              className="flex items-center justify-center sm:justify-start gap-2 bg-blue-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-colors w-full sm:w-auto"
+            >
+              <Share2 size={20} /> Share
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="flex items-center justify-center sm:justify-start gap-2 bg-emerald-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-emerald-700 font-bold transition-colors w-full sm:w-auto"
+            >
+              <Download size={20} /> Save PDF
+            </button>
+          </div>
         </div>
 
         <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
-          <div className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+          <div id="receipt-pdf-content" className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
             {/* Watermark */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
               <img src="/logo.png" alt="" className="w-[80%] max-w-lg object-contain grayscale" />
