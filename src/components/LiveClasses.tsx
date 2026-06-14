@@ -180,10 +180,6 @@ export default function LiveClasses() {
     e.preventDefault()
 
     const scheduledDate = new Date(formData.scheduled_datetime)
-    if (scheduledDate < new Date() && !editingId) {
-      alert("You cannot schedule a new class in the past!")
-      return
-    }
 
     const payload = {
       user_id: formData.user_id,
