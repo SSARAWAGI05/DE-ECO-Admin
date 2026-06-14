@@ -346,9 +346,6 @@ export default function Invoices() {
                       </td>
                       <td className="py-4 font-medium text-slate-800">
                         {c.title || 'Live Class'}
-                        {match && match.custom_hourly_rate != null && (
-                          <span className="ml-2 text-xs text-blue-500 font-semibold bg-blue-50 px-1.5 py-0.5 rounded">Custom Rate: {currencySym}{rate}/hr</span>
-                        )}
                       </td>
                       <td className="py-4 text-slate-600 text-right">{c.duration_minutes} mins</td>
                       <td className="py-4 font-medium text-slate-900 text-right">{currencySym}{amt.toFixed(2)}</td>
@@ -365,10 +362,23 @@ export default function Invoices() {
                   <span className="text-slate-600">Total Hours</span>
                   <span className="font-medium text-slate-900">{(totalMins / 60).toFixed(2)} hrs</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
-                  <span className="text-slate-600">Default Hourly Rate</span>
-                  <span className="font-medium text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
-                </div>
+                
+                {courseEnrollments.filter(e => e.user_id === profile.id).length > 0 ? (
+                  courseEnrollments.filter(e => e.user_id === profile.id).map((e, idx) => {
+                    const rate = e.custom_hourly_rate != null ? e.custom_hourly_rate : (profile.hourly_rate || 0)
+                    return (
+                      <div key={idx} className="flex justify-between py-2 border-b border-slate-100 text-sm">
+                        <span className="text-slate-600">Hourly Rate ({e.courses?.title || 'Course'})</span>
+                        <span className="font-medium text-slate-900">{currencySym}{rate.toFixed(2)}/hr</span>
+                      </div>
+                    )
+                  })
+                ) : (
+                  <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
+                    <span className="text-slate-600">Hourly Rate</span>
+                    <span className="font-medium text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
+                  </div>
+                )}
                 <div className="flex justify-between py-4 mt-2">
                   <span className="font-bold text-lg text-slate-900">Total Due</span>
                   <span className="font-bold text-xl text-slate-900">{currencySym}{totalAmount.toFixed(2)}</span>
