@@ -110,8 +110,8 @@ export default function Invoices() {
 
     classes.forEach(c => {
       const d = new Date(c.scheduled_datetime)
-      // Only include classes that have actually happened (past)
-      if (d >= startObj && d <= endObj && d < new Date()) {
+      // Include all classes in the date range
+      if (d >= startObj && d <= endObj) {
         const p = profiles[c.user_id]
         if (!p) return
 

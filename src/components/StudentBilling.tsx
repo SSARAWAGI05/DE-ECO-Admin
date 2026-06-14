@@ -393,7 +393,7 @@ export default function StudentBilling() {
     const latestProfile = profiles.find(p => p.id === receiptProfile.id) || receiptProfile
     
     // To get the exact due, let's calculate the billed hours.
-    const studentClasses = classes.filter(c => c.user_id === latestProfile.id && new Date(c.scheduled_datetime) < new Date())
+    const studentClasses = classes.filter(c => c.user_id === latestProfile.id)
     const totalMins = studentClasses.reduce((acc, c) => acc + (c.duration_minutes || 0), 0)
     const baseTotal = (totalMins / 60) * (latestProfile.hourly_rate || 0)
     const currentOutstanding = baseTotal + (latestProfile.manual_outstanding || 0) - (latestProfile.total_paid || 0)
