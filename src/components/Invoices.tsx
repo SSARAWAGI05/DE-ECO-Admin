@@ -172,18 +172,22 @@ export default function Invoices() {
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF('p', 'mm', 'a4')
       const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pageHeight = pdf.internal.pageSize.getHeight()
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const margin = 12 // 12mm margin
+      const printWidth = pdfWidth - margin * 2
+      const printHeight = pdfHeight - margin * 2
+      const totalImgHeightInMM = (canvas.height * printWidth) / canvas.width
+      
       let position = 0
       
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
-      let heightLeft = pdfHeight - pageHeight
+      pdf.addImage(imgData, 'PNG', margin, margin, printWidth, totalImgHeightInMM)
+      let heightLeft = totalImgHeightInMM - printHeight
 
       while (heightLeft > 0) {
-        position = position - pageHeight
+        position -= printHeight
         pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
-        heightLeft -= pageHeight
+        pdf.addImage(imgData, 'PNG', margin, margin + position, printWidth, totalImgHeightInMM)
+        heightLeft -= printHeight
       }
       return pdf.output('blob')
     } catch (err) {
