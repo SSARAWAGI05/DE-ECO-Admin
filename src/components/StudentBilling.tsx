@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient'
 import { 
   DollarSign, Clock, Users, Edit3, Check, X, 
   TrendingUp, Calendar as CalendarIcon, 
-  Search, Filter, ArrowUpDown, AlertCircle
+  Search, Filter, ArrowUpDown, AlertCircle, History
 } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
@@ -561,9 +561,10 @@ export default function StudentBilling() {
                         <div className="flex justify-end gap-2">
                            <button 
                              onClick={() => handleViewHistory(profile)}
-                             className="bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg font-bold text-xs transition-colors"
+                             title="View History"
+                             className="bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 px-3 py-2 rounded-lg transition-colors flex items-center justify-center"
                            >
-                             History
+                             <History size={16} />
                            </button>
                            <button 
                              onClick={() => setSettleProfile(profile)}

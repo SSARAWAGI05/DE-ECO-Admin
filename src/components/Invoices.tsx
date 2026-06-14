@@ -164,27 +164,27 @@ export default function Invoices() {
     const currencySym = CURRENCIES[profile.billing_currency] || profile.billing_currency || ''
 
     return (
-      <div className="min-h-screen bg-slate-100 p-4 sm:p-8 flex justify-center">
+      <div className="min-h-screen bg-slate-100 p-4 sm:p-8 flex flex-col items-center">
         {/* Screen-only controls */}
-        <div className="fixed top-6 left-6 flex gap-4 print:hidden z-50">
+        <div className="w-full max-w-[210mm] flex flex-col sm:flex-row justify-between gap-4 print:hidden z-50 mb-6">
           <button 
             onClick={() => setViewInvoiceFor(null)}
-            className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-md hover:bg-slate-50 font-bold text-slate-700 transition-colors"
+            className="flex items-center justify-center sm:justify-start gap-2 bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 font-bold text-slate-700 transition-colors w-full sm:w-auto"
           >
             <ArrowLeft size={20} /> Back to Dashboard
           </button>
-        </div>
-        <div className="fixed top-6 right-6 flex gap-4 print:hidden z-50">
+          
           <button 
             onClick={handlePrint}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-colors"
+            className="flex items-center justify-center sm:justify-start gap-2 bg-indigo-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-colors w-full sm:w-auto"
           >
             <Printer size={20} /> Print / Save PDF
           </button>
         </div>
 
         {/* The Printable A4 Invoice Document */}
-        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+        <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
+          <div className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
@@ -290,6 +290,7 @@ export default function Invoices() {
             </div>
           </div>
         </div>
+      </div>
         
         {/* Print Styles injection */}
         <style dangerouslySetInnerHTML={{__html: `
