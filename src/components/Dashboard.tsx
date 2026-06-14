@@ -156,7 +156,6 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         )
       `)
       .lt('end_datetime', now)
-      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
       .neq('status', 'cancelled')
 
     const months: Record<string, number> = {}

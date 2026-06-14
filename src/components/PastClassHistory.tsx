@@ -52,7 +52,6 @@ export default function PastClassHistory() {
       .from('live_classes')
       .select('id, title, scheduled_datetime, end_datetime, duration_minutes')
       .eq('user_id', userId)
-      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
 
     if (data) {
       const past = data.filter((c: any) => {

@@ -64,7 +64,6 @@ export default function EarningsAnalytics() {
       .from('live_classes')
       .select('id, user_id, title, duration_minutes, scheduled_datetime, status')
       .neq('status', 'cancelled')
-      .gte('scheduled_datetime', '2026-06-11T00:00:00.000Z')
       .order('scheduled_datetime', { ascending: true })
 
     if (classesData) {

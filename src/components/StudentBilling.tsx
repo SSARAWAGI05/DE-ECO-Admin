@@ -8,9 +8,6 @@ import {
 
 /* ================= TYPES & CONSTANTS ================= */
 
-// We ignore all classes scheduled before this date for billing purposes.
-const BILLING_START_DATE = new Date('2026-06-11T00:00:00')
-
 const CURRENCIES = [
   { code: 'INR', symbol: '₹' },
   { code: 'USD', symbol: '$' },
@@ -97,9 +94,6 @@ export default function StudentBilling() {
 
     return classes.filter(c => {
       const classDate = new Date(c.scheduled_datetime)
-      
-      // CRITICAL: Ignore any classes scheduled before Today (June 11, 2026)
-      if (classDate < BILLING_START_DATE) return false
 
       if (period === 'all_time') return true
       if (period === 'current_month') {
@@ -125,7 +119,7 @@ export default function StudentBilling() {
   // Calculate stats for a single user
   const getUserStats = (userId: string, rate: number, isActiveProfile: boolean, totalPaid: number, manualOutstanding: number) => {
     const studentClasses = filteredClasses.filter(c => c.user_id === userId)
-    const allTimeClasses = classes.filter(c => c.user_id === userId && new Date(c.scheduled_datetime) >= BILLING_START_DATE)
+    const allTimeClasses = classes.filter(c => c.user_id === userId)
     
     // Period specific
     const periodMinutes = studentClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
