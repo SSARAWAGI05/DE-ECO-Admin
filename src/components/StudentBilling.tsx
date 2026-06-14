@@ -458,32 +458,53 @@ export default function StudentBilling() {
               </div>
 
               {/* Received From */}
-              <div className="mb-12 border-l-4 border-emerald-500 pl-6 py-2 bg-emerald-50/50 rounded-r-lg">
-                <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Received From:</h3>
-                <p className="font-bold text-xl text-slate-900">{latestProfile.first_name} {latestProfile.last_name}</p>
+              <div className="mb-8">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Received From:</h3>
+                <p className="font-bold text-lg text-slate-900">{latestProfile.first_name} {latestProfile.last_name}</p>
                 <p className="text-slate-600 text-sm mt-1">{latestProfile.email}</p>
               </div>
 
-              {/* Amount Display */}
-              <div className="flex flex-col items-center justify-center py-16 border-y-2 border-slate-100 mb-12">
-                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Amount Received</p>
-                <p className="text-6xl font-black text-emerald-600 mb-4">{currencySym}{receiptRecord.amount.toFixed(2)}</p>
-                <p className="text-slate-500 font-medium bg-slate-100 px-4 py-1.5 rounded-full text-sm">
-                  Paid towards outstanding balance
-                </p>
+              {/* Amount Display Table */}
+              <table className="w-full text-left mb-8 border-collapse">
+                <thead>
+                  <tr className="border-y-2 border-slate-200 text-slate-900">
+                    <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500">Description</th>
+                    <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-slate-100 text-slate-700">
+                    <td className="py-4 font-medium">Payment Received</td>
+                    <td className="py-4 text-right font-medium">{currencySym}{receiptRecord.amount.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="flex justify-end mb-12">
+                <div className="w-1/2">
+                  <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
+                    <span className="text-slate-600 font-medium">Total Paid</span>
+                    <span className="font-medium text-slate-900">{currencySym}{receiptRecord.amount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between py-4 mt-2 border-b-2 border-slate-900">
+                    <span className="font-bold text-lg text-slate-900">Amount Received</span>
+                    <span className="font-bold text-xl text-slate-900">{currencySym}{receiptRecord.amount.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex justify-between py-4 mt-4 bg-slate-50 px-4 rounded-lg">
+                    <span className="font-bold text-slate-700">Updated Balance Due</span>
+                    <span className={`font-bold text-lg ${currentOutstanding > 0 ? 'text-rose-600' : 'text-slate-600'}`}>
+                      {currencySym}{currentOutstanding.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-auto border-t border-slate-200 pt-8 pb-8 text-slate-500 text-xs">
                 <div className="flex justify-between items-end">
                   <div>
-                    <p className="font-bold text-slate-800 uppercase tracking-wider mb-2">Thank you!</p>
+                    <p className="font-bold text-slate-800 uppercase tracking-wider mb-2">Thank you for your payment!</p>
                     <p>This receipt is automatically generated. Please keep it for your records.</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-slate-500 mb-1">Remaining Outstanding Balance</p>
-                    <p className={`text-xl font-bold ${currentOutstanding > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                      {currencySym}{currentOutstanding.toFixed(2)}
-                    </p>
                   </div>
                 </div>
               </div>
