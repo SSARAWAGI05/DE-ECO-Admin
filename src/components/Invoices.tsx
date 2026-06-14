@@ -25,6 +25,14 @@ interface LiveClass {
   status: string
 }
 
+interface CourseEnrollment {
+  user_id: string
+  custom_hourly_rate: number | null
+  courses: {
+    title: string
+  }
+}
+
 const CURRENCIES: Record<string, string> = {
   INR: '₹', USD: '$', CHF: '₣', EUR: '€', GBP: '£'
 }
@@ -50,6 +58,7 @@ const getWeekStart = (offsetWeeks: number = 0) => {
 export default function Invoices() {
   const [profiles, setProfiles] = useState<Record<string, Profile>>({})
   const [classes, setClasses] = useState<LiveClass[]>([])
+  const [courseEnrollments, setCourseEnrollments] = useState<CourseEnrollment[]>([])
   const [loading, setLoading] = useState(true)
 
   // Date Range
@@ -95,6 +104,14 @@ export default function Invoices() {
       setClasses(classesData)
     }
 
+    const { data: courseEnrollData } = await supabase
+      .from('course_enrollments')
+      .select('user_id, custom_hourly_rate, courses(title)')
+
+    if (courseEnrollData) {
+      setCourseEnrollments(courseEnrollData)
+    }
+
     setLoading(false)
   }
 
@@ -127,7 +144,16 @@ export default function Invoices() {
     })
 
     Object.values(grouped).forEach(g => {
-      g.totalAmount = (g.totalMins / 60) * (g.profile.hourly_rate || 0)
+      let amount = 0
+      const userEnrollments = courseEnrollments.filter(e => e.user_id === g.profile.id)
+      
+      g.classes.forEach(c => {
+        const match = userEnrollments.find(e => e.courses?.title === c.title)
+        const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (g.profile.hourly_rate || 0)
+        amount += (c.duration_minutes / 60) * rate
+      })
+      
+      g.totalAmount = amount
       g.classes.sort((a, b) => new Date(a.scheduled_datetime).getTime() - new Date(b.scheduled_datetime).getTime())
     })
 
@@ -309,13 +335,21 @@ export default function Invoices() {
                 {studentClasses.map((c) => {
                   const date = new Date(c.scheduled_datetime)
                   const hours = (c.duration_minutes || 0) / 60
-                  const amt = hours * (profile.hourly_rate || 0)
+                  const userEnrollments = courseEnrollments.filter(e => e.user_id === profile.id)
+                  const match = userEnrollments.find(e => e.courses?.title === c.title)
+                  const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
+                  const amt = hours * rate
                   return (
                     <tr key={c.id} className="border-b border-slate-100 text-sm">
                       <td className="py-4 text-slate-600">
                         {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td className="py-4 font-medium text-slate-800">{c.title || 'Live Class'}</td>
+                      <td className="py-4 font-medium text-slate-800">
+                        {c.title || 'Live Class'}
+                        {match && match.custom_hourly_rate != null && (
+                          <span className="ml-2 text-xs text-blue-500 font-semibold bg-blue-50 px-1.5 py-0.5 rounded">Custom Rate: {currencySym}{rate}/hr</span>
+                        )}
+                      </td>
                       <td className="py-4 text-slate-600 text-right">{c.duration_minutes} mins</td>
                       <td className="py-4 font-medium text-slate-900 text-right">{currencySym}{amt.toFixed(2)}</td>
                     </tr>
@@ -332,7 +366,7 @@ export default function Invoices() {
                   <span className="font-medium text-slate-900">{(totalMins / 60).toFixed(2)} hrs</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
-                  <span className="text-slate-600">Hourly Rate</span>
+                  <span className="text-slate-600">Default Hourly Rate</span>
                   <span className="font-medium text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
                 </div>
                 <div className="flex justify-between py-4 mt-2">

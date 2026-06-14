@@ -35,9 +35,18 @@ interface Profile {
 interface LiveClass {
   id: string
   user_id: string
+  title: string
   duration_minutes: number
   scheduled_datetime: string
   status: string
+}
+
+interface CourseEnrollment {
+  user_id: string
+  custom_hourly_rate: number | null
+  courses: {
+    title: string
+  }
 }
 
 interface BillingHistory {
@@ -59,6 +68,7 @@ export default function StudentBilling() {
   /* ---------- STATE ---------- */
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [classes, setClasses] = useState<LiveClass[]>([])
+  const [courseEnrollments, setCourseEnrollments] = useState<CourseEnrollment[]>([])
   
   // Filters & Sorting
   const [period, setPeriod] = useState<FilterPeriod>('current_month')
@@ -102,11 +112,18 @@ export default function StudentBilling() {
 
     const { data: classesData, error: classesErr } = await supabase
       .from('live_classes')
-      .select('id, user_id, duration_minutes, scheduled_datetime, status')
+      .select('id, user_id, title, duration_minutes, scheduled_datetime, status')
       .neq('status', 'cancelled')
 
     if (classesErr) console.error('Failed to fetch classes:', classesErr)
     else setClasses(classesData ?? [])
+
+    const { data: courseEnrollData, error: courseEnrollErr } = await supabase
+      .from('course_enrollments')
+      .select('user_id, custom_hourly_rate, courses(title)')
+
+    if (courseEnrollErr) console.error('Failed to fetch course enrollments:', courseEnrollErr)
+    else setCourseEnrollments(courseEnrollData ?? [])
   }
 
   /* ================= CALCULATION LOGIC ================= */
@@ -140,24 +157,37 @@ export default function StudentBilling() {
   }
 
   // Calculate stats for a single user
-  const getUserStats = (userId: string, rate: number, isActiveProfile: boolean, totalPaid: number, manualOutstanding: number) => {
+  const getUserStats = (userId: string, defaultRate: number, isActiveProfile: boolean, totalPaid: number, manualOutstanding: number) => {
     const studentClasses = filteredClasses.filter(c => c.user_id === userId)
     const allTimeClasses = classes.filter(c => c.user_id === userId)
-    
+    const enrollments = courseEnrollments.filter(e => e.user_id === userId)
+
+    const getClassRate = (c: LiveClass) => {
+      const match = enrollments.find(e => e.courses?.title === c.title)
+      return match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (defaultRate || 0)
+    }
+
     // Period specific
-    const periodMinutes = studentClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
+    let periodAmountDue = 0
+    let periodMinutes = 0
+    studentClasses.forEach(c => {
+      periodMinutes += c.duration_minutes
+      periodAmountDue += (c.duration_minutes / 60) * getClassRate(c)
+    })
     const periodHours = periodMinutes / 60
     
     // All time specific (for total due calculation)
-    const allTimeMinutes = allTimeClasses.reduce((sum, c) => sum + c.duration_minutes, 0)
-    const allTimeHours = allTimeMinutes / 60
+    let allTimeAmountDue = 0
+    allTimeClasses.forEach(c => {
+      allTimeAmountDue += (c.duration_minutes / 60) * getClassRate(c)
+    })
     
-    const allTimeDue = (allTimeHours * (rate || 0)) + (manualOutstanding || 0) - (totalPaid || 0)
+    const allTimeDue = allTimeAmountDue + (manualOutstanding || 0) - (totalPaid || 0)
 
     return {
       classCount: studentClasses.length,
       totalHours: periodHours,
-      periodAmountDue: periodHours * (rate || 0),
+      periodAmountDue: periodAmountDue,
       totalDue: allTimeDue, // Overall remaining balance
       isEnrolled: isActiveProfile
     }

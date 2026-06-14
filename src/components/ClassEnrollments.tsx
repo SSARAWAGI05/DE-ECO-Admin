@@ -90,7 +90,7 @@ export default function ClassEnrollments() {
     // Fetch course enrollments
     const { data: coursesData } = await supabase
       .from('course_enrollments')
-      .select('id, status, enrolled_at, courses(id, title)')
+      .select('id, status, enrolled_at, custom_hourly_rate, courses(id, title)')
       .eq('user_id', userId)
       .order('enrolled_at', { ascending: false })
 
@@ -154,6 +154,12 @@ export default function ClassEnrollments() {
 
   const handleUpdateCourseStatus = async (id: string, newStatus: string) => {
     const { error } = await supabase.from('course_enrollments').update({ status: newStatus }).eq('id', id)
+    if (error) alert(error.message)
+    else fetchUserEnrollments(selectedProfile!.id)
+  }
+
+  const handleUpdateCourseRate = async (id: string, newRate: number | null) => {
+    const { error } = await supabase.from('course_enrollments').update({ custom_hourly_rate: newRate }).eq('id', id)
     if (error) alert(error.message)
     else fetchUserEnrollments(selectedProfile!.id)
   }
@@ -475,6 +481,7 @@ export default function ClassEnrollments() {
                             <tr>
                               <th className="p-3 font-semibold text-slate-600">Course</th>
                               <th className="p-3 font-semibold text-slate-600">Status</th>
+                              <th className="p-3 font-semibold text-slate-600">Custom Rate</th>
                               <th className="p-3 font-semibold text-slate-600 w-24">Actions</th>
                             </tr>
                           </thead>
@@ -493,6 +500,26 @@ export default function ClassEnrollments() {
                                     <option value="completed">Completed</option>
                                     <option value="dropped">Dropped</option>
                                   </select>
+                                </td>
+                                <td className="p-3">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Default"
+                                    className="bg-slate-50 border border-slate-200 rounded px-2 py-1 outline-none focus:ring-2 focus:ring-slate-900 text-xs font-semibold w-24"
+                                    value={ce.custom_hourly_rate === null || ce.custom_hourly_rate === undefined ? '' : ce.custom_hourly_rate}
+                                    onBlur={(e) => {
+                                      const val = e.target.value === '' ? null : parseFloat(e.target.value)
+                                      handleUpdateCourseRate(ce.id, val)
+                                    }}
+                                    onChange={(e) => {
+                                      const newEnrollments = [...userCourseEnrollments]
+                                      const idx = newEnrollments.findIndex(x => x.id === ce.id)
+                                      newEnrollments[idx] = { ...ce, custom_hourly_rate: e.target.value === '' ? null : parseFloat(e.target.value) }
+                                      setUserCourseEnrollments(newEnrollments)
+                                    }}
+                                  />
                                 </td>
                                 <td className="p-3">
                                   <button onClick={() => handleDeleteCourseEnrollment(ce.id)} className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded hover:bg-rose-50">

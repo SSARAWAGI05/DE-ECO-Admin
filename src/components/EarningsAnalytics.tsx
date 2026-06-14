@@ -30,9 +30,18 @@ const CURRENCY_SYMBOL: Record<string, string> = {
   INR: '₹', USD: '$', CHF: '₣', EUR: '€', GBP: '£'
 }
 
+interface CourseEnrollment {
+  user_id: string
+  custom_hourly_rate: number | null
+  courses: {
+    title: string
+  }
+}
+
 export default function EarningsAnalytics() {
   const [profiles, setProfiles] = useState<Record<string, Profile>>({})
   const [classes, setClasses] = useState<LiveClass[]>([])
+  const [courseEnrollments, setCourseEnrollments] = useState<CourseEnrollment[]>([])
   const [timeframe, setTimeframe] = useState<Timeframe>('daily')
   const [loading, setLoading] = useState(true)
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
@@ -70,6 +79,14 @@ export default function EarningsAnalytics() {
       setClasses(classesData)
     }
 
+    const { data: courseEnrollData } = await supabase
+      .from('course_enrollments')
+      .select('user_id, custom_hourly_rate, courses(title)')
+
+    if (courseEnrollData) {
+      setCourseEnrollments(courseEnrollData)
+    }
+
     setLoading(false)
   }
 
@@ -91,7 +108,11 @@ export default function EarningsAnalytics() {
       if (!profile) return
 
       const hours = c.duration_minutes / 60
-      const rate = profile.hourly_rate || 0
+      
+      const userEnrollments = courseEnrollments.filter(e => e.user_id === c.user_id)
+      const match = userEnrollments.find(e => e.courses?.title === c.title)
+      const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
+      
       let earned = hours * rate
 
       // Normalize to INR for aggregate chart if currencies differ
