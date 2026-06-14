@@ -27,6 +27,7 @@ interface Profile {
   is_active: boolean
   total_paid: number // Added to track manual settlements
   manual_outstanding: number // Track manual extra charges
+  guardian_email: string | null
 }
 
 interface LiveClass {
@@ -91,7 +92,7 @@ export default function StudentBilling() {
   const fetchData = async () => {
     const { data: profilesData, error: profilesErr } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active, total_paid, manual_outstanding')
+      .select('id, first_name, last_name, email, hourly_rate, billing_currency, is_active, total_paid, manual_outstanding, guardian_email')
       .order('first_name')
 
     if (profilesErr) console.error('Failed to fetch profiles:', profilesErr)
