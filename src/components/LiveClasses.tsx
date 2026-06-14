@@ -221,6 +221,19 @@ export default function LiveClasses() {
     fetchClasses()
   }
 
+  const cleanupOldClasses = async () => {
+    if (!confirm('Are you absolutely sure you want to delete all classes scheduled before June 11, 2026? This cannot be undone.')) return
+    
+    const { error } = await supabase.from('live_classes').delete().lt('scheduled_datetime', '2026-06-11T00:00:00.000Z')
+    
+    if (error) {
+      alert(`Error deleting classes: ${error.message}`)
+    } else {
+      alert('Successfully deleted all classes scheduled before June 11, 2026!')
+      fetchClasses()
+    }
+  }
+
   /* ================= UI ================= */
 
   // Stats calculation
@@ -237,7 +250,12 @@ export default function LiveClasses() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
           <h1 className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-2">Live Classes</h1>
-          <p className="text-slate-500 font-medium text-lg">Manage all your scheduled sessions.</p>
+          <div className="flex items-center gap-4">
+            <p className="text-slate-500 font-medium text-lg">Manage all your scheduled sessions.</p>
+            <button onClick={cleanupOldClasses} className="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-1.5 rounded-lg transition-colors">
+              Delete pre-June 11 Classes
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
