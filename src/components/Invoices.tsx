@@ -173,7 +173,7 @@ export default function Invoices() {
         </div>
 
         {/* The Printable A4 Invoice Document */}
-        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 print:p-0 flex flex-col font-sans relative overflow-hidden">
+        <div className="bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 print:opacity-[0.05]">
@@ -283,6 +283,10 @@ export default function Invoices() {
         
         {/* Print Styles injection */}
         <style dangerouslySetInnerHTML={{__html: `
+          @page {
+            size: auto;
+            margin: 0mm;
+          }
           @media print {
             body * {
               visibility: hidden;
