@@ -3,7 +3,8 @@ import { supabase } from '../lib/supabaseClient'
 import { 
   DollarSign, Clock, Users, Edit3, Check, X, 
   TrendingUp, Calendar as CalendarIcon, 
-  Search, Filter, ArrowUpDown, AlertCircle, History
+  Search, Filter, ArrowUpDown, AlertCircle, History,
+  Printer, ArrowLeft, Receipt
 } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
@@ -76,6 +77,10 @@ export default function StudentBilling() {
   const [historyProfile, setHistoryProfile] = useState<Profile | null>(null)
   const [historyData, setHistoryData] = useState<BillingHistory[]>([])
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  
+  // Receipt State
+  const [receiptRecord, setReceiptRecord] = useState<BillingHistory | null>(null)
+  const [receiptProfile, setReceiptProfile] = useState<Profile | null>(null)
   
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
@@ -247,12 +252,17 @@ export default function StudentBilling() {
     }
 
     // Insert history record
-    await supabase.from('billing_history').insert({
+    const { data: newRecord } = await supabase.from('billing_history').insert({
       user_id: settleProfile.id,
       type: 'SETTLEMENT',
       amount: amount,
       description: 'Manual settlement added'
-    })
+    }).select().single()
+
+    if (newRecord) {
+      setReceiptRecord(newRecord as BillingHistory)
+      setReceiptProfile(settleProfile)
+    }
 
     setSettleProfile(null)
     setSettleAmount('')
@@ -290,7 +300,7 @@ export default function StudentBilling() {
       user_id: chargeProfile.id,
       type: 'CHARGE',
       amount: amount,
-      description: 'Manual charge added'
+      description: 'Manual due amount added'
     })
 
     setChargeProfile(null)
@@ -352,6 +362,155 @@ export default function StudentBilling() {
   }
 
   /* ================= UI ================= */
+
+  /* ================= PRINT RECEIPT ================= */
+  const handlePrint = () => {
+    const originalTitle = document.title
+    const firstName = receiptProfile?.first_name?.toUpperCase().trim() || ''
+    const lastName = receiptProfile?.last_name?.toUpperCase().trim() || ''
+    const fullName = `${firstName}_${lastName}`.replace(/_+/g, '_').replace(/^_|_$/g, '')
+    
+    document.title = fullName ? `DEECO_RECEIPT_${fullName}` : 'DEECO_RECEIPT'
+    window.print()
+    document.title = originalTitle
+  }
+
+  // --- PRINTABLE RECEIPT VIEW ---
+  if (receiptRecord && receiptProfile) {
+    const currencySym = CURRENCIES.find(c => c.code === receiptProfile.billing_currency)?.symbol || receiptProfile.billing_currency || ''
+    const dateStr = new Date(receiptRecord.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    const receiptNo = `#REC-${receiptRecord.id.split('-')[0].toUpperCase()}`
+    
+    // We compute the current outstanding manually. We know the totalDue formula is: totalBilled - totalPaid.
+    // The fetchData gets us manual_outstanding and total_paid, plus we can recalculate from classes.
+    // However, it's easier to just calculate it from the profiles stats if we have it.
+    // We already have `studentStats` mapped over in the UI, but here we can just use the most recent data.
+    // Wait, the settlement actually reduced the due. The easiest is to find the student in `profiles` and re-calc, 
+    // or we can rely on the fact that `fetchData()` was called and updated `profiles` in the background, 
+    // but React might not have updated `profiles` locally yet for this specific view if it's out of sync.
+    // Let's just calculate from existing state (or refetched state). `receiptProfile` is the snapshot before fetch.
+    // Actually, let's just grab the latest from the `profiles` array.
+    const latestProfile = profiles.find(p => p.id === receiptProfile.id) || receiptProfile
+    
+    // To get the exact due, let's calculate the billed hours.
+    const studentClasses = classes.filter(c => c.user_id === latestProfile.id && new Date(c.scheduled_datetime) < new Date())
+    const totalMins = studentClasses.reduce((acc, c) => acc + (c.duration_minutes || 0), 0)
+    const baseTotal = (totalMins / 60) * (latestProfile.hourly_rate || 0)
+    const currentOutstanding = baseTotal + (latestProfile.manual_outstanding || 0) - (latestProfile.total_paid || 0)
+
+    return (
+      <div className="min-h-screen bg-slate-100 p-4 sm:p-8 flex flex-col items-center">
+        <div className="w-full max-w-[210mm] flex flex-col sm:flex-row justify-between gap-4 print:hidden z-50 mb-6">
+          <button 
+            onClick={() => { setReceiptRecord(null); setReceiptProfile(null); }}
+            className="flex items-center justify-center sm:justify-start gap-2 bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 font-bold text-slate-700 transition-colors w-full sm:w-auto"
+          >
+            <ArrowLeft size={20} /> Back to Dashboard
+          </button>
+          
+          <button 
+            onClick={handlePrint}
+            className="flex items-center justify-center sm:justify-start gap-2 bg-emerald-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-emerald-700 font-bold transition-colors w-full sm:w-auto"
+          >
+            <Printer size={20} /> Print / Save PDF
+          </button>
+        </div>
+
+        <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
+          <div className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+            {/* Watermark */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
+              <img src="/logo.png" alt="" className="w-[80%] max-w-lg object-contain grayscale" />
+            </div>
+
+            <div className="relative z-10 flex flex-col h-full">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-12">
+                <div className="flex flex-col gap-4">
+                  <img src="/logo.png" alt="DEECO Logo" className="w-16 h-16 object-contain" />
+                  <div>
+                    <h1 className="text-xl font-bold text-slate-900 tracking-tight">DE-ECO Education</h1>
+                    <p className="text-slate-500 text-sm mt-2 leading-relaxed">
+                      6/1A Moira Street<br/>
+                      Mangaldeep Building<br/>
+                      Kolkata - 700017<br/>
+                      +91 9903996663<br/>
+                      www.deecobyrishika.com
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <h2 className="text-4xl font-light text-slate-400 uppercase tracking-widest mb-6">Receipt</h2>
+                  <table className="ml-auto text-sm">
+                    <tbody>
+                      <tr>
+                        <td className="pr-4 py-1 text-slate-500 font-medium text-right">Receipt No:</td>
+                        <td className="font-semibold text-slate-900 text-right">{receiptNo}</td>
+                      </tr>
+                      <tr>
+                        <td className="pr-4 py-1 text-slate-500 font-medium text-right">Date:</td>
+                        <td className="font-semibold text-slate-900 text-right">{dateStr}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Received From */}
+              <div className="mb-12 border-l-4 border-emerald-500 pl-6 py-2 bg-emerald-50/50 rounded-r-lg">
+                <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Received From:</h3>
+                <p className="font-bold text-xl text-slate-900">{latestProfile.first_name} {latestProfile.last_name}</p>
+                <p className="text-slate-600 text-sm mt-1">{latestProfile.email}</p>
+              </div>
+
+              {/* Amount Display */}
+              <div className="flex flex-col items-center justify-center py-16 border-y-2 border-slate-100 mb-12">
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Amount Received</p>
+                <p className="text-6xl font-black text-emerald-600 mb-4">{currencySym}{receiptRecord.amount.toFixed(2)}</p>
+                <p className="text-slate-500 font-medium bg-slate-100 px-4 py-1.5 rounded-full text-sm">
+                  Paid towards outstanding balance
+                </p>
+              </div>
+
+              <div className="mt-auto border-t border-slate-200 pt-8 pb-8 text-slate-500 text-xs">
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className="font-bold text-slate-800 uppercase tracking-wider mb-2">Thank you!</p>
+                    <p>This receipt is automatically generated. Please keep it for your records.</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-slate-500 mb-1">Remaining Outstanding Balance</p>
+                    <p className={`text-xl font-bold ${currentOutstanding > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                      {currencySym}{currentOutstanding.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @page { size: auto; margin: 0mm; }
+          @media print {
+            body * { visibility: hidden; }
+            .print\\:hidden { display: none !important; }
+            .min-h-screen { background: white !important; }
+            .bg-white.w-\\[210mm\\] {
+              visibility: visible !important;
+              position: absolute;
+              left: 0;
+              top: 0;
+            }
+            .bg-white.w-\\[210mm\\] * {
+              visibility: visible !important;
+            }
+          }
+        `}} />
+      </div>
+    )
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
@@ -577,7 +736,7 @@ export default function StudentBilling() {
                              onClick={() => setChargeProfile(profile)}
                              className="bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 px-4 py-2 rounded-lg font-bold text-xs transition-colors"
                            >
-                             Add Manually
+                             Add Due Amount
                            </button>
                          </div>
                       </td>
@@ -637,18 +796,18 @@ export default function StudentBilling() {
         </div>
       )}
 
-      {/* ADD CHARGE MODAL */}
+      {/* ADD DUE AMOUNT MODAL */}
       {chargeProfile && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-sm shadow-2xl border border-slate-200 p-6">
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Add Manual Charge</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Add Due Amount</h2>
             <p className="text-sm text-slate-500 mb-6 font-medium">
-              Add an outstanding balance for <span className="font-bold text-slate-800">{chargeProfile.first_name}</span>.
+              Manually add to the outstanding balance for <span className="font-bold text-slate-800">{chargeProfile.first_name}</span>.
             </p>
 
             <form onSubmit={handleAddChargeSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Charge Amount ({getCurrencySymbol(chargeProfile.billing_currency)})</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Amount to Add ({getCurrencySymbol(chargeProfile.billing_currency)})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -676,7 +835,7 @@ export default function StudentBilling() {
                   disabled={isCharging}
                   className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-70"
                 >
-                  {isCharging ? 'Adding...' : 'Add Charge'}
+                  {isCharging ? 'Adding...' : 'Add Amount'}
                 </button>
               </div>
             </form>
@@ -706,7 +865,7 @@ export default function StudentBilling() {
               ) : historyData.length === 0 ? (
                 <div className="text-center py-8 text-slate-500">
                   <p className="font-medium text-lg text-slate-700">No history found</p>
-                  <p className="text-sm mt-1">Manual charges and settlements will appear here.</p>
+                  <p className="text-sm mt-1">Manual due additions and settlements will appear here.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -717,7 +876,7 @@ export default function StudentBilling() {
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                             record.type === 'SETTLEMENT' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
                           }`}>
-                            {record.type}
+                            {record.type === 'CHARGE' ? 'DUE ADDED' : record.type}
                           </span>
                           {record.undone && (
                             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">
@@ -739,12 +898,26 @@ export default function StudentBilling() {
                             {getCurrencySymbol(historyProfile.billing_currency)} {record.amount.toFixed(2)}
                           </div>
                           {!record.undone && (
-                            <button 
-                              onClick={() => handleUndo(record)}
-                              className="text-xs text-rose-600 hover:text-rose-800 font-bold mt-1 underline decoration-rose-300 underline-offset-2 transition-colors"
-                            >
-                              Undo
-                            </button>
+                            <div className="flex items-center gap-3 mt-1 justify-end">
+                              {record.type === 'SETTLEMENT' && (
+                                <button 
+                                  onClick={() => {
+                                    setHistoryProfile(null) // close modal
+                                    setReceiptProfile(historyProfile)
+                                    setReceiptRecord(record)
+                                  }}
+                                  className="text-xs text-emerald-600 hover:text-emerald-800 font-bold flex items-center gap-1 transition-colors"
+                                >
+                                  <Receipt size={14} /> Print Receipt
+                                </button>
+                              )}
+                              <button 
+                                onClick={() => handleUndo(record)}
+                                className="text-xs text-rose-600 hover:text-rose-800 font-bold underline decoration-rose-300 underline-offset-2 transition-colors"
+                              >
+                                Undo
+                              </button>
+                            </div>
                           )}
                         </div>
                       </div>
