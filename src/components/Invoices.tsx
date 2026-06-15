@@ -267,12 +267,12 @@ export default function Invoices() {
     const currencySym = CURRENCIES[profile.billing_currency] || profile.billing_currency || ''
 
     return (
-      <div className="min-h-screen bg-slate-100 p-4 sm:p-8 flex flex-col items-center">
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-800 p-4 sm:p-8 flex flex-col items-center">
         {/* Screen-only controls */}
         <div className="w-full max-w-[210mm] flex flex-col sm:flex-row justify-between gap-4 print:hidden z-50 mb-6">
           <button 
             onClick={() => setViewInvoiceFor(null)}
-            className="flex items-center justify-center sm:justify-start gap-2 bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 font-bold text-slate-700 transition-colors w-full sm:w-auto"
+            className="flex items-center justify-center sm:justify-start gap-2 bg-white dark:bg-slate-900 dark:bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 font-bold text-slate-700 dark:text-slate-300 transition-colors w-full sm:w-auto"
           >
             <ArrowLeft size={20} /> Back to Dashboard
           </button>
@@ -280,13 +280,13 @@ export default function Invoices() {
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <button 
               onClick={handleShare}
-              className="flex items-center justify-center sm:justify-start gap-2 bg-blue-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-colors w-full sm:w-auto"
+              className="flex items-center justify-center sm:justify-start gap-2 bg-blue-600 text-white dark:text-slate-900 px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-colors w-full sm:w-auto"
             >
               <Share2 size={20} /> Share
             </button>
             <button 
               onClick={handlePrint}
-              className="flex items-center justify-center sm:justify-start gap-2 bg-indigo-600 text-white px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-colors w-full sm:w-auto"
+              className="flex items-center justify-center sm:justify-start gap-2 bg-indigo-600 text-white dark:text-slate-900 px-6 py-3 sm:py-2 rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-colors w-full sm:w-auto"
             >
               <Download size={20} /> Save PDF
             </button>
@@ -295,7 +295,7 @@ export default function Invoices() {
 
         {/* The Printable A4 Invoice Document */}
         <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
-          <div id="invoice-pdf-content" className="bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+          <div id="invoice-pdf-content" className="bg-white dark:bg-slate-900 dark:bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 dark:text-slate-200 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
@@ -308,8 +308,8 @@ export default function Invoices() {
               <div className="flex flex-col gap-4">
                 <img src="/logo.png" alt="DEECO Logo" className="w-16 h-16 object-contain" />
                 <div>
-                  <h1 className="text-xl font-bold text-slate-900 tracking-tight">DE-ECO Education</h1>
-                  <p className="text-slate-500 text-sm mt-2 leading-relaxed">
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">DE-ECO Education</h1>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 leading-relaxed">
                     6/1A Moira Street<br/>
                     Mangaldeep Building<br/>
                     Kolkata - 700017<br/>
@@ -324,16 +324,16 @@ export default function Invoices() {
                 <table className="ml-auto text-sm">
                   <tbody>
                     <tr>
-                      <td className="pr-4 py-1 text-slate-500 font-medium text-right">Invoice No:</td>
-                      <td className="font-semibold text-slate-900 text-right">#INV-{new Date().getTime().toString().slice(-6)}</td>
+                      <td className="pr-4 py-1 text-slate-500 dark:text-slate-400 font-medium text-right">Invoice No:</td>
+                      <td className="font-semibold text-slate-900 dark:text-slate-50 text-right">#INV-{new Date().getTime().toString().slice(-6)}</td>
                     </tr>
                     <tr>
-                      <td className="pr-4 py-1 text-slate-500 font-medium text-right">Date:</td>
-                      <td className="font-semibold text-slate-900 text-right">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                      <td className="pr-4 py-1 text-slate-500 dark:text-slate-400 font-medium text-right">Date:</td>
+                      <td className="font-semibold text-slate-900 dark:text-slate-50 text-right">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                     </tr>
                     <tr>
-                      <td className="pr-4 py-1 text-slate-500 font-medium text-right">Period:</td>
-                      <td className="font-semibold text-slate-900 text-right">{new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</td>
+                      <td className="pr-4 py-1 text-slate-500 dark:text-slate-400 font-medium text-right">Period:</td>
+                      <td className="font-semibold text-slate-900 dark:text-slate-50 text-right">{new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -343,18 +343,18 @@ export default function Invoices() {
             {/* Bill To */}
             <div className="mb-6">
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Bill To:</h3>
-              <p className="font-bold text-lg text-slate-900">{profile.first_name} {profile.last_name}</p>
-              <p className="text-slate-600 text-sm mt-1">{profile.email}</p>
+              <p className="font-bold text-lg text-slate-900 dark:text-slate-50">{profile.first_name} {profile.last_name}</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">{profile.email}</p>
             </div>
 
             {/* Table */}
             <table className="w-full text-left mb-6 border-collapse">
               <thead>
-                <tr className="border-y-2 border-slate-200 text-slate-900">
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500">Date</th>
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500">Description</th>
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 text-right">Duration</th>
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 text-right">Amount</th>
+                <tr className="border-y-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-900 dark:text-slate-50">
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Description</th>
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Duration</th>
+                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -366,15 +366,15 @@ export default function Invoices() {
                   const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
                   const amt = hours * rate
                   return (
-                    <tr key={c.id} className="border-b border-slate-100 text-sm">
-                      <td className="py-4 text-slate-600">
+                    <tr key={c.id} className="border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                      <td className="py-4 text-slate-600 dark:text-slate-400">
                         {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td className="py-4 font-medium text-slate-800">
+                      <td className="py-4 font-medium text-slate-800 dark:text-slate-200">
                         {c.title || 'Live Class'}
                       </td>
-                      <td className="py-4 text-slate-600 text-right">{c.duration_minutes} mins</td>
-                      <td className="py-4 font-medium text-slate-900 text-right">{currencySym}{amt.toFixed(2)}</td>
+                      <td className="py-4 text-slate-600 dark:text-slate-400 text-right">{c.duration_minutes} mins</td>
+                      <td className="py-4 font-medium text-slate-900 dark:text-slate-50 text-right">{currencySym}{amt.toFixed(2)}</td>
                     </tr>
                   )
                 })}
@@ -384,37 +384,37 @@ export default function Invoices() {
             {/* Totals Section */}
             <div className="flex justify-end mb-16">
               <div className="w-72">
-                <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
-                  <span className="text-slate-600">Total Hours</span>
-                  <span className="font-medium text-slate-900">{(totalMins / 60).toFixed(2)} hrs</span>
+                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                  <span className="text-slate-600 dark:text-slate-400">Total Hours</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-50">{(totalMins / 60).toFixed(2)} hrs</span>
                 </div>
                 
                 {courseEnrollments.filter(e => e.user_id === profile.id).length > 0 ? (
                   courseEnrollments.filter(e => e.user_id === profile.id).map((e, idx) => {
                     const rate = e.custom_hourly_rate != null ? e.custom_hourly_rate : (profile.hourly_rate || 0)
                     return (
-                      <div key={idx} className="flex justify-between py-2 border-b border-slate-100 text-sm">
-                        <span className="text-slate-600">Hourly Rate ({e.courses?.title || 'Course'})</span>
-                        <span className="font-medium text-slate-900">{currencySym}{rate.toFixed(2)}/hr</span>
+                      <div key={idx} className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                        <span className="text-slate-600 dark:text-slate-400">Hourly Rate ({e.courses?.title || 'Course'})</span>
+                        <span className="font-medium text-slate-900 dark:text-slate-50">{currencySym}{rate.toFixed(2)}/hr</span>
                       </div>
                     )
                   })
                 ) : (
-                  <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
-                    <span className="text-slate-600">Hourly Rate</span>
-                    <span className="font-medium text-slate-900">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
+                  <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                    <span className="text-slate-600 dark:text-slate-400">Hourly Rate</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-50">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
                   </div>
                 )}
                 <div className="flex justify-between py-4 mt-2">
-                  <span className="font-bold text-lg text-slate-900">Total Due</span>
-                  <span className="font-bold text-xl text-slate-900">{currencySym}{totalAmount.toFixed(2)}</span>
+                  <span className="font-bold text-lg text-slate-900 dark:text-slate-50">Total Due</span>
+                  <span className="font-bold text-xl text-slate-900 dark:text-slate-50">{currencySym}{totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="mt-auto border-t border-slate-200 pt-8 pb-8 text-slate-500 text-xs">
-              <p className="font-bold text-slate-800 uppercase tracking-wider mb-2">Payment Terms</p>
+            <div className="mt-auto border-t border-slate-200 dark:border-slate-800 dark:border-slate-700 pt-8 pb-8 text-slate-500 dark:text-slate-400 text-xs">
+              <p className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2">Payment Terms</p>
               <p>Due on receipt. Please make all payments payable to DE-ECO Education. Thank you for your business!</p>
             </div>
           </div>
@@ -437,7 +437,7 @@ export default function Invoices() {
             .min-h-screen {
               background: white !important;
             }
-            .bg-white.w-full.max-w-\\[210mm\\] {
+            .bg-white dark:bg-slate-900 dark:bg-white.w-full.max-w-\\[210mm\\] {
               visibility: visible;
               position: absolute;
               left: 0;
@@ -447,7 +447,7 @@ export default function Invoices() {
               padding: 48px !important;
               box-shadow: none;
             }
-            .bg-white.w-full.max-w-\\[210mm\\] * {
+            .bg-white dark:bg-slate-900 dark:bg-white.w-full.max-w-\\[210mm\\] * {
               visibility: visible;
             }
           }
@@ -461,20 +461,20 @@ export default function Invoices() {
     <div className="p-4 sm:p-6 lg:p-10 w-full flex flex-col min-h-screen overflow-x-hidden">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-2">Invoices</h1>
-          <p className="text-slate-500 font-medium text-lg">Generate itemized invoices for any date range instantly.</p>
+          <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-2">Invoices</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">Generate itemized invoices for any date range instantly.</p>
         </div>
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6 mb-8">
         <div className="flex flex-col md:flex-row gap-6 items-end">
           <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Start Date</label>
               <input 
                 type="date"
-                className="w-full border-2 border-slate-200 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50"
+                className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-800/50"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
               />
@@ -483,7 +483,7 @@ export default function Invoices() {
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">End Date</label>
               <input 
                 type="date"
-                className="w-full border-2 border-slate-200 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50"
+                className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-800/50"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
               />
@@ -498,7 +498,7 @@ export default function Invoices() {
                 e.setDate(e.getDate() - 1)
                 setEndDate(`${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, '0')}-${String(e.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               This Week
             </button>
@@ -510,7 +510,7 @@ export default function Invoices() {
                 e.setDate(e.getDate() - 1)
                 setEndDate(`${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, '0')}-${String(e.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               Last Week
             </button>
@@ -521,7 +521,7 @@ export default function Invoices() {
                 d.setDate(1)
                 setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               This Month
             </button>
@@ -533,7 +533,7 @@ export default function Invoices() {
                 d.setDate(1) // First day of previous month
                 setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               Last Month
             </button>
@@ -541,7 +541,7 @@ export default function Invoices() {
         </div>
 
         {/* Formatted Date Range Display */}
-        <div className="mt-4 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-700 text-sm font-bold flex items-center gap-2">
+        <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 rounded-lg text-indigo-700 dark:text-indigo-400 text-sm font-bold flex items-center gap-2">
           <Calendar size={16} />
           <span>
             Viewing classes scheduled from{' '}
@@ -555,44 +555,44 @@ export default function Invoices() {
       {/* Results Grid */}
       {loading ? (
         <div className="flex-1 flex items-center justify-center p-10">
-          <div className="animate-spin w-8 h-8 border-4 border-slate-200 border-t-slate-900 rounded-full" />
+          <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-slate-800 dark:border-slate-700 border-t-slate-900 rounded-full" />
         </div>
       ) : studentSummaries.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-16 flex flex-col items-center justify-center text-center">
+        <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-16 flex flex-col items-center justify-center text-center">
           <Receipt className="w-16 h-16 text-slate-300 mb-4" />
-          <h3 className="text-xl font-bold text-slate-700 mb-2">No Classes Found</h3>
-          <p className="text-slate-500">There are no completed classes in the selected date range.</p>
+          <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Classes Found</h3>
+          <p className="text-slate-500 dark:text-slate-400">There are no completed classes in the selected date range.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {studentSummaries.map(summary => {
             const currencySym = CURRENCIES[summary.profile.billing_currency] || summary.profile.billing_currency || ''
             return (
-              <div key={summary.profile.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                <div className="p-6 border-b border-slate-100">
-                  <h3 className="text-lg font-black text-slate-900 truncate">
+              <div key={summary.profile.id} className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-hidden flex flex-col">
+                <div className="p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50">
+                  <h3 className="text-lg font-black text-slate-900 dark:text-slate-50 truncate">
                     {summary.profile.first_name} {summary.profile.last_name}
                   </h3>
-                  <p className="text-sm font-medium text-slate-500 truncate">{summary.profile.email}</p>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{summary.profile.email}</p>
                 </div>
-                <div className="p-6 bg-slate-50 flex-1 flex flex-col gap-4">
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 flex-1 flex flex-col gap-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Classes</span>
-                    <span className="font-bold text-slate-900">{summary.classes.length} completed</span>
+                    <span className="font-bold text-slate-900 dark:text-slate-50">{summary.classes.length} completed</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Time</span>
-                    <span className="font-bold text-slate-900">{(summary.totalMins / 60).toFixed(2)} hrs</span>
+                    <span className="font-bold text-slate-900 dark:text-slate-50">{(summary.totalMins / 60).toFixed(2)} hrs</span>
                   </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-slate-200 mt-auto">
+                  <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-800 dark:border-slate-700 mt-auto">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Amount Due</span>
                     <span className="text-xl font-black text-indigo-600">{currencySym}{summary.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="p-4 bg-white border-t border-slate-100">
+                <div className="p-4 bg-white dark:bg-slate-900 dark:bg-white border-t border-slate-100 dark:border-slate-800 dark:border-slate-700/50">
                   <button
                     onClick={() => setViewInvoiceFor(summary.profile.id)}
-                    className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-sm"
                   >
                     <Printer size={18} />
                     View & Print Invoice

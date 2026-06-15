@@ -168,17 +168,17 @@ export default function MarketPulse() {
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700 shrink-0">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-1">Market Pulse</h1>
-          <p className="text-slate-500 font-medium">
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight mb-1">Market Pulse</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
             Manage reels & short market insights
           </p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 transition-colors text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-white dark:text-slate-900 px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           Add Reel
@@ -187,13 +187,13 @@ export default function MarketPulse() {
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
-            <div className="flex justify-between items-center p-6 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900">
+        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                 {editingId ? 'Edit Reel' : 'New Reel'}
               </h2>
-              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors">
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 p-2 rounded-lg transition-colors">
                 <X />
               </button>
             </div>
@@ -204,7 +204,7 @@ export default function MarketPulse() {
             >
               <input
                 placeholder="Title"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -214,7 +214,7 @@ export default function MarketPulse() {
 
               <input
                 placeholder="Reel URL"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 value={formData.reel_url}
                 onChange={(e) =>
                   setFormData({ ...formData, reel_url: e.target.value })
@@ -224,7 +224,7 @@ export default function MarketPulse() {
 
               <input
                 placeholder="Thumbnail URL"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 value={formData.thumbnail_url}
                 onChange={(e) =>
                   setFormData({
@@ -236,7 +236,7 @@ export default function MarketPulse() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <select
-                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
+                  className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
                   value={formData.platform}
                   onChange={(e) =>
                     setFormData({
@@ -252,7 +252,7 @@ export default function MarketPulse() {
 
                 <input
                   placeholder="Tag (e.g. BOJ, FED)"
-                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                  className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                   value={formData.tag}
                   onChange={(e) =>
                     setFormData({ ...formData, tag: e.target.value })
@@ -265,7 +265,7 @@ export default function MarketPulse() {
                 <input
                   type="number"
                   placeholder="Duration (seconds)"
-                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                  className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                   value={formData.duration_seconds}
                   onChange={(e) =>
                     setFormData({
@@ -277,7 +277,7 @@ export default function MarketPulse() {
                 <input
                   type="number"
                   placeholder="View Count (Optional)"
-                  className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                  className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                   value={formData.view_count}
                   onChange={(e) =>
                     setFormData({
@@ -290,7 +290,7 @@ export default function MarketPulse() {
 
               <input
                 type="datetime-local"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700 dark:text-slate-300"
                 value={formData.published_at}
                 onChange={(e) =>
                   setFormData({
@@ -303,7 +303,7 @@ export default function MarketPulse() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-slate-900 hover:bg-slate-800 transition-colors text-white py-3 rounded-lg font-bold"
+                  className="w-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-white dark:text-slate-900 py-3 rounded-lg font-bold"
                 >
                   {editingId ? 'Update Reel' : 'Create Reel'}
                 </button>
@@ -318,13 +318,13 @@ export default function MarketPulse() {
         {reels.map((r) => (
           <div
             key={r.id}
-            className="bg-white p-6 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
+            className="bg-white dark:bg-slate-900 dark:bg-white p-6 rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
           >
             <div>
-              <h3 className="font-bold text-xl text-slate-900 mb-1">{r.title}</h3>
-              <p className="text-sm text-slate-500 max-w-2xl">{r.description}</p>
+              <h3 className="font-bold text-xl text-slate-900 dark:text-slate-50 mb-1">{r.title}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl">{r.description}</p>
 
-              <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-600 font-medium">
+              <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
                 <span className="flex items-center gap-1.5">
                   <Tag size={16} className="text-slate-400" /> {r.tag}
                 </span>
@@ -340,7 +340,7 @@ export default function MarketPulse() {
                 href={r.reel_url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 px-4 py-2 rounded-lg text-sm font-bold mt-4 transition-colors w-fit"
+                className="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 px-4 py-2 rounded-lg text-sm font-bold mt-4 transition-colors w-fit"
               >
                 <Link size={16} /> View Reel
               </a>
@@ -349,13 +349,13 @@ export default function MarketPulse() {
             <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(r)}
-                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 rounded-lg transition-colors"
               >
                 <Edit2 size={18} />
               </button>
               <button
                 onClick={() => handleDelete(r.id)}
-                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-lg transition-colors"
               >
                 <Trash2 size={18} />
               </button>

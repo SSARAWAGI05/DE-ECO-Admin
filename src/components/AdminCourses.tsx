@@ -174,15 +174,15 @@ export default function AdminCourses() {
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700 shrink-0">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">Courses Admin</h1>
-          <p className="text-slate-500 font-medium">Manage all courses and curriculum</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-1">Courses Admin</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Manage all courses and curriculum</p>
         </div>
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 transition-colors text-white px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-white dark:text-slate-900 px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
         >
           <Plus size={18} /> Add Course
         </button>
@@ -190,19 +190,19 @@ export default function AdminCourses() {
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
-            <div className="flex justify-between items-center p-6 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900">
+        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                 {editingId ? 'Edit Course' : 'New Course'}
               </h2>
-              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors"><X /></button>
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 p-2 rounded-lg transition-colors"><X /></button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
               <input
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Course Title"
                 value={formData.title}
                 onChange={(e) =>
@@ -212,7 +212,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Short Description (Optional)"
                 value={formData.description}
                 onChange={(e) =>
@@ -221,7 +221,7 @@ export default function AdminCourses() {
               />
 
               <select
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
                 value={formData.level}
                 onChange={(e) =>
                   setFormData({ ...formData, level: e.target.value as any })
@@ -234,7 +234,7 @@ export default function AdminCourses() {
 
               <input
                 type="number"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Duration (weeks)"
                 value={formData.duration_weeks}
                 onChange={(e) =>
@@ -245,7 +245,7 @@ export default function AdminCourses() {
               {/* THUMBNAIL URL */}
               <input
                 type="url"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Thumbnail Image URL (https://...)"
                 value={formData.thumbnail_url}
                 onChange={(e) =>
@@ -267,7 +267,7 @@ export default function AdminCourses() {
               )}
 
               <input
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Instructor Name"
                 value={formData.instructor_name}
                 onChange={(e) =>
@@ -277,7 +277,7 @@ export default function AdminCourses() {
 
               <input
                 type="number"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Price (INR)"
                 value={formData.price}
                 onChange={(e) =>
@@ -287,7 +287,7 @@ export default function AdminCourses() {
 
               <input
                 type="date"
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700 dark:text-slate-300"
                 value={formData.enrollment_deadline}
                 onChange={(e) =>
                   setFormData({ ...formData, enrollment_deadline: e.target.value })
@@ -295,7 +295,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="What you'll learn (one per line)"
                 value={formData.what_you_learn}
                 onChange={(e) =>
@@ -304,7 +304,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Prerequisites (one per line)"
                 value={formData.prerequisites}
                 onChange={(e) =>
@@ -313,10 +313,10 @@ export default function AdminCourses() {
               />
 
               <div className="flex gap-6">
-                <label className="flex items-center gap-3 cursor-pointer text-slate-700 font-medium">
+                <label className="flex items-center gap-3 cursor-pointer text-slate-700 dark:text-slate-300 font-medium">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
+                    className="w-5 h-5 text-slate-900 dark:text-slate-50 border-slate-300 dark:border-slate-700 rounded focus:ring-slate-900"
                     checked={formData.is_active}
                     onChange={(e) =>
                       setFormData({ ...formData, is_active: e.target.checked })
@@ -325,10 +325,10 @@ export default function AdminCourses() {
                   Active
                 </label>
 
-                <label className="flex items-center gap-3 cursor-pointer text-slate-700 font-medium">
+                <label className="flex items-center gap-3 cursor-pointer text-slate-700 dark:text-slate-300 font-medium">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
+                    className="w-5 h-5 text-slate-900 dark:text-slate-50 border-slate-300 dark:border-slate-700 rounded focus:ring-slate-900"
                     checked={formData.featured}
                     onChange={(e) =>
                       setFormData({ ...formData, featured: e.target.checked })
@@ -341,7 +341,7 @@ export default function AdminCourses() {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-bold transition-colors"
+                  className="w-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 py-3 rounded-lg font-bold transition-colors"
                 >
                   {editingId ? 'Update Course' : 'Create Course'}
                 </button>
@@ -357,23 +357,23 @@ export default function AdminCourses() {
         {courses.map((c) => (
           <div
             key={c.id}
-            className="bg-white p-6 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
+            className="bg-white dark:bg-slate-900 dark:bg-white p-6 rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
           >
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-bold text-xl text-slate-900 flex items-center gap-2">
+                <h3 className="font-bold text-xl text-slate-900 dark:text-slate-50 flex items-center gap-2">
                   {c.title}
                   {c.featured && <Star size={16} className="text-amber-400 fill-amber-400" title="Featured Course" />}
                 </h3>
                 {!c.is_active && (
-                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold">
                     Draft
                   </span>
                 )}
               </div>
-              <p className="text-sm text-slate-500 mb-4 max-w-2xl">{c.description}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 max-w-2xl">{c.description}</p>
 
-              <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-600 font-medium">
+              <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-600 dark:text-slate-400 font-medium">
                 <span className="flex items-center gap-1.5"><Users size={16} className="text-slate-400"/> <span className="capitalize">{c.level}</span></span>
                 <span className="flex items-center gap-1.5"><Clock size={16} className="text-slate-400"/> {c.duration_weeks ?? '—'} weeks</span>
                 <span className="flex items-center gap-1.5"><Calendar size={16} className="text-slate-400"/> {c.enrollment_deadline ?? '—'}</span>
@@ -383,13 +383,13 @@ export default function AdminCourses() {
             <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(c)}
-                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 rounded-lg transition-colors"
               >
                 <Edit2 size={18} />
               </button>
               <button
                 onClick={() => handleDelete(c.id)}
-                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-lg transition-colors"
               >
                 <Trash2 size={18} />
               </button>

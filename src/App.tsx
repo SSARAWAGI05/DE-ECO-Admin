@@ -14,6 +14,7 @@ import StudentBilling from './components/StudentBilling' // ✅ NEW
 import PastClassHistory from './components/PastClassHistory'
 import EarningsAnalytics from './components/EarningsAnalytics'
 import Invoices from './components/Invoices'
+import { useDarkMode } from './hooks/useDarkMode'
 
 type Section =
   | 'dashboard'
@@ -31,6 +32,7 @@ type Section =
   | 'earnings_analytics'
 
 function App() {
+  useDarkMode() // Initialize theme
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [passcode, setPasscode] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
@@ -58,15 +60,15 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full">
-          <div className="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
-            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 dark:bg-white p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 max-w-sm w-full">
+          <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
+            <svg className="w-8 h-8 text-white dark:text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-black text-center text-slate-900 mb-2">Admin Portal</h2>
-          <p className="text-center text-slate-500 text-sm mb-6">Enter your secure passcode to access the dashboard.</p>
+          <h2 className="text-2xl font-black text-center text-slate-900 dark:text-slate-50 mb-2">Admin Portal</h2>
+          <p className="text-center text-slate-500 dark:text-slate-400 text-sm mb-6">Enter your secure passcode to access the dashboard.</p>
           
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -78,12 +80,12 @@ function App() {
                   setPasscode(e.target.value)
                   setErrorMsg('')
                 }}
-                className="w-full text-center text-2xl tracking-[0.25em] font-mono p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none"
+                className="w-full text-center text-2xl tracking-[0.25em] font-mono p-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none"
                 autoFocus
               />
-              {errorMsg && <p className="text-rose-500 text-sm font-semibold text-center mt-2">{errorMsg}</p>}
+              {errorMsg && <p className="text-rose-500 dark:text-rose-400 text-sm font-semibold text-center mt-2">{errorMsg}</p>}
             </div>
-            <button type="submit" className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors shadow-sm">
+            <button type="submit" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-sm">
               Unlock
             </button>
           </form>
@@ -131,7 +133,7 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden font-sans">
+    <div className="flex h-screen bg-white dark:bg-slate-900 dark:bg-white overflow-hidden font-sans">
       <Sidebar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}

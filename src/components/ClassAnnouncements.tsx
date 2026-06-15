@@ -138,13 +138,13 @@ const AdminAnnouncements: React.FC = () => {
     <div className="max-w-5xl mx-auto w-full overflow-x-hidden p-4 sm:p-6 lg:p-10 ">
 
       {/* FORM */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8">
+      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6 sm:p-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
             {editingId ? "Edit Announcement" : "Create Announcement"}
           </h2>
           {editingId && (
-            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition-colors"><X /></button>
+            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 p-2 rounded-lg transition-colors"><X /></button>
           )}
         </div>
 
@@ -152,7 +152,7 @@ const AdminAnnouncements: React.FC = () => {
 
           {/* CLASS */}
           <select
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
+            className="w-full border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
             value={form.classId}
             onChange={(e) =>
               setForm({ ...form, classId: e.target.value })
@@ -167,7 +167,7 @@ const AdminAnnouncements: React.FC = () => {
           </select>
 
           <input
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+            className="w-full border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
             placeholder="Title"
             required
             value={form.title}
@@ -177,7 +177,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <textarea
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 placeholder:text-slate-400"
+            className="w-full border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
             placeholder="Message"
             required
             value={form.message}
@@ -187,7 +187,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <select
-            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900"
+            className="w-full border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
             value={form.priority}
             onChange={(e) =>
               setForm({ ...form, priority: e.target.value })
@@ -202,7 +202,7 @@ const AdminAnnouncements: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 w-full sm:w-auto bg-slate-900 hover:bg-slate-800 disabled:opacity-70 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 disabled:opacity-70 text-white dark:text-slate-900 px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               <Send size={18} />
               {loading
@@ -217,29 +217,29 @@ const AdminAnnouncements: React.FC = () => {
 
       {/* LIST */}
       <div className="space-y-5">
-        <h3 className="text-xl font-bold text-slate-900 tracking-tight">All Announcements</h3>
+        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">All Announcements</h3>
 
         {announcements.length === 0 && (
-          <p className="text-slate-500 font-medium bg-white p-6 rounded-2xl border border-slate-200 text-center">No announcements yet.</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium bg-white dark:bg-slate-900 dark:bg-white p-6 rounded-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 text-center">No announcements yet.</p>
         )}
 
         {announcements.map((a) => (
           <div
             key={a.id}
-            className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
+            className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
           >
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h4 className="font-bold text-lg text-slate-900">{a.title}</h4>
+                <h4 className="font-bold text-lg text-slate-900 dark:text-slate-50">{a.title}</h4>
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                  a.priority === 'high' ? 'bg-rose-100 text-rose-700' :
-                  a.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
-                  'bg-emerald-100 text-emerald-700'
+                  a.priority === 'high' ? 'bg-rose-100 text-rose-700 dark:text-rose-400' :
+                  a.priority === 'medium' ? 'bg-amber-100 text-amber-700 dark:text-amber-400' :
+                  'bg-emerald-100 text-emerald-700 dark:text-emerald-400'
                 }`}>
                   {a.priority.toUpperCase()}
                 </span>
               </div>
-              <p className="text-sm text-slate-600 mb-3 whitespace-pre-wrap leading-relaxed">{a.message}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 whitespace-pre-wrap leading-relaxed">{a.message}</p>
               <p className="text-xs font-medium text-slate-400 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                 {a.class_id ? "Class-specific" : "All classes"}
@@ -249,13 +249,13 @@ const AdminAnnouncements: React.FC = () => {
             <div className="flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => handleEdit(a)}
-                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 rounded-lg transition-colors"
               >
                 <Edit2 size={18} />
               </button>
               <button
                 onClick={() => handleDelete(a.id)}
-                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-lg transition-colors"
               >
                 <Trash2 size={18} />
               </button>

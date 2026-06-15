@@ -203,7 +203,7 @@ export default function EarningsAnalytics() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center p-10">
-        <div className="animate-spin w-8 h-8 border-4 border-slate-200 border-t-slate-900 rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-slate-800 dark:border-slate-700 border-t-slate-900 rounded-full" />
       </div>
     )
   }
@@ -250,12 +250,12 @@ export default function EarningsAnalytics() {
       {/* HEADER & CONTROLS */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-1">Earnings Analytics</h1>
-          <p className="text-slate-500 font-medium">Track your revenue trends and student contributions.</p>
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight mb-1">Earnings Analytics</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Track your revenue trends and student contributions.</p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1.5 rounded-lg shadow-inner">
+          <div className="flex flex-wrap items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-lg shadow-inner">
             {(['daily', 'weekly', 'monthly', 'custom'] as Timeframe[]).map((tf) => (
               <button
                 key={tf}
@@ -264,7 +264,7 @@ export default function EarningsAnalytics() {
                   setSelectedDateKey(null)
                 }}
                 className={`px-5 py-2 rounded-md text-sm font-bold capitalize transition-colors ${
-                  timeframe === tf ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'
+                  timeframe === tf ? 'bg-white dark:bg-slate-900 dark:bg-white shadow-sm text-slate-900 dark:text-slate-50' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'
                 }`}
               >
                 {tf}
@@ -275,7 +275,7 @@ export default function EarningsAnalytics() {
       </div>
 
       {/* SUMMARY HERO CARD */}
-      <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 mb-8 text-white shadow-lg relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="bg-slate-900 dark:bg-white rounded-2xl p-6 sm:p-8 mb-8 text-white dark:text-slate-900 shadow-lg relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="relative z-10">
           <h2 className="text-slate-400 font-medium tracking-wide uppercase text-sm mb-2">
             Earnings for {selectedDetails ? selectedDetails.label : 'Selected Period'}
@@ -297,33 +297,33 @@ export default function EarningsAnalytics() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="bg-white text-sm font-bold text-slate-900 outline-none p-2 rounded-lg cursor-pointer"
+                className="bg-white dark:bg-slate-900 dark:bg-white text-sm font-bold text-slate-900 dark:text-slate-50 outline-none p-2 rounded-lg cursor-pointer"
               />
               <span className="text-slate-400">to</span>
               <input 
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="bg-white text-sm font-bold text-slate-900 outline-none p-2 rounded-lg cursor-pointer"
+                className="bg-white dark:bg-slate-900 dark:bg-white text-sm font-bold text-slate-900 dark:text-slate-50 outline-none p-2 rounded-lg cursor-pointer"
               />
             </div>
           ) : timeframe === 'daily' ? (
-            <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-2 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
               <input 
                 type="date"
                 value={selectedDateKey || ''}
                 onChange={(e) => setSelectedDateKey(e.target.value)}
-                className="bg-transparent text-sm font-bold text-slate-900 outline-none pr-2 cursor-pointer"
+                className="bg-transparent text-sm font-bold text-slate-900 dark:text-slate-50 outline-none pr-2 cursor-pointer"
               />
             </div>
           ) : (
-            <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-2 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
               <select 
                 value={selectedDateKey || ''}
                 onChange={(e) => setSelectedDateKey(e.target.value)}
-                className="bg-transparent text-sm font-bold text-slate-900 outline-none pr-8 cursor-pointer"
+                className="bg-transparent text-sm font-bold text-slate-900 dark:text-slate-50 outline-none pr-8 cursor-pointer"
               >
                 <option value="" disabled>Select {timeframe}</option>
                 {chartData.map(d => (
@@ -347,33 +347,33 @@ export default function EarningsAnalytics() {
       <div className="flex flex-col gap-8">
         {/* CONTRIBUTIONS BREAKDOWN */}
         <div>
-          <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-4 flex items-center gap-2">
             <Users size={18} className="text-slate-400" />
             Class Breakdown
           </h3>
           
           {!selectedDetails || selectedDetails.classes.length === 0 ? (
-            <div className="bg-white border border-slate-200 border-dashed rounded-2xl py-12 flex flex-col items-center justify-center text-slate-400">
+            <div className="bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 border-dashed rounded-2xl py-12 flex flex-col items-center justify-center text-slate-400">
               <Calendar size={32} className="opacity-20 mb-3" />
               <p className="font-medium">No classes scheduled for this period.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {selectedDetails.classes.map((cls, idx) => (
-                <div key={idx} className="flex flex-col gap-3 p-5 rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <div key={idx} className="flex flex-col gap-3 p-5 rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-white shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start gap-2">
-                    <div className="font-bold text-slate-900 text-lg">{cls.studentName}</div>
-                    <div className="text-right shrink-0 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md">
+                    <div className="font-bold text-slate-900 dark:text-slate-50 text-lg">{cls.studentName}</div>
+                    <div className="text-right shrink-0 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-md">
                       <div className="font-bold text-sm">
                         {CURRENCY_SYMBOL[cls.currency] || cls.currency}{Math.round(cls.earnedOriginal).toLocaleString()}
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm font-medium border-t border-slate-100 pt-3">
-                    <div className="text-slate-500 truncate pr-2">
+                  <div className="flex justify-between items-center text-sm font-medium border-t border-slate-100 dark:border-slate-800 dark:border-slate-700/50 pt-3">
+                    <div className="text-slate-500 dark:text-slate-400 truncate pr-2">
                       {cls.title}
                     </div>
-                    <div className="text-slate-600 shrink-0 flex items-center gap-1.5 bg-slate-100 px-2 py-1 rounded">
+                    <div className="text-slate-600 dark:text-slate-400 shrink-0 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
                       <TrendingUp size={14} className="text-slate-400" />
                       {cls.duration_minutes}m
                     </div>
@@ -385,8 +385,8 @@ export default function EarningsAnalytics() {
         </div>
 
         {/* REVENUE TREND CHART */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 mb-8">
-          <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 shadow-sm p-4 sm:p-6 mb-8">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-slate-400" />
             Revenue Trend ({timeframe})
           </h3>
@@ -428,7 +428,7 @@ export default function EarningsAnalytics() {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload
                         return (
-                          <div className="bg-slate-900 text-white p-3 rounded-lg shadow-xl border border-slate-700">
+                          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-3 rounded-lg shadow-xl border border-slate-700">
                             <p className="font-bold mb-1">{data.label}</p>
                             <p className="text-emerald-400 font-medium">₹{Math.round(data.totalINR).toLocaleString()}</p>
                             <p className="text-xs text-slate-400 mt-1">{data.classes.length} classes</p>

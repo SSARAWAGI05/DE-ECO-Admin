@@ -193,10 +193,10 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HERO */}
       <div className="pb-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-1">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-1">
           Welcome back
         </h1>
-        <p className="text-slate-500 font-medium">
+        <p className="text-slate-500 dark:text-slate-400 font-medium">
           Here’s what’s happening on DE-ECO today.
         </p>
       </div>
@@ -210,8 +210,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* EARNINGS CHART */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold mb-6 text-slate-900 tracking-tight">Earnings Overview</h2>
+      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+        <h2 className="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-50 tracking-tight">Earnings Overview</h2>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -238,8 +238,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* CLASSES */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold mb-5 text-slate-900 tracking-tight">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+          <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
             Upcoming Live Classes
           </h2>
 
@@ -282,8 +282,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         </div>
 
         {/* ACTIVITY */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold mb-5 text-slate-900 tracking-tight">
+        <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+          <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
             Activity Feed
           </h2>
 
@@ -312,8 +312,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold mb-5 text-slate-900 tracking-tight">
+      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+        <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
           Quick Actions
         </h2>
 
@@ -332,13 +332,13 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
 
 function Stat({ label, value, icon: Icon, accent }: any) {
   return (
-    <div className="bg-white rounded-xl p-5 border border-slate-200 flex items-center gap-4">
-      <div className="p-3 bg-slate-50 text-slate-700 rounded-lg">
+    <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl p-5 border border-slate-200 dark:border-slate-800 dark:border-slate-700 flex items-center gap-4">
+      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 rounded-lg">
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
-        <p className="text-2xl font-bold text-slate-900 tracking-tight">{value}</p>
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">{value}</p>
       </div>
     </div>
   )
@@ -348,9 +348,9 @@ function Action({ icon: Icon, label, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-3 border border-slate-200 rounded-xl p-5 hover:bg-slate-50 hover:border-slate-300 transition bg-white text-slate-600 hover:text-slate-900 group"
+      className="flex flex-col items-center justify-center gap-3 border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded-xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 hover:border-slate-300 dark:border-slate-700 transition bg-white dark:bg-slate-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-50 group"
     >
-      <Icon className="w-6 h-6 text-slate-400 group-hover:text-slate-900 transition-colors" />
+      <Icon className="w-6 h-6 text-slate-400 group-hover:text-slate-900 dark:text-slate-50 transition-colors" />
       <span className="text-sm font-semibold tracking-tight">{label}</span>
     </button>
   )
