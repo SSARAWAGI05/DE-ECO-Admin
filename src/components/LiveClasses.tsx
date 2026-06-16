@@ -47,6 +47,7 @@ export default function LiveClasses() {
   const [panelOpen, setPanelOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [customDuration, setCustomDuration] = useState(false)
+  const [viewFilter, setViewFilter] = useState<'upcoming' | 'past'>('upcoming')
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [defaultLink, setDefaultLink] = useState(
@@ -66,9 +67,12 @@ export default function LiveClasses() {
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
     fetchEligibleUsers()
-    fetchClasses()
     fetchCourses()
   }, [])
+
+  useEffect(() => {
+    fetchClasses()
+  }, [viewFilter])
 
   /* ================= DATA FETCHING ================= */
 
@@ -118,19 +122,22 @@ export default function LiveClasses() {
   }
 
   /**
-   * Fetch only upcoming / ongoing classes
+   * Fetch classes based on viewFilter
    */
   const fetchClasses = async () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const startOfToday = today.toISOString()
 
-    const { data } = await supabase
-      .from('live_classes')
-      .select('*')
-      .gte('scheduled_datetime', startOfToday)
-      .order('scheduled_datetime', { ascending: true })
+    let query = supabase.from('live_classes').select('*')
 
+    if (viewFilter === 'upcoming') {
+      query = query.gte('scheduled_datetime', startOfToday).order('scheduled_datetime', { ascending: true })
+    } else {
+      query = query.lt('scheduled_datetime', startOfToday).order('scheduled_datetime', { ascending: false })
+    }
+
+    const { data } = await query
     setClasses(data ?? [])
   }
 
@@ -275,11 +282,29 @@ export default function LiveClasses() {
         </div>
       </div>
 
+      {/* TOGGLE */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex bg-slate-100 dark:bg-neutral-800 p-1 rounded-xl">
+          <button
+            onClick={() => setViewFilter('upcoming')}
+            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-colors ${viewFilter === 'upcoming' ? 'bg-white dark:bg-neutral-950 text-slate-900 dark:text-slate-50 shadow-sm border border-slate-200 dark:border-neutral-700' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+          >
+            Upcoming & Today
+          </button>
+          <button
+            onClick={() => setViewFilter('past')}
+            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-colors ${viewFilter === 'past' ? 'bg-white dark:bg-neutral-950 text-slate-900 dark:text-slate-50 shadow-sm border border-slate-200 dark:border-neutral-700' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+          >
+            Past Classes
+          </button>
+        </div>
+      </div>
+
       {/* CARD GRID */}
       {classes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-dashed rounded-3xl p-12 text-center mt-4">
-          <Calendar size={48} className="text-slate-300 mb-4" />
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">No Upcoming Classes</h3>
+        <div className="flex flex-col items-center justify-center bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-dashed rounded-3xl p-12 text-center">
+          <Calendar size={48} className="text-slate-300 dark:text-slate-600 mb-4" />
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">No {viewFilter === 'upcoming' ? 'Upcoming' : 'Past'} Classes</h3>
           <p className="text-slate-500 dark:text-slate-400">You don't have any classes scheduled right now.</p>
         </div>
       ) : (
