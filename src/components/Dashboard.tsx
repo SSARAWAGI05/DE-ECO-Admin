@@ -210,7 +210,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* EARNINGS CHART */}
-      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
         <h2 className="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-50 tracking-tight">Earnings Overview</h2>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -238,7 +238,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* CLASSES */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+        <div className="lg:col-span-2 bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
           <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
             Upcoming Live Classes
           </h2>
@@ -282,7 +282,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         </div>
 
         {/* ACTIVITY */}
-        <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+        <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
           <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
             Activity Feed
           </h2>
@@ -312,7 +312,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6">
+      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
         <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
           Quick Actions
         </h2>
@@ -332,8 +332,8 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
 
 function Stat({ label, value, icon: Icon, accent }: any) {
   return (
-    <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl p-5 border border-slate-200 dark:border-slate-800 dark:border-slate-700 flex items-center gap-4">
-      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 rounded-lg">
+    <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl p-5 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-center gap-4">
+      <div className="p-3 bg-slate-50 dark:bg-neutral-800/50 text-slate-700 dark:text-slate-300 rounded-lg">
         <Icon className="w-5 h-5" />
       </div>
       <div>
@@ -348,7 +348,7 @@ function Action({ icon: Icon, label, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-3 border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded-xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 hover:border-slate-300 dark:border-slate-700 transition bg-white dark:bg-slate-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-50 group"
+      className="flex flex-col items-center justify-center gap-3 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-5 hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50 hover:border-slate-300 dark:border-neutral-700 transition bg-white dark:bg-neutral-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-50 group"
     >
       <Icon className="w-6 h-6 text-slate-400 group-hover:text-slate-900 dark:text-slate-50 transition-colors" />
       <span className="text-sm font-semibold tracking-tight">{label}</span>

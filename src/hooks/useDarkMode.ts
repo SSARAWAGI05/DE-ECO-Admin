@@ -7,11 +7,8 @@ export function useDarkMode() {
     const root = window.document.documentElement
     const initialColorValue = localStorage.getItem('theme')
     
-    // Check local storage or system preference
-    let isDarkValue = false
-    if (initialColorValue === 'dark' || (!initialColorValue && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      isDarkValue = true
-    }
+    // Default to light mode ALWAYS, unless explicitly set to dark in localStorage
+    const isDarkValue = initialColorValue === 'dark'
     
     setIsDark(isDarkValue)
     if (isDarkValue) {

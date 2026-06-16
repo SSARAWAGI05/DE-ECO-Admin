@@ -241,11 +241,11 @@ export default function LiveClasses() {
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <div className="flex gap-4">
-            <div className="bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
+            <div className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Upcoming</span>
               <span className="text-2xl font-black text-slate-900 dark:text-slate-50">{upcomingCount}</span>
             </div>
-            <div className="bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
+            <div className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today</span>
               <span className="text-2xl font-black text-indigo-600">{todayClasses}</span>
             </div>
@@ -253,7 +253,7 @@ export default function LiveClasses() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSettingsOpen(true)}
-              className="flex items-center justify-center gap-2 bg-white dark:bg-slate-900 dark:bg-white border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 hover:border-slate-300 dark:border-slate-700 transition-colors text-slate-700 dark:text-slate-300 px-5 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm"
+              className="flex items-center justify-center gap-2 bg-white dark:bg-neutral-900 dark:bg-white border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 hover:border-slate-300 dark:border-neutral-700 transition-colors text-slate-700 dark:text-slate-300 px-5 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm"
               title="Edit Default Meeting Link"
             >
               <LinkIcon className="w-5 h-5 text-slate-400" />
@@ -272,7 +272,7 @@ export default function LiveClasses() {
 
       {/* CARD GRID */}
       {classes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 border-dashed rounded-3xl p-12 text-center mt-4">
+        <div className="flex flex-col items-center justify-center bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-dashed rounded-3xl p-12 text-center mt-4">
           <Calendar size={48} className="text-slate-300 mb-4" />
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">No Upcoming Classes</h3>
           <p className="text-slate-500 dark:text-slate-400">You don't have any classes scheduled right now.</p>
@@ -306,7 +306,7 @@ export default function LiveClasses() {
             }
 
             return (
-              <div key={c.id} className="group flex flex-col bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div key={c.id} className="group flex flex-col bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 {/* Accent Bar */}
                 <div className={`h-1.5 w-full ${accentBar}`} />
                 
@@ -326,8 +326,8 @@ export default function LiveClasses() {
                   </p>
 
                   {/* Student Info */}
-                  <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 dark:border-slate-700/50 rounded-xl mb-5">
-                    <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 dark:bg-white shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 flex items-center justify-center text-indigo-600 font-bold shrink-0">
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-neutral-800/50 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 rounded-xl mb-5">
+                    <div className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900 dark:bg-white shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-center justify-center text-indigo-600 font-bold shrink-0">
                       {getUserName(c.user_id).charAt(0).toUpperCase() || 'S'}
                     </div>
                     <div className="truncate">
@@ -338,22 +338,22 @@ export default function LiveClasses() {
 
                   {/* Date/Time Chips */}
                   <div className="flex flex-wrap gap-2 mt-auto">
-                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-800 dark:border-slate-700">
+                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                       <Calendar size={14} className="text-slate-500 dark:text-slate-400" />
                       {start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                     </div>
-                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-800 dark:border-slate-700">
+                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                       <Clock size={14} className="text-slate-500 dark:text-slate-400" />
                       {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
-                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-800 dark:border-slate-700">
+                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                       {c.duration_minutes}m
                     </div>
                   </div>
                 </div>
 
                 {/* Footer Actions */}
-                <div className="border-t border-slate-100 dark:border-slate-800 dark:border-slate-700/50 p-3 bg-slate-50 dark:bg-slate-800/50/50 flex items-center justify-end gap-2 shrink-0">
+                <div className="border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 p-3 bg-slate-50 dark:bg-neutral-800/50/50 flex items-center justify-end gap-2 shrink-0">
                   {c.meeting_link && (
                     <a
                       href={c.meeting_link}
@@ -388,12 +388,12 @@ export default function LiveClasses() {
       {/* SIDE PANEL */}
       {panelOpen && (
         <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm z-50 flex justify-end">
-          <div className="w-full max-w-lg bg-white dark:bg-slate-900 dark:bg-white h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-800 dark:border-slate-700 animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 shrink-0 bg-white dark:bg-slate-900 dark:bg-white">
+          <div className="w-full max-w-lg bg-white dark:bg-neutral-900 dark:bg-white h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-neutral-800 dark:border-neutral-700 animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0 bg-white dark:bg-neutral-900 dark:bg-white">
               <h2 className="text-2xl font-black text-slate-900 dark:text-slate-50">
                 {editingId ? 'Edit Class' : 'Schedule Class'}
               </h2>
-              <button onClick={() => setPanelOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 rounded-full transition-colors">
+              <button onClick={() => setPanelOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 rounded-full transition-colors">
                 <X size={24} />
               </button>
             </div>
@@ -403,7 +403,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Assigned Student</label>
                 <select
-                  className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-slate-800/50"
+                  className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-neutral-800/50"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -423,7 +423,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Class Title</label>
                 <select
-                  className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-slate-800/50"
+                  className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-neutral-800/50"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -443,7 +443,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Instructor</label>
                 <input
-                  className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-slate-800/50"
+                  className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-neutral-800/50"
                   value={formData.instructor_name}
                   onChange={(e) =>
                     setFormData({
@@ -461,7 +461,7 @@ export default function LiveClasses() {
                 <input
                   type="url"
                   placeholder="https://meet.google.com/..."
-                  className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-slate-800/50 text-indigo-600"
+                  className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-neutral-800/50 text-indigo-600"
                   value={formData.meeting_link || ''}
                   onChange={(e) =>
                     setFormData({
@@ -478,7 +478,7 @@ export default function LiveClasses() {
                   <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Date & Time</label>
                   <input
                     type="datetime-local"
-                    className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-800/50"
+                    className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-neutral-800/50"
                     value={formData.scheduled_datetime}
                     onChange={(e) =>
                       setFormData({
@@ -512,7 +512,7 @@ export default function LiveClasses() {
                       className={`px-5 py-2.5 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
                         formData.duration_minutes === d.toString()
                           ? 'bg-indigo-600 text-white dark:text-slate-900 border-indigo-600 shadow-md'
-                          : 'bg-white dark:bg-slate-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-slate-700 border-slate-200 dark:border-slate-800 dark:border-slate-700'
+                          : 'bg-white dark:bg-neutral-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-neutral-700 border-slate-200 dark:border-neutral-800 dark:border-neutral-700'
                       }`}
                     >
                       {d} min
@@ -531,7 +531,7 @@ export default function LiveClasses() {
                     className={`px-5 py-2.5 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
                       customDuration
                         ? 'bg-indigo-600 text-white dark:text-slate-900 border-indigo-600 shadow-md'
-                        : 'bg-white dark:bg-slate-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-slate-700 border-slate-200 dark:border-slate-800 dark:border-slate-700'
+                        : 'bg-white dark:bg-neutral-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-neutral-700 border-slate-200 dark:border-neutral-800 dark:border-neutral-700'
                     }`}
                   >
                     Custom
@@ -543,7 +543,7 @@ export default function LiveClasses() {
                     <input
                       type="number"
                       placeholder="Enter custom minutes"
-                      className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-800/50"
+                      className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50"
                       value={formData.duration_minutes}
                       onChange={(e) =>
                         setFormData({
@@ -562,7 +562,7 @@ export default function LiveClasses() {
                   <div className="relative flex items-center">
                     <input
                       type="checkbox"
-                      className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 dark:border-slate-700 checked:border-indigo-600 checked:bg-indigo-600 transition-all outline-none"
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 dark:border-neutral-700 checked:border-indigo-600 checked:bg-indigo-600 transition-all outline-none"
                       checked={formData.send_email}
                       onChange={(e) => setFormData({ ...formData, send_email: e.target.checked })}
                     />
@@ -590,10 +590,10 @@ export default function LiveClasses() {
       {/* SETTINGS MODAL */}
       {settingsOpen && (
         <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 flex items-center justify-between">
+          <div className="w-full max-w-sm bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-50 text-xl">Default Meeting Link</h3>
-              <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-slate-900 dark:text-slate-50 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 p-1.5 rounded-full transition-colors">
+              <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-slate-900 dark:text-slate-50 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 p-1.5 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -601,7 +601,7 @@ export default function LiveClasses() {
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block mb-2">Meeting Link URL</label>
               <input
                 type="url"
-                className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3.5 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-800/50 text-indigo-600"
+                className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50 text-indigo-600"
                 value={defaultLink}
                 onChange={(e) => setDefaultLink(e.target.value)}
               />

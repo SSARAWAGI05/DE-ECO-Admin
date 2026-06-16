@@ -197,7 +197,7 @@ export default function ClassEnrollments() {
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shrink-0">
         <div>
           <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight mb-1">
             Student Enrollments
@@ -209,7 +209,7 @@ export default function ClassEnrollments() {
       </div>
 
       {/* SEARCH BAR */}
-      <div className="bg-white dark:bg-slate-900 dark:bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 dark:border-slate-800 dark:border-slate-700 shrink-0">
+      <div className="bg-white dark:bg-neutral-900 dark:bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shrink-0">
         <div className="relative w-full max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
@@ -218,24 +218,24 @@ export default function ClassEnrollments() {
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-slate-900 text-sm font-medium outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-slate-900 text-sm font-medium outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
           />
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-b-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-hidden flex-1 flex flex-col min-h-[400px]">
+      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-b-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden flex-1 flex flex-col min-h-[400px]">
         <div className="overflow-auto flex-1 relative">
           <table className="hidden md:table w-full text-left border-collapse min-w-[900px]">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700 sticky top-0 z-10 shadow-sm">
+            <thead className="bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-slate-800/50">Student Details</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-slate-800/50">Account Status</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-slate-800/50">Hourly Rate & Currency</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-slate-800/50">Actions</th>
+                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Student Details</th>
+                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Account Status</th>
+                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Hourly Rate & Currency</th>
+                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
               {filteredProfiles.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="p-12 text-center">
@@ -244,7 +244,7 @@ export default function ClassEnrollments() {
                 </tr>
               ) : (
                 filteredProfiles.map((profile) => (
-                  <tr key={profile.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50/50 transition-colors">
+                  <tr key={profile.id} className="hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50/50 transition-colors">
                     
                     <td className="p-4 whitespace-nowrap">
                       <div className="font-bold text-slate-900 dark:text-slate-50">
@@ -257,7 +257,7 @@ export default function ClassEnrollments() {
                         <input
                           type="email"
                           placeholder="guardian@example.com"
-                          className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 dark:border-slate-700 px-2 py-1.5 rounded text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-shadow disabled:opacity-50"
+                          className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 px-2 py-1.5 rounded text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-shadow disabled:opacity-50"
                           defaultValue={profile.guardian_email || ''}
                           onBlur={(e) => {
                             if (e.target.value !== (profile.guardian_email || '')) {
@@ -275,13 +275,13 @@ export default function ClassEnrollments() {
                         disabled={isSaving === profile.id}
                         className={`
                           relative inline-flex items-center w-32 h-10 rounded-full transition-colors focus:outline-none shadow-sm
-                          ${profile.is_active ? 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20' : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 dark:border-slate-700'}
+                          ${profile.is_active ? 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20' : 'bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700'}
                           ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
                         `}
                       >
                         <div
                           className={`
-                            absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-slate-900 dark:bg-white shadow-sm transition-transform duration-300 border border-slate-100 dark:border-slate-800 dark:border-slate-700/50
+                            absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-neutral-900 dark:bg-white shadow-sm transition-transform duration-300 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50
                             ${profile.is_active ? 'translate-x-22 text-emerald-600 dark:text-emerald-400' : 'translate-x-0 text-slate-400'}
                           `}
                         >
@@ -299,9 +299,9 @@ export default function ClassEnrollments() {
                     </td>
 
                     <td className="p-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 max-w-[200px] focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
+                      <div className="flex items-center gap-2 bg-slate-50 dark:bg-neutral-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-neutral-700 max-w-[200px] focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
                         <select 
-                          className="bg-transparent border-r border-slate-200 dark:border-slate-800 dark:border-slate-700 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
+                          className="bg-transparent border-r border-slate-200 dark:border-neutral-800 dark:border-neutral-700 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
                           value={profile.billing_currency || 'INR'}
                           onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
                           disabled={isSaving === profile.id}
@@ -331,7 +331,7 @@ export default function ClassEnrollments() {
                     <td className="p-4 whitespace-nowrap">
                       <button
                         onClick={() => setSelectedProfile(profile)}
-                        className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+                        className="flex items-center gap-2 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
                       >
                         <Settings size={16} /> Manage Enrollments
                       </button>
@@ -351,7 +351,7 @@ export default function ClassEnrollments() {
               </div>
             ) : (
               filteredProfiles.map((profile) => (
-                <div key={profile.id} className="bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded-xl p-4 shadow-sm flex flex-col gap-4">
+                <div key={profile.id} className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-4 shadow-sm flex flex-col gap-4">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="font-bold text-slate-900 dark:text-slate-50 text-lg">
@@ -368,13 +368,13 @@ export default function ClassEnrollments() {
                       disabled={isSaving === profile.id}
                       className={`
                         relative inline-flex items-center w-28 h-8 rounded-full transition-colors focus:outline-none shadow-sm
-                        ${profile.is_active ? 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20' : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 dark:border-slate-700'}
+                        ${profile.is_active ? 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20' : 'bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700'}
                         ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       `}
                     >
                       <div
                         className={`
-                          absolute left-1 flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-slate-900 dark:bg-white shadow-sm transition-transform duration-300 border border-slate-100 dark:border-slate-800 dark:border-slate-700/50
+                          absolute left-1 flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-neutral-900 dark:bg-white shadow-sm transition-transform duration-300 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50
                           ${profile.is_active ? 'translate-x-20 text-emerald-600 dark:text-emerald-400' : 'translate-x-0 text-slate-400'}
                         `}
                       >
@@ -393,9 +393,9 @@ export default function ClassEnrollments() {
 
                   <div className="flex flex-col gap-2">
                     <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase">Hourly Rate & Currency</span>
-                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
+                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-neutral-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-neutral-700 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
                       <select 
-                        className="bg-transparent border-r border-slate-200 dark:border-slate-800 dark:border-slate-700 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
+                        className="bg-transparent border-r border-slate-200 dark:border-neutral-800 dark:border-neutral-700 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
                         value={profile.billing_currency || 'INR'}
                         onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
                         disabled={isSaving === profile.id}
@@ -425,7 +425,7 @@ export default function ClassEnrollments() {
                   <div className="pt-2">
                     <button
                       onClick={() => setSelectedProfile(profile)}
-                      className="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-3 rounded-lg font-semibold transition-colors text-sm"
+                      className="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-3 rounded-lg font-semibold transition-colors text-sm"
                     >
                       <Settings size={16} /> Manage Enrollments
                     </button>
@@ -440,9 +440,9 @@ export default function ClassEnrollments() {
       {/* MANAGE ENROLLMENTS MODAL */}
       {selectedProfile && (
         <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 dark:bg-white w-full max-w-3xl max-h-[90vh] rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 flex flex-col">
+          <div className="bg-white dark:bg-neutral-900 dark:bg-white w-full max-w-3xl max-h-[90vh] rounded-xl shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col">
             
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 shrink-0">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                   Manage Enrollments
@@ -456,13 +456,13 @@ export default function ClassEnrollments() {
                   setSelectedProfile(null)
                   setNewEnrollmentId('')
                 }} 
-                className="text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 p-2 rounded-lg transition-colors"
+                className="text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 p-2 rounded-lg transition-colors"
               >
                 <X size={24} />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-50 dark:bg-slate-800/50/50">
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50 dark:bg-neutral-800/50/50">
               {loadingEnrollments ? (
                 <div className="flex justify-center p-10 text-slate-500 dark:text-slate-400 font-semibold">Loading enrollments...</div>
               ) : (
@@ -474,11 +474,11 @@ export default function ClassEnrollments() {
                       Course Enrollments
                     </h3>
                     {userCourseEnrollments.length === 0 ? (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-slate-900 dark:bg-white p-4 rounded-lg border border-slate-200 dark:border-slate-800 dark:border-slate-700">No courses enrolled.</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-neutral-900 dark:bg-white p-4 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">No courses enrolled.</p>
                     ) : (
-                      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-lg border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-x-auto">
+                      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-x-auto">
                         <table className="w-full text-left text-sm min-w-[500px]">
-                          <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700">
+                          <thead className="bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                             <tr>
                               <th className="p-3 font-semibold text-slate-600 dark:text-slate-400">Course</th>
                               <th className="p-3 font-semibold text-slate-600 dark:text-slate-400">Status</th>
@@ -486,7 +486,7 @@ export default function ClassEnrollments() {
                               <th className="p-3 font-semibold text-slate-600 dark:text-slate-400 w-24">Actions</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                          <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
                             {userCourseEnrollments.map(ce => (
                               <tr key={ce.id}>
                                 <td className="p-3 font-medium text-slate-900 dark:text-slate-50">{ce.courses?.title || 'Unknown Course'}</td>
@@ -494,7 +494,7 @@ export default function ClassEnrollments() {
                                   <select
                                     value={ce.status}
                                     onChange={(e) => handleUpdateCourseStatus(ce.id, e.target.value)}
-                                    className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded px-2 py-1 outline-none focus:ring-2 focus:ring-slate-900 text-xs font-semibold uppercase"
+                                    className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded px-2 py-1 outline-none focus:ring-2 focus:ring-slate-900 text-xs font-semibold uppercase"
                                   >
                                     <option value="contacted">Contacted</option>
                                     <option value="active">Active</option>
@@ -508,7 +508,7 @@ export default function ClassEnrollments() {
                                     min="0"
                                     step="0.01"
                                     placeholder="Default"
-                                    className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded px-2 py-1 outline-none focus:ring-2 focus:ring-slate-900 text-xs font-semibold w-24"
+                                    className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded px-2 py-1 outline-none focus:ring-2 focus:ring-slate-900 text-xs font-semibold w-24"
                                     value={ce.custom_hourly_rate === null || ce.custom_hourly_rate === undefined ? '' : ce.custom_hourly_rate}
                                     onBlur={(e) => {
                                       const val = e.target.value === '' ? null : parseFloat(e.target.value)
@@ -541,17 +541,17 @@ export default function ClassEnrollments() {
                       Live Class Enrollments
                     </h3>
                     {userClassEnrollments.length === 0 ? (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-slate-900 dark:bg-white p-4 rounded-lg border border-slate-200 dark:border-slate-800 dark:border-slate-700">No live classes enrolled.</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-neutral-900 dark:bg-white p-4 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">No live classes enrolled.</p>
                     ) : (
-                      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-lg border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-x-auto">
+                      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-x-auto">
                         <table className="w-full text-left text-sm min-w-[400px]">
-                          <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700">
+                          <thead className="bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                             <tr>
                               <th className="p-3 font-semibold text-slate-600 dark:text-slate-400">Class</th>
                               <th className="p-3 font-semibold text-slate-600 dark:text-slate-400 w-24">Actions</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                          <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
                             {userClassEnrollments.map(ce => (
                               <tr key={ce.id}>
                                 <td className="p-3 font-medium text-slate-900 dark:text-slate-50">{ce.live_classes?.title || 'Unknown Class'}</td>
@@ -573,7 +573,7 @@ export default function ClassEnrollments() {
             </div>
 
             {/* ADD ENROLLMENT SECTION */}
-            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-800 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50 shrink-0">
+            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-slate-50 dark:bg-neutral-800/50 shrink-0">
               <h4 className="font-bold text-slate-900 dark:text-slate-50 mb-3">Add New Enrollment</h4>
               <form onSubmit={handleAssignEnrollment} className="flex flex-col sm:flex-row gap-3">
                 <select
@@ -582,7 +582,7 @@ export default function ClassEnrollments() {
                     setNewEnrollmentType(e.target.value as 'course' | 'class')
                     setNewEnrollmentId('')
                   }}
-                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                  className="border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
                 >
                   <option value="course">Course</option>
                   <option value="class">Live Class</option>
@@ -591,7 +591,7 @@ export default function ClassEnrollments() {
                 <select
                   value={newEnrollmentId}
                   onChange={(e) => setNewEnrollmentId(e.target.value)}
-                  className="flex-1 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                  className="flex-1 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
                   required
                 >
                   <option value="">-- Select --</option>

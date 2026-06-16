@@ -98,23 +98,23 @@ const AdminContactMessages: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
-      <div className="mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 dark:border-slate-700">
+      <div className="mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-1">Contact Us Messages</h1>
         <p className="text-slate-500 dark:text-slate-400 font-medium">Manage and respond to user inquiries</p>
       </div>
 
       {messages.length === 0 && (
-        <p className="text-slate-500 dark:text-slate-400 font-medium bg-white dark:bg-slate-900 dark:bg-white p-6 rounded-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 text-center">No messages yet.</p>
+        <p className="text-slate-500 dark:text-slate-400 font-medium bg-white dark:bg-neutral-900 dark:bg-white p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-center">No messages yet.</p>
       )}
 
       <div className="space-y-6">
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="bg-white dark:bg-slate-900 dark:bg-white rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6 space-y-5 hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 space-y-5 hover:shadow-md transition-shadow"
           >
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 pb-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 pb-4">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">{msg.subject}</h2>
                 <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 font-medium mt-1.5">
@@ -142,7 +142,7 @@ const AdminContactMessages: React.FC = () => {
                       e.target.value as ContactMessage["status"]
                     )
                   }
-                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 font-medium disabled:opacity-70"
+                  className="border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 font-medium disabled:opacity-70"
                 >
                   <option value="new">New</option>
                   <option value="in_progress">In Progress</option>
@@ -153,7 +153,7 @@ const AdminContactMessages: React.FC = () => {
                 <button
                   onClick={() => deleteMessage(msg.id)}
                   disabled={deletingId === msg.id}
-                  className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:border-rose-200 dark:border-rose-500/20 hover:bg-rose-50 dark:bg-rose-500/10 disabled:opacity-50 transition-colors"
+                  className="p-2.5 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:border-rose-200 dark:border-rose-500/20 hover:bg-rose-50 dark:bg-rose-500/10 disabled:opacity-50 transition-colors"
                   title="Delete message"
                 >
                   <Trash2 size={18} />
@@ -175,7 +175,7 @@ const AdminContactMessages: React.FC = () => {
             </div>
 
             {/* Message */}
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-lg border border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 leading-relaxed shadow-inner">
+            <div className="bg-slate-50 dark:bg-neutral-800/50 p-5 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-slate-700 dark:text-slate-300 leading-relaxed shadow-inner">
               <div className="flex items-center gap-2 mb-3 font-semibold text-slate-900 dark:text-slate-50">
                 <MessageSquare size={18} className="text-slate-600 dark:text-slate-400" /> Message
               </div>
@@ -192,7 +192,7 @@ const AdminContactMessages: React.FC = () => {
                 onBlur={(e) =>
                   updateAdminNotes(msg.id, e.target.value)
                 }
-                className="w-full border border-slate-300 dark:border-slate-700 rounded-lg p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Add internal notes here..."
               />
             </div>

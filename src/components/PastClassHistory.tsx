@@ -104,8 +104,8 @@ export default function PastClassHistory() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Student List */}
-        <div className={`${selectedProfile ? 'hidden lg:flex' : 'flex'} bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-hidden flex-col h-[600px] lg:h-[650px]`}>
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50">
+        <div className={`${selectedProfile ? 'hidden lg:flex' : 'flex'} bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden flex-col h-[600px] lg:h-[650px]`}>
+          <div className="p-4 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-slate-50 dark:bg-neutral-800/50">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
@@ -113,7 +113,7 @@ export default function PastClassHistory() {
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
               />
             </div>
             <label className="flex items-center gap-2 mt-3 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
@@ -121,7 +121,7 @@ export default function PastClassHistory() {
                 type="checkbox" 
                 checked={showActiveOnly}
                 onChange={(e) => setShowActiveOnly(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-50 focus:ring-slate-900 cursor-pointer"
+                className="w-4 h-4 rounded border-slate-300 dark:border-neutral-700 text-slate-900 dark:text-slate-50 focus:ring-slate-900 cursor-pointer"
               />
               Show Active Students Only
             </label>
@@ -138,11 +138,11 @@ export default function PastClassHistory() {
                     className={`w-full text-left p-3 rounded-lg flex items-center gap-3 transition-colors ${
                       selectedProfile?.id === profile.id 
                         ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' 
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        : 'hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                      selectedProfile?.id === profile.id ? 'bg-white dark:bg-slate-900 dark:bg-white/20 text-white dark:text-slate-900' : 'bg-slate-200 text-slate-600 dark:text-slate-400'
+                      selectedProfile?.id === profile.id ? 'bg-white dark:bg-neutral-900 dark:bg-white/20 text-white dark:text-slate-900' : 'bg-slate-200 text-slate-600 dark:text-slate-400'
                     }`}>
                       {profile.first_name?.[0] || 'U'}
                     </div>
@@ -160,7 +160,7 @@ export default function PastClassHistory() {
         </div>
 
         {/* Right Col: Class History */}
-        <div className={`${!selectedProfile ? 'hidden lg:flex' : 'flex'} lg:col-span-2 bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-4 sm:p-6 lg:p-8 h-[600px] lg:h-[650px] flex-col`}>
+        <div className={`${!selectedProfile ? 'hidden lg:flex' : 'flex'} lg:col-span-2 bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-4 sm:p-6 lg:p-8 h-[600px] lg:h-[650px] flex-col`}>
           {!selectedProfile ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400">
               <History className="w-16 h-16 mb-4 opacity-50" />
@@ -179,7 +179,7 @@ export default function PastClassHistory() {
                 </button>
               </div>
 
-              <div className="mb-6 pb-4 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="mb-6 pb-4 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                     {selectedProfile.first_name} {selectedProfile.last_name}'s History
@@ -190,7 +190,7 @@ export default function PastClassHistory() {
 
               {loadingClasses ? (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-slate-800 dark:border-slate-700 border-t-slate-900 rounded-full" />
+                  <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-t-slate-900 rounded-full" />
                 </div>
               ) : pastClasses.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
@@ -203,7 +203,7 @@ export default function PastClassHistory() {
                     {pastClasses.map(c => {
                       const earned = ((c.duration_minutes || 0) / 60) * (selectedProfile.hourly_rate || 0)
                       return (
-                        <div key={c.id} className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div key={c.id} className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div>
                             <h4 className="font-bold text-slate-900 dark:text-slate-50">{c.title || 'Unknown Class'}</h4>
                             <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-1">

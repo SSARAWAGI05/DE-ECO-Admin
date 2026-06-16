@@ -267,12 +267,12 @@ export default function Invoices() {
     const currencySym = CURRENCIES[profile.billing_currency] || profile.billing_currency || ''
 
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-800 p-4 sm:p-8 flex flex-col items-center">
+      <div className="min-h-screen bg-slate-100 dark:bg-neutral-800 p-4 sm:p-8 flex flex-col items-center">
         {/* Screen-only controls */}
         <div className="w-full max-w-[210mm] flex flex-col sm:flex-row justify-between gap-4 print:hidden z-50 mb-6">
           <button 
             onClick={() => setViewInvoiceFor(null)}
-            className="flex items-center justify-center sm:justify-start gap-2 bg-white dark:bg-slate-900 dark:bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:bg-slate-200/50 dark:bg-slate-800/50 font-bold text-slate-700 dark:text-slate-300 transition-colors w-full sm:w-auto"
+            className="flex items-center justify-center sm:justify-start gap-2 bg-white dark:bg-neutral-900 dark:bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50 font-bold text-slate-700 dark:text-slate-300 transition-colors w-full sm:w-auto"
           >
             <ArrowLeft size={20} /> Back to Dashboard
           </button>
@@ -295,7 +295,7 @@ export default function Invoices() {
 
         {/* The Printable A4 Invoice Document */}
         <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
-          <div id="invoice-pdf-content" className="bg-white dark:bg-slate-900 dark:bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 dark:text-slate-200 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+          <div id="invoice-pdf-content" className="bg-white dark:bg-neutral-900 dark:bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 dark:text-slate-200 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
           
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
@@ -350,7 +350,7 @@ export default function Invoices() {
             {/* Table */}
             <table className="w-full text-left mb-6 border-collapse">
               <thead>
-                <tr className="border-y-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-900 dark:text-slate-50">
+                <tr className="border-y-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-slate-900 dark:text-slate-50">
                   <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Date</th>
                   <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Description</th>
                   <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Duration</th>
@@ -366,7 +366,7 @@ export default function Invoices() {
                   const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
                   const amt = hours * rate
                   return (
-                    <tr key={c.id} className="border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                    <tr key={c.id} className="border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 text-sm">
                       <td className="py-4 text-slate-600 dark:text-slate-400">
                         {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
@@ -384,7 +384,7 @@ export default function Invoices() {
             {/* Totals Section */}
             <div className="flex justify-end mb-16">
               <div className="w-72">
-                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                <div className="flex justify-between py-2 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 text-sm">
                   <span className="text-slate-600 dark:text-slate-400">Total Hours</span>
                   <span className="font-medium text-slate-900 dark:text-slate-50">{(totalMins / 60).toFixed(2)} hrs</span>
                 </div>
@@ -393,14 +393,14 @@ export default function Invoices() {
                   courseEnrollments.filter(e => e.user_id === profile.id).map((e, idx) => {
                     const rate = e.custom_hourly_rate != null ? e.custom_hourly_rate : (profile.hourly_rate || 0)
                     return (
-                      <div key={idx} className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                      <div key={idx} className="flex justify-between py-2 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 text-sm">
                         <span className="text-slate-600 dark:text-slate-400">Hourly Rate ({e.courses?.title || 'Course'})</span>
                         <span className="font-medium text-slate-900 dark:text-slate-50">{currencySym}{rate.toFixed(2)}/hr</span>
                       </div>
                     )
                   })
                 ) : (
-                  <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50 text-sm">
+                  <div className="flex justify-between py-2 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 text-sm">
                     <span className="text-slate-600 dark:text-slate-400">Hourly Rate</span>
                     <span className="font-medium text-slate-900 dark:text-slate-50">{currencySym}{(profile.hourly_rate || 0).toFixed(2)}/hr</span>
                   </div>
@@ -413,7 +413,7 @@ export default function Invoices() {
             </div>
 
             {/* Footer */}
-            <div className="mt-auto border-t border-slate-200 dark:border-slate-800 dark:border-slate-700 pt-8 pb-8 text-slate-500 dark:text-slate-400 text-xs">
+            <div className="mt-auto border-t border-slate-200 dark:border-neutral-800 dark:border-neutral-700 pt-8 pb-8 text-slate-500 dark:text-slate-400 text-xs">
               <p className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2">Payment Terms</p>
               <p>Due on receipt. Please make all payments payable to DE-ECO Education. Thank you for your business!</p>
             </div>
@@ -437,7 +437,7 @@ export default function Invoices() {
             .min-h-screen {
               background: white !important;
             }
-            .bg-white dark:bg-slate-900 dark:bg-white.w-full.max-w-\\[210mm\\] {
+            .bg-white dark:bg-neutral-900 dark:bg-white.w-full.max-w-\\[210mm\\] {
               visibility: visible;
               position: absolute;
               left: 0;
@@ -447,7 +447,7 @@ export default function Invoices() {
               padding: 48px !important;
               box-shadow: none;
             }
-            .bg-white dark:bg-slate-900 dark:bg-white.w-full.max-w-\\[210mm\\] * {
+            .bg-white dark:bg-neutral-900 dark:bg-white.w-full.max-w-\\[210mm\\] * {
               visibility: visible;
             }
           }
@@ -467,14 +467,14 @@ export default function Invoices() {
       </div>
 
       {/* Controls */}
-      <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-6 mb-8">
+      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 mb-8">
         <div className="flex flex-col md:flex-row gap-6 items-end">
           <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Start Date</label>
               <input 
                 type="date"
-                className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-800/50"
+                className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
               />
@@ -483,7 +483,7 @@ export default function Invoices() {
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">End Date</label>
               <input 
                 type="date"
-                className="w-full border-2 border-slate-200 dark:border-slate-800 dark:border-slate-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-800/50"
+                className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
               />
@@ -498,7 +498,7 @@ export default function Invoices() {
                 e.setDate(e.getDate() - 1)
                 setEndDate(`${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, '0')}-${String(e.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               This Week
             </button>
@@ -510,7 +510,7 @@ export default function Invoices() {
                 e.setDate(e.getDate() - 1)
                 setEndDate(`${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, '0')}-${String(e.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               Last Week
             </button>
@@ -521,7 +521,7 @@ export default function Invoices() {
                 d.setDate(1)
                 setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               This Month
             </button>
@@ -533,7 +533,7 @@ export default function Invoices() {
                 d.setDate(1) // First day of previous month
                 setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               Last Month
             </button>
@@ -555,10 +555,10 @@ export default function Invoices() {
       {/* Results Grid */}
       {loading ? (
         <div className="flex-1 flex items-center justify-center p-10">
-          <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-slate-800 dark:border-slate-700 border-t-slate-900 rounded-full" />
+          <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-t-slate-900 rounded-full" />
         </div>
       ) : studentSummaries.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-16 flex flex-col items-center justify-center text-center">
+        <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-16 flex flex-col items-center justify-center text-center">
           <Receipt className="w-16 h-16 text-slate-300 mb-4" />
           <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Classes Found</h3>
           <p className="text-slate-500 dark:text-slate-400">There are no completed classes in the selected date range.</p>
@@ -568,14 +568,14 @@ export default function Invoices() {
           {studentSummaries.map(summary => {
             const currencySym = CURRENCIES[summary.profile.billing_currency] || summary.profile.billing_currency || ''
             return (
-              <div key={summary.profile.id} className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 dark:border-slate-700 overflow-hidden flex flex-col">
-                <div className="p-6 border-b border-slate-100 dark:border-slate-800 dark:border-slate-700/50">
+              <div key={summary.profile.id} className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden flex flex-col">
+                <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
                   <h3 className="text-lg font-black text-slate-900 dark:text-slate-50 truncate">
                     {summary.profile.first_name} {summary.profile.last_name}
                   </h3>
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{summary.profile.email}</p>
                 </div>
-                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 flex-1 flex flex-col gap-4">
+                <div className="p-6 bg-slate-50 dark:bg-neutral-800/50 flex-1 flex flex-col gap-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Classes</span>
                     <span className="font-bold text-slate-900 dark:text-slate-50">{summary.classes.length} completed</span>
@@ -584,12 +584,12 @@ export default function Invoices() {
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Time</span>
                     <span className="font-bold text-slate-900 dark:text-slate-50">{(summary.totalMins / 60).toFixed(2)} hrs</span>
                   </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-800 dark:border-slate-700 mt-auto">
+                  <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-neutral-800 dark:border-neutral-700 mt-auto">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Amount Due</span>
                     <span className="text-xl font-black text-indigo-600">{currencySym}{summary.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="p-4 bg-white dark:bg-slate-900 dark:bg-white border-t border-slate-100 dark:border-slate-800 dark:border-slate-700/50">
+                <div className="p-4 bg-white dark:bg-neutral-900 dark:bg-white border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
                   <button
                     onClick={() => setViewInvoiceFor(summary.profile.id)}
                     className="w-full flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-sm"

@@ -203,7 +203,7 @@ export default function EarningsAnalytics() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center p-10">
-        <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-slate-800 dark:border-slate-700 border-t-slate-900 rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-t-slate-900 rounded-full" />
       </div>
     )
   }
@@ -255,7 +255,7 @@ export default function EarningsAnalytics() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex flex-wrap items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-lg shadow-inner">
+          <div className="flex flex-wrap items-center gap-1 bg-slate-100 dark:bg-neutral-800 p-1.5 rounded-lg shadow-inner">
             {(['daily', 'weekly', 'monthly', 'custom'] as Timeframe[]).map((tf) => (
               <button
                 key={tf}
@@ -264,7 +264,7 @@ export default function EarningsAnalytics() {
                   setSelectedDateKey(null)
                 }}
                 className={`px-5 py-2 rounded-md text-sm font-bold capitalize transition-colors ${
-                  timeframe === tf ? 'bg-white dark:bg-slate-900 dark:bg-white shadow-sm text-slate-900 dark:text-slate-50' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'
+                  timeframe === tf ? 'bg-white dark:bg-neutral-900 dark:bg-white shadow-sm text-slate-900 dark:text-slate-50' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'
                 }`}
               >
                 {tf}
@@ -297,18 +297,18 @@ export default function EarningsAnalytics() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="bg-white dark:bg-slate-900 dark:bg-white text-sm font-bold text-slate-900 dark:text-slate-50 outline-none p-2 rounded-lg cursor-pointer"
+                className="bg-white dark:bg-neutral-900 dark:bg-white text-sm font-bold text-slate-900 dark:text-slate-50 outline-none p-2 rounded-lg cursor-pointer"
               />
               <span className="text-slate-400">to</span>
               <input 
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="bg-white dark:bg-slate-900 dark:bg-white text-sm font-bold text-slate-900 dark:text-slate-50 outline-none p-2 rounded-lg cursor-pointer"
+                className="bg-white dark:bg-neutral-900 dark:bg-white text-sm font-bold text-slate-900 dark:text-slate-50 outline-none p-2 rounded-lg cursor-pointer"
               />
             </div>
           ) : timeframe === 'daily' ? (
-            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-2 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-2 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
               <input 
                 type="date"
@@ -318,7 +318,7 @@ export default function EarningsAnalytics() {
               />
             </div>
           ) : (
-            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 p-2 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-2 rounded-lg shadow-sm">
               <Calendar size={18} className="text-slate-400 ml-2" />
               <select 
                 value={selectedDateKey || ''}
@@ -353,14 +353,14 @@ export default function EarningsAnalytics() {
           </h3>
           
           {!selectedDetails || selectedDetails.classes.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 dark:bg-white border border-slate-200 dark:border-slate-800 dark:border-slate-700 border-dashed rounded-2xl py-12 flex flex-col items-center justify-center text-slate-400">
+            <div className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-dashed rounded-2xl py-12 flex flex-col items-center justify-center text-slate-400">
               <Calendar size={32} className="opacity-20 mb-3" />
               <p className="font-medium">No classes scheduled for this period.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {selectedDetails.classes.map((cls, idx) => (
-                <div key={idx} className="flex flex-col gap-3 p-5 rounded-xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-white shadow-sm hover:shadow-md transition-shadow">
+                <div key={idx} className="flex flex-col gap-3 p-5 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 bg-white dark:bg-neutral-900 dark:bg-white shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start gap-2">
                     <div className="font-bold text-slate-900 dark:text-slate-50 text-lg">{cls.studentName}</div>
                     <div className="text-right shrink-0 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-md">
@@ -369,11 +369,11 @@ export default function EarningsAnalytics() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm font-medium border-t border-slate-100 dark:border-slate-800 dark:border-slate-700/50 pt-3">
+                  <div className="flex justify-between items-center text-sm font-medium border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 pt-3">
                     <div className="text-slate-500 dark:text-slate-400 truncate pr-2">
                       {cls.title}
                     </div>
-                    <div className="text-slate-600 dark:text-slate-400 shrink-0 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                    <div className="text-slate-600 dark:text-slate-400 shrink-0 flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 px-2 py-1 rounded">
                       <TrendingUp size={14} className="text-slate-400" />
                       {cls.duration_minutes}m
                     </div>
@@ -385,7 +385,7 @@ export default function EarningsAnalytics() {
         </div>
 
         {/* REVENUE TREND CHART */}
-        <div className="bg-white dark:bg-slate-900 dark:bg-white rounded-2xl border border-slate-200 dark:border-slate-800 dark:border-slate-700 shadow-sm p-4 sm:p-6 mb-8">
+        <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm p-4 sm:p-6 mb-8">
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-slate-400" />
             Revenue Trend ({timeframe})
