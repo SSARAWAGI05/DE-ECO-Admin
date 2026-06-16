@@ -576,17 +576,10 @@ export default function ClassEnrollments() {
             <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-slate-50 dark:bg-neutral-800/50 shrink-0">
               <h4 className="font-bold text-slate-900 dark:text-slate-50 mb-3">Add New Enrollment</h4>
               <form onSubmit={handleAssignEnrollment} className="flex flex-col sm:flex-row gap-3">
-                <select
-                  value={newEnrollmentType}
-                  onChange={(e) => {
-                    setNewEnrollmentType(e.target.value as 'course' | 'class')
-                    setNewEnrollmentId('')
-                  }}
-                  className="border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
-                >
-                  <option value="course">Course</option>
-                  <option value="class">Live Class</option>
-                </select>
+                {/* 
+                  Temporarily hidden as requested:
+                  <select value={newEnrollmentType} ... >
+                */}
 
                 <select
                   value={newEnrollmentId}

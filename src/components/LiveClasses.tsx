@@ -43,6 +43,7 @@ export default function LiveClasses() {
   const [classes, setClasses] = useState<LiveClass[]>([])
   const [users, setUsers] = useState<UserFromDB[]>([])
   const [courses, setCourses] = useState<{id: string, title: string}[]>([])
+  const [enrollments, setEnrollments] = useState<{user_id: string, course_id: string}[]>([])
   const [panelOpen, setPanelOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [customDuration, setCustomDuration] = useState(false)
@@ -80,18 +81,20 @@ export default function LiveClasses() {
    * Fetch ONLY users who appear in class_enrollments
    */
   const fetchEligibleUsers = async () => {
-    // 1️⃣ Get distinct user_ids from class_enrollments
-    const { data: enrollments, error: enrollErr } = await supabase
+    // 1️⃣ Get distinct user_ids and course_ids from class_enrollments
+    const { data: enrollmentsData, error: enrollErr } = await supabase
       .from('class_enrollments')
-      .select('user_id')
+      .select('user_id, course_id')
 
-    if (enrollErr || !enrollments) {
+    if (enrollErr || !enrollmentsData) {
       console.error('Failed to fetch enrollments', enrollErr)
       return
     }
 
+    setEnrollments(enrollmentsData)
+
     const userIds = Array.from(
-      new Set(enrollments.map((e) => e.user_id))
+      new Set(enrollmentsData.map((e) => e.user_id))
     )
 
     if (userIds.length === 0) {
@@ -424,7 +427,7 @@ export default function LiveClasses() {
               <div>
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Class Title</label>
                 <select
-                  className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-neutral-800/50"
+                  className="w-full border-2 border-slate-200 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium min-w-0 bg-slate-50 dark:bg-neutral-900"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -432,7 +435,10 @@ export default function LiveClasses() {
                   required
                 >
                   <option value="">Select a course</option>
-                  {courses.map(c => (
+                  {(formData.user_id 
+                    ? courses.filter(c => enrollments.some(e => e.user_id === formData.user_id && e.course_id === c.id))
+                    : courses
+                  ).map(c => (
                     <option key={c.id} value={c.title}>
                       {c.title}
                     </option>
