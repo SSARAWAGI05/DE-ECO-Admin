@@ -9,6 +9,8 @@ import {
   Users,
   Link as LinkIcon,
   Settings,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 import { sendClassEmail } from '../lib/emailService'
@@ -47,7 +49,7 @@ export default function LiveClasses() {
   const [panelOpen, setPanelOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [customDuration, setCustomDuration] = useState(false)
-  const [viewFilter, setViewFilter] = useState<'upcoming' | 'past'>('upcoming')
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10))
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [defaultLink, setDefaultLink] = useState(
@@ -72,7 +74,7 @@ export default function LiveClasses() {
 
   useEffect(() => {
     fetchClasses()
-  }, [viewFilter])
+  }, [selectedDate])
 
   /* ================= DATA FETCHING ================= */
 
@@ -122,22 +124,19 @@ export default function LiveClasses() {
   }
 
   /**
-   * Fetch classes based on viewFilter
+   * Fetch classes for the selected date
    */
   const fetchClasses = async () => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const startOfToday = today.toISOString()
+    const startOfDay = new Date(selectedDate + "T00:00:00")
+    const endOfDay = new Date(selectedDate + "T23:59:59.999")
 
-    let query = supabase.from('live_classes').select('*')
+    const { data } = await supabase
+      .from('live_classes')
+      .select('*')
+      .gte('scheduled_datetime', startOfDay.toISOString())
+      .lte('scheduled_datetime', endOfDay.toISOString())
+      .order('scheduled_datetime', { ascending: true })
 
-    if (viewFilter === 'upcoming') {
-      query = query.gte('scheduled_datetime', startOfToday).order('scheduled_datetime', { ascending: true })
-    } else {
-      query = query.lt('scheduled_datetime', startOfToday).order('scheduled_datetime', { ascending: false })
-    }
-
-    const { data } = await query
     setClasses(data ?? [])
   }
 
@@ -232,15 +231,22 @@ export default function LiveClasses() {
     fetchClasses()
   }
 
+  const changeDate = (days: number) => {
+    const d = new Date(selectedDate + "T00:00:00")
+    d.setDate(d.getDate() + days)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    setSelectedDate(`${year}-${month}-${day}`)
+  }
+
   /* ================= UI ================= */
 
   // Stats calculation
-  const upcomingCount = classes.length
-  const todayClasses = classes.filter(c => {
-    const d = new Date(c.scheduled_datetime)
-    const today = new Date()
-    return d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear()
-  }).length
+  const classesOnDate = classes.length
+  
+  // Format selected date for display
+  const displayDate = new Date(selectedDate + "T00:00:00").toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 
   return (
     <div className="p-4 sm:p-6 lg:p-10 w-full flex flex-col min-h-screen overflow-x-hidden">
@@ -253,13 +259,9 @@ export default function LiveClasses() {
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <div className="flex gap-4">
-            <div className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Upcoming</span>
-              <span className="text-2xl font-black text-slate-900 dark:text-slate-50">{upcomingCount}</span>
-            </div>
-            <div className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today</span>
-              <span className="text-2xl font-black text-indigo-600">{todayClasses}</span>
+            <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Classes on {displayDate}</span>
+              <span className="text-2xl font-black text-indigo-600">{classesOnDate}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -282,30 +284,40 @@ export default function LiveClasses() {
         </div>
       </div>
 
-      {/* TOGGLE */}
+      {/* DATE NAVIGATOR */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex bg-slate-100 dark:bg-neutral-800 p-1 rounded-xl">
+        <div className="inline-flex items-center bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 shadow-sm p-1.5 rounded-2xl">
           <button
-            onClick={() => setViewFilter('upcoming')}
-            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-colors ${viewFilter === 'upcoming' ? 'bg-white dark:bg-neutral-950 text-slate-900 dark:text-slate-50 shadow-sm border border-slate-200 dark:border-neutral-700' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+            onClick={() => changeDate(-1)}
+            className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
           >
-            Upcoming & Today
+            <ChevronLeft size={20} />
           </button>
+          
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => {
+              if (e.target.value) setSelectedDate(e.target.value)
+            }}
+            className="bg-transparent border-none outline-none text-slate-900 dark:text-slate-50 font-bold px-4 py-2 cursor-pointer [&::-webkit-calendar-picker-indicator]:dark:invert"
+          />
+
           <button
-            onClick={() => setViewFilter('past')}
-            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-colors ${viewFilter === 'past' ? 'bg-white dark:bg-neutral-950 text-slate-900 dark:text-slate-50 shadow-sm border border-slate-200 dark:border-neutral-700' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+            onClick={() => changeDate(1)}
+            className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
           >
-            Past Classes
+            <ChevronRight size={20} />
           </button>
         </div>
       </div>
 
       {/* CARD GRID */}
       {classes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-dashed rounded-3xl p-12 text-center">
+        <div className="flex flex-col items-center justify-center bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 border-dashed rounded-3xl p-12 text-center">
           <Calendar size={48} className="text-slate-300 dark:text-slate-600 mb-4" />
-          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">No {viewFilter === 'upcoming' ? 'Upcoming' : 'Past'} Classes</h3>
-          <p className="text-slate-500 dark:text-slate-400">You don't have any classes scheduled right now.</p>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">No Classes on {displayDate}</h3>
+          <p className="text-slate-500 dark:text-slate-400">You don't have any classes scheduled for this date.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
