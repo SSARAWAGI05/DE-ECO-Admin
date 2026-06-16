@@ -141,12 +141,13 @@ export default function LiveClasses() {
   const resetForm = () => {
     setEditingId(null)
     setCustomDuration(false)
+    const today = new Date().toISOString().slice(0, 10)
     setFormData({
       user_id: '',
       title: '',
       instructor_name: 'Rishika',
       meeting_link: defaultLink,
-      scheduled_datetime: '',
+      scheduled_datetime: `${today}T12:00`,
       duration_minutes: '60',
       send_email: true,
     })
@@ -472,18 +473,33 @@ export default function LiveClasses() {
                 />
               </div>
 
-              {/* DATE */}
+              {/* DATE & TIME SPLIT */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="sm:col-span-2">
-                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Date & Time</label>
+                <div>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Date</label>
                   <input
-                    type="datetime-local"
-                    className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-neutral-800/50"
-                    value={formData.scheduled_datetime}
+                    type="date"
+                    className="w-full border-2 border-slate-200 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-neutral-800/50"
+                    value={formData.scheduled_datetime?.split('T')[0] || ''}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        scheduled_datetime: e.target.value,
+                        scheduled_datetime: `${e.target.value}T${formData.scheduled_datetime?.split('T')[1] || '12:00'}`,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Time</label>
+                  <input
+                    type="time"
+                    className="w-full border-2 border-slate-200 dark:border-neutral-700 p-3.5 rounded-xl mt-2 focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-neutral-800/50"
+                    value={formData.scheduled_datetime?.split('T')[1] || ''}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        scheduled_datetime: `${formData.scheduled_datetime?.split('T')[0] || new Date().toISOString().slice(0, 10)}T${e.target.value}`,
                       })
                     }
                     required
