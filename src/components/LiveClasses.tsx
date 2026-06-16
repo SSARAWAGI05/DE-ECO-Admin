@@ -167,14 +167,15 @@ export default function LiveClasses() {
     setEditingId(c.id)
     setCustomDuration(!DURATION_OPTIONS.includes(c.duration_minutes))
 
+    const d = new Date(c.scheduled_datetime)
+    const localDateTime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+
     setFormData({
       user_id: c.user_id,
       title: c.title,
       instructor_name: c.instructor_name || 'Rishika',
       meeting_link: c.meeting_link ?? defaultLink,
-      scheduled_datetime: new Date(c.scheduled_datetime)
-        .toISOString()
-        .slice(0, 16),
+      scheduled_datetime: localDateTime,
       duration_minutes: c.duration_minutes?.toString() || '60',
       send_email: false,
     })
