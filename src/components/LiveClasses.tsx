@@ -81,9 +81,9 @@ export default function LiveClasses() {
    * Fetch ONLY users who appear in class_enrollments
    */
   const fetchEligibleUsers = async () => {
-    // 1️⃣ Get distinct user_ids and course_ids from class_enrollments
+    // 1️⃣ Get distinct user_ids and course_ids from course_enrollments
     const { data: enrollmentsData, error: enrollErr } = await supabase
-      .from('class_enrollments')
+      .from('course_enrollments')
       .select('user_id, course_id')
 
     if (enrollErr || !enrollmentsData) {
