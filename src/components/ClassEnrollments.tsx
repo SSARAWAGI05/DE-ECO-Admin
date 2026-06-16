@@ -574,7 +574,10 @@ export default function ClassEnrollments() {
 
             {/* ADD ENROLLMENT SECTION */}
             <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-slate-50 dark:bg-neutral-800/50 shrink-0">
-              <h4 className="font-bold text-slate-900 dark:text-slate-50 mb-3">Add New Enrollment</h4>
+              <div className="mb-3">
+                <h4 className="font-bold text-slate-900 dark:text-slate-50">Add New Enrollment</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Please select a course from the dropdown below to enroll the student.</p>
+              </div>
               <form onSubmit={handleAssignEnrollment} className="flex flex-col sm:flex-row gap-3">
                 {/* 
                   Temporarily hidden as requested:
@@ -587,7 +590,7 @@ export default function ClassEnrollments() {
                   className="flex-1 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
                   required
                 >
-                  <option value="">-- Select --</option>
+                  <option value="">-- Select a Course to Enroll --</option>
                   {newEnrollmentType === 'course' 
                     ? courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)
                     : classes.map(c => <option key={c.id} value={c.id}>{c.title}</option>)
