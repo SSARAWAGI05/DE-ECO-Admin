@@ -46,6 +46,10 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
   const [classes, setClasses] = useState<LiveClass[]>([])
   const [activity, setActivity] = useState<Activity[]>([])
   const [chartData, setChartData] = useState<any[]>([])
+  const [selectedCurrency, setSelectedCurrency] = useState('INR')
+  const [availableCurrencies, setAvailableCurrencies] = useState<string[]>(['INR'])
+  // We need to store raw month data to instantly switch without refetching
+  const [rawMonthsData, setRawMonthsData] = useState<Record<string, Record<string, number>>>({})
 
   useEffect(() => {
     loadDashboard()
@@ -152,39 +156,52 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         scheduled_datetime,
         duration_minutes,
         profiles!live_classes_user_id_fkey (
-          hourly_rate
+          hourly_rate,
+          currency
         )
       `)
       .lt('end_datetime', now)
       .neq('status', 'cancelled')
 
-    const months: Record<string, number> = {}
-    
-    for(let i=5; i>=0; i--) {
+    const last6Months: string[] = []
+    for (let i = 5; i >= 0; i--) {
       const d = new Date()
       d.setMonth(d.getMonth() - i)
-      const monthName = d.toLocaleString('default', { month: 'short' })
-      months[monthName] = 0
+      last6Months.push(d.toLocaleString('default', { month: 'short' }))
     }
+
+    const monthsData: Record<string, Record<string, number>> = {}
+    const currs = new Set<string>(['INR'])
 
     if (data) {
       data.forEach((c: any) => {
+        const curr = c.profiles?.currency || 'INR'
+        currs.add(curr)
+      })
+
+      currs.forEach(curr => {
+        monthsData[curr] = {}
+        last6Months.forEach(m => monthsData[curr][m] = 0)
+      })
+
+      data.forEach((c: any) => {
         const d = new Date(c.scheduled_datetime)
         const monthName = d.toLocaleString('default', { month: 'short' })
-        if (months[monthName] !== undefined) {
+        const curr = c.profiles?.currency || 'INR'
+        if (monthsData[curr] && monthsData[curr][monthName] !== undefined) {
           const rate = c.profiles?.hourly_rate || 0
           const amount = (c.duration_minutes / 60) * rate
-          months[monthName] += amount
+          monthsData[curr][monthName] += amount
         }
       })
     }
 
-    const formattedData = Object.keys(months).map(m => ({
-      name: m,
-      Earnings: Math.round(months[m])
-    }))
+    setAvailableCurrencies(Array.from(currs))
+    setRawMonthsData(monthsData)
 
-    setChartData(formattedData)
+    if (!Array.from(currs).includes(selectedCurrency)) {
+      setSelectedCurrency(Array.from(currs)[0])
+    }
   }
 
   /* ================= UI ================= */
@@ -210,8 +227,17 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* EARNINGS CHART */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
-        <h2 className="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-50 tracking-tight">Earnings Overview</h2>
+      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 p-6">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Earnings Overview</h2>
+          <select 
+            value={selectedCurrency}
+            onChange={(e) => setSelectedCurrency(e.target.value)}
+            className="border border-slate-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-slate-50 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50 font-medium text-sm"
+          >
+            {availableCurrencies.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -223,11 +249,11 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} dy={10} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} tickFormatter={(value) => `₹${value}`} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} tickFormatter={(value) => selectedCurrency === 'INR' ? `₹${value}` : `${selectedCurrency} ${value}`} />
               <Tooltip 
-                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', padding: '12px' }}
+                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#0f172a', padding: '12px' }}
                 itemStyle={{ color: '#0f172a', fontWeight: 600 }}
-                formatter={(value: any) => [`₹${value}`, 'Earnings']}
+                formatter={(value: any) => [selectedCurrency === 'INR' ? `₹${value}` : `${selectedCurrency} ${value}`, 'Earnings']}
               />
               <Area type="monotone" dataKey="Earnings" stroke="#0f172a" strokeWidth={2} fillOpacity={1} fill="url(#colorEarnings)" />
             </AreaChart>

@@ -46,7 +46,9 @@ export default function EarningsAnalytics() {
   const [loading, setLoading] = useState(true)
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
   const [customStart, setCustomStart] = useState('')
-  const [customEnd, setCustomEnd] = useState('')
+  const [customEnd, setCustomEnd] = useState<string>('')
+
+  const [chartCurrency, setChartCurrency] = useState('INR')
 
   useEffect(() => {
     fetchData()
@@ -91,10 +93,11 @@ export default function EarningsAnalytics() {
   }
 
   // --- AGGREGATION LOGIC ---
-  const chartData = useMemo(() => {
-    if (!classes.length || Object.keys(profiles).length === 0) return []
+  const { chartData, availableCurrencies } = useMemo(() => {
+    if (!classes.length || Object.keys(profiles).length === 0) return { chartData: [], availableCurrencies: ['INR'] }
 
-    const aggregated: Record<string, { key: string, label: string, totalINR: number, classes: any[] }> = {}
+    const aggregated: Record<string, { key: string, label: string, totals: Record<string, number>, classes: any[] }> = {}
+    const currs = new Set<string>()
 
     classes.forEach(c => {
       // Ignore if scheduled in the future? No, user might want to see projected earnings.
@@ -113,15 +116,9 @@ export default function EarningsAnalytics() {
       const match = userEnrollments.find(e => e.courses?.title === c.title)
       const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
       
-      let earned = hours * rate
-
-      // Normalize to INR for aggregate chart if currencies differ
-      // Hardcoded rough conversion for demonstration if needed, but assuming most are INR.
-      // If CHF, multiply by ~95. USD by ~83.
-      if (profile.billing_currency === 'CHF') earned *= 95
-      else if (profile.billing_currency === 'USD') earned *= 83
-      else if (profile.billing_currency === 'EUR') earned *= 90
-      else if (profile.billing_currency === 'GBP') earned *= 105
+      const earned = hours * rate
+      const currency = profile.billing_currency || 'INR'
+      currs.add(currency)
 
       // Timeframe Key Generation
       let key = ''
@@ -159,22 +156,23 @@ export default function EarningsAnalytics() {
       }
 
       if (!aggregated[key]) {
-        aggregated[key] = { key, label, totalINR: 0, classes: [] }
+        aggregated[key] = { key, label, totals: {}, classes: [] }
       }
 
-      aggregated[key].totalINR += earned
+      aggregated[key].totals[currency] = (aggregated[key].totals[currency] || 0) + earned
       aggregated[key].classes.push({
         ...c,
-        earnedOriginal: hours * rate,
-        currency: profile.billing_currency || 'INR',
+        earnedOriginal: earned,
+        currency,
         studentName: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown'
       })
     })
 
     const sortedData = Object.values(aggregated).sort((a, b) => a.key.localeCompare(b.key))
+    const availCurrs = Array.from(currs).length > 0 ? Array.from(currs) : ['INR']
     
-    return sortedData
-  }, [classes, profiles, timeframe, customStart, customEnd])
+    return { chartData: sortedData, availableCurrencies: availCurrs }
+  }, [classes, profiles, timeframe, customStart, customEnd, courseEnrollments])
 
   useEffect(() => {
     if (timeframe === 'custom') {
@@ -196,8 +194,20 @@ export default function EarningsAnalytics() {
   }, [chartData, selectedDateKey])
 
   const totalAllTime = useMemo(() => {
-    return chartData.reduce((sum, d) => sum + d.totalINR, 0)
+    const totals: Record<string, number> = {}
+    chartData.forEach(d => {
+      Object.entries(d.totals).forEach(([curr, amount]) => {
+        totals[curr] = (totals[curr] || 0) + amount
+      })
+    })
+    return totals
   }, [chartData])
+
+  useEffect(() => {
+    if (!availableCurrencies.includes(chartCurrency)) {
+      setChartCurrency(availableCurrencies[0] || 'INR')
+    }
+  }, [availableCurrencies, chartCurrency])
 
   // --- UI ---
   if (loading) {
@@ -280,8 +290,16 @@ export default function EarningsAnalytics() {
           <h2 className="text-slate-400 font-medium tracking-wide uppercase text-sm mb-2">
             Earnings for {selectedDetails ? selectedDetails.label : 'Selected Period'}
           </h2>
-          <div className="text-4xl sm:text-5xl font-black">
-            ₹{selectedDetails ? Math.round(selectedDetails.totalINR).toLocaleString() : '0'}
+          <div className="flex flex-col gap-1">
+            {!selectedDetails || Object.keys(selectedDetails.totals).length === 0 ? (
+              <div className="text-4xl sm:text-5xl font-black">₹0</div>
+            ) : (
+              Object.entries(selectedDetails.totals).map(([curr, amount]) => (
+                <div key={curr} className="text-3xl sm:text-4xl font-black">
+                  {CURRENCY_SYMBOL[curr] || curr}{Math.round(amount).toLocaleString()}
+                </div>
+              ))
+            )}
           </div>
         </div>
         <div className="relative z-10 flex flex-wrap items-center gap-2">
@@ -386,17 +404,26 @@ export default function EarningsAnalytics() {
 
         {/* REVENUE TREND CHART */}
         <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm p-4 sm:p-6 mb-8">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-6 flex items-center gap-2">
-            <TrendingUp size={18} className="text-slate-400" />
-            Revenue Trend ({timeframe})
-          </h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 flex items-center gap-2">
+              <TrendingUp size={18} className="text-slate-400" />
+              Revenue Trend ({timeframe})
+            </h3>
+            <select
+              value={chartCurrency}
+              onChange={(e) => setChartCurrency(e.target.value)}
+              className="border border-slate-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-slate-50 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold"
+            >
+              {availableCurrencies.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
           
           <div className="w-full h-[240px]">
             {chartData.length === 0 ? (
               <div className="h-full flex items-center justify-center text-slate-400 font-medium">No data available</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} onClick={(e) => {
+                <AreaChart data={chartData.map(d => ({ ...d, chartTotal: d.totals[chartCurrency] || 0 }))} onClick={(e) => {
                   if (e && e.activePayload && e.activePayload.length > 0) {
                     setSelectedDateKey(e.activePayload[0].payload.key)
                   }
@@ -419,7 +446,7 @@ export default function EarningsAnalytics() {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#64748b', fontSize: 12 }}
-                    tickFormatter={(val) => `₹${val}`}
+                    tickFormatter={(val) => chartCurrency === 'INR' ? `₹${val}` : `${chartCurrency} ${val}`}
                     dx={-10}
                   />
                   <Tooltip 
@@ -430,7 +457,7 @@ export default function EarningsAnalytics() {
                         return (
                           <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-3 rounded-lg shadow-xl border border-slate-700">
                             <p className="font-bold mb-1">{data.label}</p>
-                            <p className="text-emerald-400 font-medium">₹{Math.round(data.totalINR).toLocaleString()}</p>
+                            <p className="text-emerald-400 font-medium">{CURRENCY_SYMBOL[chartCurrency] || chartCurrency}{Math.round(data.chartTotal).toLocaleString()}</p>
                             <p className="text-xs text-slate-400 mt-1">{data.classes.length} classes</p>
                           </div>
                         )
@@ -440,7 +467,7 @@ export default function EarningsAnalytics() {
                   />
                   <Area 
                     type="monotone" 
-                    dataKey="totalINR" 
+                    dataKey="chartTotal" 
                     stroke="#0f172a" 
                     strokeWidth={3}
                     fillOpacity={1} 
