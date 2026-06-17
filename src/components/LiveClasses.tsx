@@ -193,13 +193,15 @@ export default function LiveClasses() {
     e.preventDefault()
 
     const scheduledDate = new Date(formData.scheduled_datetime)
+    const endDate = new Date(scheduledDate.getTime() + Number(formData.duration_minutes) * 60000)
 
     const payload = {
       user_id: formData.user_id,
       title: formData.title,
       instructor_name: formData.instructor_name,
       meeting_link: formData.meeting_link,
-      scheduled_datetime: new Date(formData.scheduled_datetime).toISOString(),
+      scheduled_datetime: scheduledDate.toISOString(),
+      end_datetime: endDate.toISOString(),
       duration_minutes: Number(formData.duration_minutes),
     }
 
