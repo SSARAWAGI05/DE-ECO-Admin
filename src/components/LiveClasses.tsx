@@ -604,6 +604,7 @@ export default function LiveClasses() {
                   <div className="mt-4 animate-in fade-in slide-in-from-top-2">
                     <input
                       type="number"
+                      min="1"
                       placeholder="Enter custom minutes"
                       className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50"
                       value={formData.duration_minutes}
