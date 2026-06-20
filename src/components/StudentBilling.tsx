@@ -721,39 +721,43 @@ export default function StudentBilling() {
 
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 shrink-0">
-        <div className="bg-white dark:bg-neutral-900 dark:bg-white p-6 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-center gap-4">
-          <div className="bg-slate-50 dark:bg-neutral-800/50 p-3.5 rounded-lg text-slate-700 dark:text-slate-300">
+        {/* Active Students Card */}
+        <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-white/50 dark:border-white/5 flex items-center gap-4 shadow-lg shadow-blue-500/5 dark:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
+          <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 dark:from-blue-500/30 dark:to-indigo-500/30 p-3.5 rounded-xl text-blue-600 dark:text-blue-400">
             <Users size={24} />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Active Students</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">{summaryStats.activeStudents}</p>
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Active Students</p>
+            <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-neutral-900 dark:bg-white p-6 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-center gap-4">
-          <div className="bg-slate-50 dark:bg-neutral-800/50 p-3.5 rounded-lg text-slate-700 dark:text-slate-300">
+        {/* Scheduled Hours Card */}
+        <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-white/50 dark:border-white/5 flex items-center gap-4 shadow-lg shadow-purple-500/5 dark:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300">
+          <div className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 dark:from-purple-500/30 dark:to-fuchsia-500/30 p-3.5 rounded-xl text-purple-600 dark:text-purple-400">
             <TrendingUp size={24} />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Scheduled Hours</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} hrs</p>
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Scheduled Hours</p>
+            <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-lg font-bold text-slate-400">hrs</span></p>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-neutral-900 dark:bg-white p-6 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-start gap-4">
-          <div className="bg-slate-50 dark:bg-neutral-800/50 p-3.5 rounded-lg text-slate-700 dark:text-slate-300 shrink-0">
+        {/* Total Outstanding Card */}
+        <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-white/50 dark:border-white/5 flex items-start gap-4 shadow-lg shadow-rose-500/5 dark:shadow-rose-500/10 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full"></div>
+          <div className="bg-gradient-to-br from-rose-500/20 to-pink-500/20 dark:from-rose-500/30 dark:to-pink-500/30 p-3.5 rounded-xl text-rose-600 dark:text-rose-400 shrink-0">
             <DollarSign size={24} />
           </div>
-          <div className="flex-1">
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Outstanding</p>
+          <div className="flex-1 relative z-10">
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Total Outstanding</p>
             <div className="space-y-1 mt-1">
               {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
-                <p className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">₹ 0.00</p>
+                <p className="text-3xl font-black text-rose-500 tracking-tight">₹ 0.00</p>
               ) : (
                 Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
-                  <p key={currency} className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
-                    <span className="text-slate-400 mr-2 text-sm font-semibold">{currency}</span>
+                  <p key={currency} className="text-3xl font-black text-rose-500 tracking-tight flex items-baseline">
+                    <span className="text-rose-400/70 mr-2 text-base font-bold">{currency}</span>
                     {getCurrencySymbol(currency)} {amount.toFixed(2)}
                   </p>
                 ))
@@ -844,7 +848,7 @@ export default function StudentBilling() {
                   const isOfficiallyEnrolled = stats.isEnrolled
 
                   return (
-                    <tr key={profile.id} className="block md:table-row hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-colors border-b border-slate-100 dark:border-neutral-800 md:border-none p-4 md:p-0">
+                    <tr key={profile.id} className="block md:table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-all duration-300 border-b border-slate-100 dark:border-white/5 p-4 md:p-0 relative group">
                       {/* Name */}
                       <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-start md:items-center">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Student</span>
@@ -878,16 +882,16 @@ export default function StudentBilling() {
                       <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-center">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Activity</span>
                         {!isOfficiallyEnrolled ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 font-bold text-xs border border-rose-200 dark:border-rose-500/20 shadow-sm">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-[11px] uppercase tracking-wider border border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
                             Unenrolled
                           </span>
                         ) : hasClasses ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-xs border border-emerald-200 dark:border-emerald-500/20 shadow-sm">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] uppercase tracking-wider border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-[pulse_1.5s_ease-in-out_infinite] shadow-[0_0_5px_rgba(16,185,129,0.8)]"></div>
                             {stats.classCount} Classes
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 dark:bg-neutral-800/50 text-slate-500 dark:text-slate-400 font-bold text-xs border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-500/10 text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-wider border border-slate-500/20">
                             No Classes
                           </span>
                         )}
@@ -1143,9 +1147,9 @@ export default function StudentBilling() {
 
       {/* BREAKDOWN MODAL */}
       {breakdownProfile && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl w-full max-w-3xl shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex justify-between items-center shrink-0">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-3xl shadow-2xl border border-white/20 dark:border-white/10 flex flex-col max-h-[90vh] animate-modal">
+            <div className="p-6 border-b border-slate-200/50 dark:border-white/5 flex justify-between items-center shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Calculation Breakdown</h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">

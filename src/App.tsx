@@ -133,7 +133,7 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-white dark:bg-neutral-900 dark:bg-white overflow-hidden font-sans">
+    <div className="flex h-screen bg-slate-50 dark:bg-transparent overflow-hidden font-sans">
       <Sidebar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
@@ -141,7 +141,7 @@ function App() {
         onClose={() => setSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 overflow-auto">
           {renderSection()}
