@@ -163,7 +163,10 @@ export default function StudentBilling() {
     const enrollments = courseEnrollments.filter(e => e.user_id === userId)
 
     const getClassRate = (c: LiveClass) => {
-      const match = enrollments.find(e => e.courses?.title === c.title)
+      const match = enrollments.find(e => {
+        const courseTitle = Array.isArray(e.courses) ? e.courses[0]?.title : e.courses?.title;
+        return (courseTitle || '').trim().toLowerCase() === (c.title || '').trim().toLowerCase();
+      })
       return match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (defaultRate || 0)
     }
 
@@ -178,8 +181,14 @@ export default function StudentBilling() {
     
     // All time specific (for total due calculation)
     let allTimeAmountDue = 0
+    const allTimeActiveRates = new Set<number>()
+    
+    // If student has no classes yet but is enrolled, we might still want to show a rate.
+    // We'll show the base rate by default, and active rates if classes exist.
     allTimeClasses.forEach(c => {
-      allTimeAmountDue += (c.duration_minutes / 60) * getClassRate(c)
+      const rate = getClassRate(c)
+      allTimeActiveRates.add(rate)
+      allTimeAmountDue += (c.duration_minutes / 60) * rate
     })
     
     const allTimeDue = allTimeAmountDue + (manualOutstanding || 0) - (totalPaid || 0)
@@ -189,7 +198,8 @@ export default function StudentBilling() {
       totalHours: periodHours,
       periodAmountDue: periodAmountDue,
       totalDue: allTimeDue, // Overall remaining balance
-      isEnrolled: isActiveProfile
+      isEnrolled: isActiveProfile,
+      activeRates: Array.from(allTimeActiveRates)
     }
   }
 
@@ -775,7 +785,7 @@ export default function StudentBilling() {
             <thead className="hidden md:table-header-group bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Student</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Base Rate</th>
+                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Rates Applied</th>
                 <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Activity</th>
                 <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Period</th>
                 <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Outstanding</th>

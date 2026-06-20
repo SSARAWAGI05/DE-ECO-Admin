@@ -47,11 +47,18 @@ export default function EarningsAnalytics() {
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
   const [customStart, setCustomStart] = useState('')
   const [customEnd, setCustomEnd] = useState<string>('')
-
-  const [chartCurrency, setChartCurrency] = useState('INR')
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({})
 
   useEffect(() => {
     fetchData()
+    fetch('https://open.er-api.com/v6/latest/INR')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.rates) {
+          setExchangeRates(data.rates)
+        }
+      })
+      .catch(err => console.error('Failed to fetch exchange rates', err))
   }, [])
 
   const fetchData = async () => {
@@ -113,7 +120,10 @@ export default function EarningsAnalytics() {
       const hours = c.duration_minutes / 60
       
       const userEnrollments = courseEnrollments.filter(e => e.user_id === c.user_id)
-      const match = userEnrollments.find(e => e.courses?.title === c.title)
+      const match = userEnrollments.find(e => {
+        const courseTitle = Array.isArray(e.courses) ? e.courses[0]?.title : e.courses?.title;
+        return (courseTitle || '').trim().toLowerCase() === (c.title || '').trim().toLowerCase();
+      })
       const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
       
       const earned = hours * rate
@@ -202,12 +212,6 @@ export default function EarningsAnalytics() {
     })
     return totals
   }, [chartData])
-
-  useEffect(() => {
-    if (!availableCurrencies.includes(chartCurrency)) {
-      setChartCurrency(availableCurrencies[0] || 'INR')
-    }
-  }, [availableCurrencies, chartCurrency])
 
   // --- UI ---
   if (loading) {
@@ -407,15 +411,8 @@ export default function EarningsAnalytics() {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 flex items-center gap-2">
               <TrendingUp size={18} className="text-slate-400" />
-              Revenue Trend ({timeframe})
+              Revenue Trend ({timeframe}) (in INR)
             </h3>
-            <select
-              value={chartCurrency}
-              onChange={(e) => setChartCurrency(e.target.value)}
-              className="border border-slate-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-slate-50 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold"
-            >
-              {availableCurrencies.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
           </div>
           
           <div className="w-full h-[240px]">
@@ -423,7 +420,19 @@ export default function EarningsAnalytics() {
               <div className="h-full flex items-center justify-center text-slate-400 font-medium">No data available</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData.map(d => ({ ...d, chartTotal: d.totals[chartCurrency] || 0 }))} onClick={(e) => {
+                <AreaChart data={chartData.map(d => {
+                  let inrTotal = 0;
+                  Object.entries(d.totals).forEach(([curr, amount]) => {
+                    if (curr === 'INR') {
+                      inrTotal += amount;
+                    } else if (exchangeRates[curr]) {
+                      inrTotal += amount / exchangeRates[curr];
+                    } else {
+                      inrTotal += amount;
+                    }
+                  });
+                  return { ...d, chartTotal: inrTotal };
+                })} onClick={(e) => {
                   if (e && e.activePayload && e.activePayload.length > 0) {
                     setSelectedDateKey(e.activePayload[0].payload.key)
                   }
@@ -446,7 +455,7 @@ export default function EarningsAnalytics() {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#64748b', fontSize: 12 }}
-                    tickFormatter={(val) => chartCurrency === 'INR' ? `₹${val}` : `${chartCurrency} ${val}`}
+                    tickFormatter={(val) => `₹${val}`}
                     dx={-10}
                   />
                   <Tooltip 
@@ -457,7 +466,7 @@ export default function EarningsAnalytics() {
                         return (
                           <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-3 rounded-lg shadow-xl border border-slate-700">
                             <p className="font-bold mb-1">{data.label}</p>
-                            <p className="text-emerald-400 font-medium">{CURRENCY_SYMBOL[chartCurrency] || chartCurrency}{Math.round(data.chartTotal).toLocaleString()}</p>
+                            <p className="text-emerald-400 font-medium">₹{Math.round(data.chartTotal).toLocaleString()}</p>
                             <p className="text-xs text-slate-400 mt-1">{data.classes.length} classes</p>
                           </div>
                         )
