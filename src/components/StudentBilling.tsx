@@ -903,7 +903,7 @@ export default function StudentBilling() {
                         </div>
                           {hasClasses && (
                             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1.5">
-                              Period Charges: <span className="text-slate-700 dark:text-slate-300">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
+                              Billed This Period: <span className="text-slate-700 dark:text-slate-300">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
                             </div>
                           )}
                         </div>
