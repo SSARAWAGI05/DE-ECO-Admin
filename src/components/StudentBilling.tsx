@@ -71,7 +71,7 @@ export default function StudentBilling() {
   const [courseEnrollments, setCourseEnrollments] = useState<CourseEnrollment[]>([])
   
   // Filters & Sorting
-  const [period, setPeriod] = useState<FilterPeriod>('current_month')
+  const [period, setPeriod] = useState<FilterPeriod>('all_time')
   const [searchTerm, setSearchTerm] = useState('')
   const [showActiveOnly, setShowActiveOnly] = useState(true) // User requested default to active
   const [sortBy, setSortBy] = useState<SortOption>('name_asc')
@@ -903,7 +903,7 @@ export default function StudentBilling() {
                         </div>
                           {hasClasses && (
                             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1.5">
-                              Due: <span className="text-slate-700 dark:text-slate-300">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
+                              Period Charges: <span className="text-slate-700 dark:text-slate-300">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
                             </div>
                           )}
                         </div>
