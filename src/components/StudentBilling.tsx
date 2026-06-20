@@ -94,6 +94,9 @@ export default function StudentBilling() {
   // Receipt State
   const [receiptRecord, setReceiptRecord] = useState<BillingHistory | null>(null)
   const [receiptProfile, setReceiptProfile] = useState<Profile | null>(null)
+
+  // Breakdown Modal State
+  const [breakdownProfile, setBreakdownProfile] = useState<any | null>(null)
   
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
@@ -185,11 +188,22 @@ export default function StudentBilling() {
     
     // If student has no classes yet but is enrolled, we might still want to show a rate.
     // We'll show the base rate by default, and active rates if classes exist.
+    const classBreakdown: any[] = []
+    
     allTimeClasses.forEach(c => {
       const rate = getClassRate(c)
       allTimeActiveRates.add(rate)
-      allTimeAmountDue += (c.duration_minutes / 60) * rate
+      const cost = (c.duration_minutes / 60) * rate
+      allTimeAmountDue += cost
+      classBreakdown.push({
+        ...c,
+        rateApplied: rate,
+        cost: cost
+      })
     })
+    
+    // Sort classBreakdown by date descending
+    classBreakdown.sort((a, b) => new Date(b.scheduled_datetime).getTime() - new Date(a.scheduled_datetime).getTime())
     
     const allTimeDue = allTimeAmountDue + (manualOutstanding || 0) - (totalPaid || 0)
 
@@ -199,7 +213,11 @@ export default function StudentBilling() {
       periodAmountDue: periodAmountDue,
       totalDue: allTimeDue, // Overall remaining balance
       isEnrolled: isActiveProfile,
-      activeRates: Array.from(allTimeActiveRates)
+      activeRates: Array.from(allTimeActiveRates),
+      classBreakdown,
+      allTimeAmountDue,
+      manualOutstanding,
+      totalPaid
     }
   }
 
@@ -871,9 +889,18 @@ export default function StudentBilling() {
                       {/* Total Amount Due */}
                       <td className="block md:table-cell p-0 md:p-4 mb-3 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-center">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Outstanding</span>
-                        <span className={`inline-flex items-center font-bold text-lg ${stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : stats.totalDue < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
-                          {currencySymbol} {stats.totalDue.toFixed(2)}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center font-bold text-lg ${stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : stats.totalDue < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                            {currencySymbol} {stats.totalDue.toFixed(2)}
+                          </span>
+                          <button 
+                            onClick={() => setBreakdownProfile(profile)}
+                            className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-slate-50 hover:bg-indigo-50 dark:bg-neutral-800/50 dark:hover:bg-indigo-500/10 p-1.5 rounded-full"
+                            title="View Calculation Breakdown"
+                          >
+                            <AlertCircle size={16} />
+                          </button>
+                        </div>
                       </td>
                       
                       {/* Actions */}
@@ -1086,6 +1113,86 @@ export default function StudentBilling() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BREAKDOWN MODAL */}
+      {breakdownProfile && (
+        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl w-full max-w-3xl shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex justify-between items-center shrink-0">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Calculation Breakdown</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                  Understand how the outstanding amount for {breakdownProfile.first_name} {breakdownProfile.last_name} was calculated.
+                </p>
+              </div>
+              <button onClick={() => setBreakdownProfile(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 rounded-full text-slate-500 dark:text-slate-400 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50 dark:bg-neutral-900/50">
+              {breakdownProfile.stats.classBreakdown.length === 0 ? (
+                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                  <p className="font-medium text-lg text-slate-700 dark:text-slate-300">No classes taken yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <h3 className="font-bold text-slate-700 dark:text-slate-300 uppercase text-xs tracking-wider mb-2">Class History</h3>
+                  {breakdownProfile.stats.classBreakdown.map((c: any) => (
+                    <div key={c.id} className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 rounded-xl p-4 flex justify-between items-center shadow-sm">
+                      <div>
+                        <div className="font-bold text-slate-800 dark:text-slate-200">{c.title}</div>
+                        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-3">
+                          <span className="flex items-center gap-1">
+                            <CalendarIcon size={12} /> {new Date(c.scheduled_datetime).toLocaleDateString()}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock size={12} /> {(c.duration_minutes / 60).toFixed(1)} hrs
+                          </span>
+                          <span className="flex items-center gap-1 bg-slate-100 dark:bg-neutral-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400">
+                            Rate: {getCurrencySymbol(breakdownProfile.billing_currency)}{c.rateApplied}/hr
+                          </span>
+                        </div>
+                      </div>
+                      <div className="font-black text-rose-600 dark:text-rose-400 text-lg">
+                        +{getCurrencySymbol(breakdownProfile.billing_currency)}{c.cost.toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-white dark:bg-neutral-900 shrink-0">
+              <h3 className="font-bold text-slate-700 dark:text-slate-300 uppercase text-xs tracking-wider mb-4">Final Calculation Summary</h3>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <span>Total Charges for Classes</span>
+                  <span className="text-rose-600 dark:text-rose-400">+{getCurrencySymbol(breakdownProfile.billing_currency)}{breakdownProfile.stats.allTimeAmountDue.toFixed(2)}</span>
+                </div>
+                
+                <div className="flex justify-between items-center text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <span>Total Manual Due Additions</span>
+                  <span className="text-rose-600 dark:text-rose-400">+{getCurrencySymbol(breakdownProfile.billing_currency)}{(breakdownProfile.stats.manualOutstanding || 0).toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-sm font-medium text-slate-600 dark:text-slate-400 pb-3 border-b border-slate-200 dark:border-neutral-800">
+                  <span>Total Paid (Settlements)</span>
+                  <span className="text-emerald-600 dark:text-emerald-400">-{getCurrencySymbol(breakdownProfile.billing_currency)}{(breakdownProfile.stats.totalPaid || 0).toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between items-center pt-1">
+                  <span className="font-bold text-slate-900 dark:text-slate-50 text-lg">Outstanding Amount</span>
+                  <span className={`font-black text-2xl ${breakdownProfile.stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                    {getCurrencySymbol(breakdownProfile.billing_currency)}{breakdownProfile.stats.totalDue.toFixed(2)}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
