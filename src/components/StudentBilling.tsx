@@ -123,7 +123,7 @@ export default function StudentBilling() {
 
     const { data: courseEnrollData, error: courseEnrollErr } = await supabase
       .from('course_enrollments')
-      .select('user_id, custom_hourly_rate, courses(title)')
+      .select('user_id, status, custom_hourly_rate, courses(id, title)')
 
     if (courseEnrollErr) console.error('Failed to fetch course enrollments:', courseEnrollErr)
     else setCourseEnrollments(courseEnrollData ?? [])
@@ -166,11 +166,15 @@ export default function StudentBilling() {
     const enrollments = courseEnrollments.filter(e => e.user_id === userId)
 
     const getClassRate = (c: LiveClass) => {
-      const match = enrollments.find(e => {
+      const matchingEnrollments = enrollments.filter(e => {
         const courseTitle = Array.isArray(e.courses) ? e.courses[0]?.title : e.courses?.title;
         return (courseTitle || '').trim().toLowerCase() === (c.title || '').trim().toLowerCase();
       })
-      return match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (defaultRate || 0)
+      
+      // Prefer the enrollment that has a custom hourly rate set
+      const validEnrollment = matchingEnrollments.find(e => e.custom_hourly_rate != null) || matchingEnrollments[0]
+
+      return validEnrollment && validEnrollment.custom_hourly_rate != null ? validEnrollment.custom_hourly_rate : (defaultRate || 0)
     }
 
     // Period specific
@@ -236,7 +240,7 @@ export default function StudentBilling() {
       ...p,
       stats: getUserStats(p.id, p.hourly_rate, p.is_active, p.total_paid, p.manual_outstanding)
     }))
-  }, [profiles, filteredClasses, classes])
+  }, [profiles, filteredClasses, classes, courseEnrollments])
 
   // Apply Search, Filter, and Sort
   const processedProfiles = useMemo(() => {
