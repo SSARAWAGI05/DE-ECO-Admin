@@ -184,15 +184,24 @@ export default function StudentBilling() {
     
     // All time specific (for total due calculation)
     let allTimeAmountDue = 0
-    const allTimeActiveRates = new Set<number>()
+    const activeRates = new Set<number>()
     
-    // If student has no classes yet but is enrolled, we might still want to show a rate.
-    // We'll show the base rate by default, and active rates if classes exist.
+    // 1. Add rates from all course enrollments
+    enrollments.forEach(e => {
+      activeRates.add(e.custom_hourly_rate != null ? e.custom_hourly_rate : (defaultRate || 0))
+    })
+    
+    // If they have no enrollments but have taken classes, allTimeClasses loop below will add those.
+    // If they have no classes and no enrollments, we still want to show the base rate.
+    if (activeRates.size === 0 && allTimeClasses.length === 0) {
+      activeRates.add(defaultRate || 0)
+    }
+
     const classBreakdown: any[] = []
     
     allTimeClasses.forEach(c => {
       const rate = getClassRate(c)
-      allTimeActiveRates.add(rate)
+      activeRates.add(rate)
       const cost = (c.duration_minutes / 60) * rate
       allTimeAmountDue += cost
       classBreakdown.push({
@@ -213,7 +222,7 @@ export default function StudentBilling() {
       periodAmountDue: periodAmountDue,
       totalDue: allTimeDue, // Overall remaining balance
       isEnrolled: isActiveProfile,
-      activeRates: Array.from(allTimeActiveRates),
+      activeRates: Array.from(activeRates),
       classBreakdown,
       allTimeAmountDue,
       manualOutstanding,
@@ -843,12 +852,22 @@ export default function StudentBilling() {
                         </div>
                       </td>
 
-                      {/* Base Rate (Read-Only) */}
+                      {/* Rates Applied */}
                       <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-center">
-                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Base Rate</span>
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-neutral-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
-                          {currencySymbol} {profile.hourly_rate || 0}
-                        </span>
+                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Rates Applied</span>
+                        <div className="flex flex-wrap gap-1.5 justify-end md:justify-start">
+                          {stats.activeRates.length > 0 ? (
+                            stats.activeRates.map((rate, i) => (
+                              <span key={i} className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-neutral-800 px-2 py-1 rounded-md border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-xs">
+                                {currencySymbol} {rate}/hr
+                              </span>
+                            ))
+                          ) : (
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-neutral-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-xs">
+                              {currencySymbol} {profile.hourly_rate || 0}/hr (Base)
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Activity Status */}
