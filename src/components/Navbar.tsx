@@ -79,7 +79,7 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
       >
       {/* BRANDING */}
       <div className="flex items-center gap-2 shrink-0 pl-1">
-        <img src="/logo.png" alt="DEECO Logo" className="w-6 h-6 object-contain drop-shadow-lg" />
+        <img src="/logo.png" alt="DEECO Logo" className="w-6 h-6 object-contain drop-shadow-lg bg-white rounded-full p-0.5" />
         <div>
           <h1 className="text-base font-black tracking-tight text-slate-900 dark:text-white leading-none">DEECO</h1>
         </div>
@@ -173,7 +173,7 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
       <aside className={`fixed top-0 left-0 h-full w-72 bg-white/95 dark:bg-[#020617]/95 backdrop-blur-2xl z-50 transform transition-transform duration-300 ease-in-out border-r border-slate-200/50 dark:border-white/10 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:hidden flex flex-col`}>
         <div className="p-4 border-b border-slate-200/50 dark:border-white/10 flex items-center justify-between shrink-0 h-16">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="DEECO Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+            <img src="/logo.png" alt="DEECO Logo" className="w-8 h-8 object-contain drop-shadow-sm bg-white rounded-full p-1" />
             <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white leading-none">DEECO</h1>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors">
