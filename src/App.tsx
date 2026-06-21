@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Sidebar from './components/Sidebar'
+import Navbar from './components/Navbar'
 import MobileHeader from './components/MobileHeader'
 import ClassAnnouncements from './components/ClassAnnouncements'
 import LiveClasses from './components/LiveClasses'
@@ -133,17 +133,15 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-transparent overflow-hidden font-sans">
-      <Sidebar
+    <div className="h-screen bg-slate-50 dark:bg-transparent overflow-hidden font-sans flex flex-col relative pt-24">
+      <Navbar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
           {renderSection()}
         </main>
       </div>

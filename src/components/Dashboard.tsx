@@ -226,40 +226,6 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         <Stat label="New Messages" value={stats.messages} icon={Mail} accent="slate" />
       </div>
 
-      {/* EARNINGS CHART */}
-      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 p-6">
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Earnings Overview</h2>
-          <select 
-            value={selectedCurrency}
-            onChange={(e) => setSelectedCurrency(e.target.value)}
-            className="border border-slate-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-slate-50 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50 font-medium text-sm"
-          >
-            {availableCurrencies.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        <div className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1e293b" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#1e293b" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} dy={10} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} tickFormatter={(value) => selectedCurrency === 'INR' ? `₹${value}` : `${selectedCurrency} ${value}`} />
-              <Tooltip 
-                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#0f172a', padding: '12px' }}
-                itemStyle={{ color: '#0f172a', fontWeight: 600 }}
-                formatter={(value: any) => [selectedCurrency === 'INR' ? `₹${value}` : `${selectedCurrency} ${value}`, 'Earnings']}
-              />
-              <Area type="monotone" dataKey="Earnings" stroke="#0f172a" strokeWidth={2} fillOpacity={1} fill="url(#colorEarnings)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
