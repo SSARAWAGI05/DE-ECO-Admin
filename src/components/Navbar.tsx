@@ -75,7 +75,7 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
     <>
       <nav 
         ref={navRef}
-        className="hidden lg:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-[98%] h-14 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 items-center justify-between px-3 transition-all"
+        className="hidden lg:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-max max-w-[98%] h-14 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 items-center gap-8 xl:gap-16 px-6 transition-all"
       >
       {/* BRANDING */}
       <div className="flex items-center gap-2 shrink-0 pl-1">

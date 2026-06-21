@@ -351,7 +351,7 @@ export default function ClassEnrollments() {
               </div>
             ) : (
               filteredProfiles.map((profile) => (
-                <div key={profile.id} className="bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-4 shadow-sm flex flex-col gap-4">
+                <div key={profile.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-4 shadow-sm flex flex-col gap-4">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="font-bold text-slate-900 dark:text-slate-50 text-lg">
@@ -374,7 +374,7 @@ export default function ClassEnrollments() {
                     >
                       <div
                         className={`
-                          absolute left-1 flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-neutral-900 dark:bg-white shadow-sm transition-transform duration-300 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50
+                          absolute left-1 flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-slate-900 shadow-sm transition-transform duration-300 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50
                           ${profile.is_active ? 'translate-x-20 text-emerald-600 dark:text-emerald-400' : 'translate-x-0 text-slate-400'}
                         `}
                       >
@@ -439,8 +439,8 @@ export default function ClassEnrollments() {
 
       {/* MANAGE ENROLLMENTS MODAL */}
       {selectedProfile && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white w-full max-w-3xl max-h-[90vh] rounded-xl shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-3xl max-h-[90vh] rounded-xl shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col">
             
             <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0">
               <div>
@@ -474,9 +474,9 @@ export default function ClassEnrollments() {
                       Course Enrollments
                     </h3>
                     {userCourseEnrollments.length === 0 ? (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-neutral-900 dark:bg-white p-4 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">No courses enrolled.</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">No courses enrolled.</p>
                     ) : (
-                      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-x-auto">
+                      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-x-auto">
                         <table className="w-full text-left text-sm min-w-[500px]">
                           <thead className="bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                             <tr>
@@ -541,9 +541,9 @@ export default function ClassEnrollments() {
                       Live Class Enrollments
                     </h3>
                     {userClassEnrollments.length === 0 ? (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-neutral-900 dark:bg-white p-4 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">No live classes enrolled.</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 italic bg-white dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">No live classes enrolled.</p>
                     ) : (
-                      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-x-auto">
+                      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-x-auto">
                         <table className="w-full text-left text-sm min-w-[400px]">
                           <thead className="bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
                             <tr>
@@ -600,7 +600,7 @@ export default function ClassEnrollments() {
                 <button
                   type="submit"
                   disabled={!newEnrollmentId}
-                  className="bg-slate-900 dark:bg-white w-full sm:w-auto hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-colors disabled:opacity-50"
+                  className="bg-slate-900 dark:bg-indigo-500 w-full sm:w-auto hover:bg-slate-800 dark:hover:bg-indigo-400 text-white px-5 py-2.5 rounded-lg font-bold transition-colors disabled:opacity-50"
                 >
                   Assign
                 </button>
