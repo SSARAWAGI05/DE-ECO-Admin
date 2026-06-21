@@ -699,22 +699,22 @@ export default function StudentBilling() {
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       
       {/* HEADER & TIME PERIOD CONTROL */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 pb-4 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 pb-4 border-b border-slate-200/50 dark:border-white/10">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight mb-1">Student Billing</h1>
-          <p className="text-slate-500 dark:text-slate-400 font-medium">Auto-calculate and settle invoice amounts for enrolled students.</p>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Student Billing</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Auto-calculate and settle invoice amounts for enrolled students.</p>
         </div>
 
-        <div className="flex items-center bg-white dark:bg-neutral-900 dark:bg-white border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-lg p-1 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
-          <CalendarIcon size={18} className="text-slate-400 ml-3 mr-2" />
+        <div className="flex items-center bg-white/60 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-xl p-1.5 shadow-sm hover:shadow-md transition-all">
+          <CalendarIcon size={18} className="text-indigo-500 dark:text-indigo-400 ml-3 mr-2" />
           <select
-            className="p-2.5 border-none bg-transparent focus:ring-0 font-semibold text-slate-700 dark:text-slate-300 cursor-pointer outline-none"
+            className="p-2.5 border-none bg-transparent focus:ring-0 font-bold text-slate-700 dark:text-white cursor-pointer outline-none"
             value={period}
             onChange={(e) => setPeriod(e.target.value as FilterPeriod)}
           >
-            <option value="current_month">Current Month</option>
-            <option value="last_month">Last Month</option>
-            <option value="all_time">All Time</option>
+            <option value="current_month" className="dark:bg-slate-900">Current Month</option>
+            <option value="last_month" className="dark:bg-slate-900">Last Month</option>
+            <option value="all_time" className="dark:bg-slate-900">All Time</option>
           </select>
         </div>
       </div>
@@ -768,7 +768,7 @@ export default function StudentBilling() {
       </div>
 
       {/* CONTROL PANEL: Search, Filter, Sort */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
+      <div className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-2xl p-5 rounded-t-2xl border border-b-0 border-slate-200/50 dark:border-white/10 flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
         
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
@@ -778,7 +778,7 @@ export default function StudentBilling() {
           <input
             type="text"
             placeholder="Search by name or email..."
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-slate-900 text-sm font-medium outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm font-bold outline-none transition-all shadow-inner text-slate-900 dark:text-white placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -786,56 +786,60 @@ export default function StudentBilling() {
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           {/* Active Only Toggle */}
-          <label className={`flex items-center gap-2 cursor-pointer text-sm font-semibold transition-colors px-4 py-3 rounded-lg border ${showActiveOnly ? 'bg-slate-900 dark:bg-white border-slate-900 text-white dark:text-slate-900' : 'bg-slate-50 dark:bg-neutral-800/50 border-slate-300 dark:border-neutral-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-50'}`}>
-            <Filter size={16} className={showActiveOnly ? "text-white dark:text-slate-900" : "text-slate-400"} />
-            <span className="hidden sm:inline">Active Only</span>
-            <input 
-              type="checkbox" 
-              className="w-4 h-4 text-slate-900 dark:text-slate-50 rounded border-slate-300 dark:border-neutral-700 focus:ring-slate-900 cursor-pointer hidden"
-              checked={showActiveOnly}
-              onChange={(e) => setShowActiveOnly(e.target.checked)}
-            />
+          {/* Active Toggle */}
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <div className="relative">
+              <input 
+                type="checkbox" 
+                className="sr-only"
+                checked={showActiveOnly}
+                onChange={() => setShowActiveOnly(!showActiveOnly)}
+              />
+              <div className={`block w-12 h-6 rounded-full transition-colors ${showActiveOnly ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-700'}`}></div>
+              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showActiveOnly ? 'translate-x-6' : 'translate-x-0'}`}></div>
+            </div>
+            <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Active Only</span>
           </label>
 
           {/* Sort Dropdown */}
-          <div className="flex items-center bg-white dark:bg-neutral-900 dark:bg-white border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
-            <ArrowUpDown size={16} className="text-slate-400 mr-2" />
+          <div className="flex items-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 transition-all shadow-sm hover:shadow-md">
+            <ArrowUpDown size={16} className="text-indigo-500 dark:text-indigo-400 mr-2" />
             <select
-              className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer p-0 pr-6 outline-none"
+              className="bg-transparent border-none focus:ring-0 text-sm font-bold text-slate-700 dark:text-white cursor-pointer p-0 pr-6 outline-none"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
             >
-              <option value="name_asc">Sort: A-Z</option>
-              <option value="amount_desc">Sort: Highest Due</option>
-              <option value="hours_desc">Sort: Most Hours</option>
+              <option value="name_asc" className="dark:bg-slate-900">Sort: A-Z</option>
+              <option value="amount_desc" className="dark:bg-slate-900">Sort: Highest Due</option>
+              <option value="hours_desc" className="dark:bg-slate-900">Sort: Most Hours</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* TABLE DATA */}
-      <div className="bg-white dark:bg-neutral-900 rounded-b-xl border border-slate-200 dark:border-neutral-800 overflow-hidden flex-1 flex flex-col min-h-[400px]">
-        <div className="overflow-auto flex-1 relative">
+      <div className="bg-white/40 dark:bg-slate-900/20 backdrop-blur-xl rounded-b-2xl border border-slate-200/50 dark:border-white/10 overflow-hidden flex-1 flex flex-col min-h-[400px]">
+        <div className="overflow-auto flex-1 relative custom-scrollbar">
           <table className="w-full text-left border-collapse block md:table">
-            <thead className="hidden md:table-header-group bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 sticky top-0 z-10 shadow-sm">
+            <thead className="hidden md:table-header-group bg-slate-100/50 dark:bg-slate-900/60 backdrop-blur-md border-b border-slate-200/50 dark:border-white/10 sticky top-0 z-10">
               <tr>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Student</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Rates Applied</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Activity</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Period</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Outstanding</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50 text-right">Action</th>
+                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Student</th>
+                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Rates Applied</th>
+                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Activity</th>
+                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Period</th>
+                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Outstanding</th>
+                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-neutral-800 block md:table-row-group">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/5 block md:table-row-group">
               {processedProfiles.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-12 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 dark:bg-neutral-800/50 mb-4 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
-                      <Search className="text-slate-400 w-8 h-8" />
+                  <td colSpan={6} className="p-16 text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/50 dark:bg-slate-800/50 mb-6 border border-slate-200/50 dark:border-white/10 shadow-inner">
+                      <Search className="text-slate-400 w-10 h-10" />
                     </div>
-                    <p className="text-lg font-bold text-slate-900 dark:text-slate-50">No students found</p>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium text-sm mt-1">Try adjusting your search or filters.</p>
+                    <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">No students found</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">Try adjusting your search or filters.</p>
                   </td>
                 </tr>
               ) : (
@@ -850,13 +854,18 @@ export default function StudentBilling() {
                   return (
                     <tr key={profile.id} className="block md:table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-all duration-300 border-b border-slate-100 dark:border-white/5 p-4 md:p-0 relative group">
                       {/* Name */}
-                      <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-start md:items-center">
+                      <td className="block md:table-cell p-0 md:p-5 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-start md:items-center">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Student</span>
-                        <div className="text-right md:text-left">
-                          <div className="font-bold text-slate-900 dark:text-slate-50">
-                            {profile.first_name} {profile.last_name}
+                        <div className="text-right md:text-left flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg hidden sm:flex">
+                            {profile.first_name?.[0] || '?'}
                           </div>
-                          <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">{profile.email}</div>
+                          <div>
+                            <div className="font-bold text-slate-900 dark:text-white text-base">
+                              {profile.first_name} {profile.last_name}
+                            </div>
+                            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{profile.email}</div>
+                          </div>
                         </div>
                       </td>
 
@@ -866,12 +875,12 @@ export default function StudentBilling() {
                         <div className="flex flex-wrap gap-1.5 justify-end md:justify-start">
                           {stats.activeRates.length > 0 ? (
                             stats.activeRates.map((rate, i) => (
-                              <span key={i} className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-neutral-800 px-2 py-1 rounded-md border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-xs">
+                              <span key={i} className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-200 dark:border-white/5 text-xs">
                                 {currencySymbol} {rate}/hr
                               </span>
                             ))
                           ) : (
-                            <span className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-neutral-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-xs">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/5 text-xs">
                               {currencySymbol} {profile.hourly_rate || 0}/hr (Base)
                             </span>
                           )}
@@ -922,7 +931,7 @@ export default function StudentBilling() {
                           </span>
                           <button 
                             onClick={() => setBreakdownProfile(profile)}
-                            className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-slate-50 hover:bg-indigo-50 dark:bg-neutral-800/50 dark:hover:bg-indigo-500/10 p-1.5 rounded-full"
+                            className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-slate-50 hover:bg-indigo-50 dark:bg-slate-800/50 dark:hover:bg-indigo-500/10 p-1.5 rounded-full"
                             title="View Calculation Breakdown"
                           >
                             <AlertCircle size={16} />
@@ -931,19 +940,18 @@ export default function StudentBilling() {
                       </td>
                       
                       {/* Actions */}
-                      <td className="block md:table-cell p-0 md:p-4 whitespace-normal md:whitespace-nowrap text-right pt-3 md:pt-4 border-t border-slate-100 dark:border-neutral-800 md:border-none">
+                      <td className="block md:table-cell p-0 md:p-5 whitespace-normal md:whitespace-nowrap text-right pt-3 md:pt-4 border-t border-slate-100 dark:border-white/5 md:border-none">
                         <div className="flex justify-end gap-2">
                            <button 
-                             onClick={() => handleViewHistory(profile)}
-                             title="View History"
-                             className="bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors flex items-center justify-center"
-                           >
-                             <History size={16} />
-                           </button>
+                            onClick={() => handleViewHistory(profile)}
+                            className="bg-white/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2 px-4 rounded-lg transition-all duration-300 shadow-sm text-sm border border-slate-200/50 dark:border-white/5"
+                          >
+                            History
+                          </button>
                            <button 
                              onClick={() => setSettleProfile(profile)}
                              disabled={stats.totalDue <= 0}
-                             className="bg-slate-900 dark:bg-white border border-slate-800 dark:border-neutral-700 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 px-4 py-2 rounded-lg font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                             className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 text-sm transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                            >
                              Settle Due
                            </button>
@@ -966,8 +974,8 @@ export default function StudentBilling() {
 
       {/* SETTLE MODAL */}
       {settleProfile && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl w-full max-w-sm shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal">
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">Settle Balance</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
               Record a payment from <span className="font-bold text-slate-800 dark:text-slate-200">{settleProfile.first_name}</span>.
@@ -984,7 +992,7 @@ export default function StudentBilling() {
                   placeholder={`e.g. ${settleProfile.stats.totalDue.toFixed(2)}`}
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
-                  className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 font-medium"
+                  className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white font-medium shadow-inner transition-all"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -1013,8 +1021,8 @@ export default function StudentBilling() {
 
       {/* ADD DUE AMOUNT MODAL */}
       {chargeProfile && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl w-full max-w-sm shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal">
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">Add Due Amount</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
               Manually add to the outstanding balance for <span className="font-bold text-slate-800 dark:text-slate-200">{chargeProfile.first_name}</span>.
@@ -1031,7 +1039,7 @@ export default function StudentBilling() {
                   placeholder="e.g. 1500.00"
                   value={chargeAmount}
                   onChange={(e) => setChargeAmount(e.target.value)}
-                  className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 font-medium"
+                  className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none text-slate-900 dark:text-white font-medium shadow-inner transition-all"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -1060,8 +1068,8 @@ export default function StudentBilling() {
 
       {/* HISTORY MODAL */}
       {historyProfile && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl w-full max-w-lg shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col max-h-[80vh]">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-lg shadow-2xl border border-white/20 dark:border-white/10 flex flex-col max-h-[80vh] animate-modal">
             <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex justify-between items-center shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Billing History</h2>
@@ -1085,7 +1093,7 @@ export default function StudentBilling() {
               ) : (
                 <div className="space-y-4">
                   {historyData.map(record => (
-                    <div key={record.id} className={`p-4 rounded-xl border ${record.undone ? 'bg-slate-50 dark:bg-neutral-800/50 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 opacity-60' : 'bg-white dark:bg-neutral-900 dark:bg-white border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shadow-sm'}`}>
+                    <div key={record.id} className={`p-4 rounded-xl border ${record.undone ? 'bg-white/30 dark:bg-slate-800/30 border-slate-200/50 dark:border-white/5 opacity-60' : 'bg-white/50 dark:bg-slate-800/50 border-slate-200/50 dark:border-white/10 shadow-sm hover:shadow-md transition-shadow'}`}>
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2">
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
