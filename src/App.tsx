@@ -141,7 +141,7 @@ function App() {
 
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-auto max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 overflow-auto w-full px-4 sm:px-6 lg:px-8">
           {renderSection()}
         </main>
       </div>

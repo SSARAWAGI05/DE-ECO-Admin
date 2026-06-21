@@ -728,7 +728,7 @@ export default function StudentBilling() {
           </div>
           <div>
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Active Students</p>
-            <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
+            <p className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
@@ -739,7 +739,7 @@ export default function StudentBilling() {
           </div>
           <div>
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Scheduled Hours</p>
-            <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-xl font-bold text-slate-400">hrs</span></p>
+            <p className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-lg lg:text-xl font-bold text-slate-400">hrs</span></p>
           </div>
         </div>
 
@@ -753,11 +753,11 @@ export default function StudentBilling() {
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Total Outstanding</p>
             <div className="space-y-1">
               {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
-                <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">₹ 0.00</p>
+                <p className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">₹ 0.00</p>
               ) : (
                 Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
-                  <p key={currency} className="text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline">
-                    <span className="text-slate-400 dark:text-slate-500 mr-2 text-xl font-bold">{currency}</span>
+                  <p key={currency} className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline whitespace-nowrap">
+                    <span className="text-slate-400 dark:text-slate-500 mr-2 text-lg font-bold">{currency}</span>
                     {getCurrencySymbol(currency)} {amount.toFixed(2)}
                   </p>
                 ))
