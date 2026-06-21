@@ -60,8 +60,8 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-black flex flex-col items-center justify-center p-4">
-        <div className="bg-white dark:bg-neutral-900 dark:bg-white p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 max-w-sm w-full">
+      <div className="min-h-screen bg-slate-50 dark:bg-transparent flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900/40 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 max-w-sm w-full">
           <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
             <svg className="w-8 h-8 text-white dark:text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

@@ -722,42 +722,42 @@ export default function StudentBilling() {
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 shrink-0">
         {/* Active Students Card */}
-        <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-white/50 dark:border-white/5 flex items-center gap-4 shadow-lg shadow-blue-500/5 dark:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
-          <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 dark:from-blue-500/30 dark:to-indigo-500/30 p-3.5 rounded-xl text-blue-600 dark:text-blue-400">
-            <Users size={24} />
+        <div className="bg-white/40 dark:bg-[#020617]/40 backdrop-blur-3xl p-6 rounded-[24px] border border-white/60 dark:border-[#0ea5e9]/30 flex items-center gap-5 shadow-xl shadow-blue-500/10 dark:shadow-[#0ea5e9]/10 hover:-translate-y-1 hover:dark:shadow-[#0ea5e9]/20 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-[#0ea5e9] dark:to-[#0284c7] p-4 rounded-[18px] text-white shadow-[0_0_15px_rgba(14,165,233,0.4)] group-hover:shadow-[0_0_25px_rgba(14,165,233,0.6)] transition-all">
+            <Users size={28} strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Active Students</p>
-            <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Active Students</p>
+            <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
         {/* Scheduled Hours Card */}
-        <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-white/50 dark:border-white/5 flex items-center gap-4 shadow-lg shadow-purple-500/5 dark:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300">
-          <div className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 dark:from-purple-500/30 dark:to-fuchsia-500/30 p-3.5 rounded-xl text-purple-600 dark:text-purple-400">
-            <TrendingUp size={24} />
+        <div className="bg-white/40 dark:bg-[#020617]/40 backdrop-blur-3xl p-6 rounded-[24px] border border-white/60 dark:border-[#a855f7]/30 flex items-center gap-5 shadow-xl shadow-purple-500/10 dark:shadow-[#a855f7]/10 hover:-translate-y-1 hover:dark:shadow-[#a855f7]/20 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-purple-500 to-fuchsia-600 dark:from-[#a855f7] dark:to-[#9333ea] p-4 rounded-[18px] text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] group-hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all">
+            <TrendingUp size={28} strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Scheduled Hours</p>
-            <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-lg font-bold text-slate-400">hrs</span></p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Scheduled Hours</p>
+            <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-xl font-bold text-slate-400">hrs</span></p>
           </div>
         </div>
 
         {/* Total Outstanding Card */}
-        <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-white/50 dark:border-white/5 flex items-start gap-4 shadow-lg shadow-rose-500/5 dark:shadow-rose-500/10 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-          <div className="absolute right-0 top-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full"></div>
-          <div className="bg-gradient-to-br from-rose-500/20 to-pink-500/20 dark:from-rose-500/30 dark:to-pink-500/30 p-3.5 rounded-xl text-rose-600 dark:text-rose-400 shrink-0">
-            <DollarSign size={24} />
+        <div className="bg-white/40 dark:bg-[#020617]/40 backdrop-blur-3xl p-6 rounded-[24px] border border-white/60 dark:border-[#f43f5e]/30 flex items-start gap-5 shadow-xl shadow-rose-500/10 dark:shadow-[#f43f5e]/10 hover:-translate-y-1 hover:dark:shadow-[#f43f5e]/20 transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-rose-500/20 dark:bg-[#f43f5e]/20 blur-[50px] rounded-full pointer-events-none"></div>
+          <div className="bg-gradient-to-br from-rose-500 to-pink-600 dark:from-[#f43f5e] dark:to-[#e11d48] p-4 rounded-[18px] text-white shadow-[0_0_15px_rgba(244,63,94,0.4)] group-hover:shadow-[0_0_25px_rgba(244,63,94,0.6)] shrink-0 z-10 transition-all">
+            <DollarSign size={28} strokeWidth={2.5} />
           </div>
           <div className="flex-1 relative z-10">
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Total Outstanding</p>
-            <div className="space-y-1 mt-1">
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Total Outstanding</p>
+            <div className="space-y-1">
               {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
-                <p className="text-3xl font-black text-rose-500 tracking-tight">₹ 0.00</p>
+                <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">₹ 0.00</p>
               ) : (
                 Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
-                  <p key={currency} className="text-3xl font-black text-rose-500 tracking-tight flex items-baseline">
-                    <span className="text-rose-400/70 mr-2 text-base font-bold">{currency}</span>
+                  <p key={currency} className="text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline">
+                    <span className="text-slate-400 dark:text-slate-500 mr-2 text-xl font-bold">{currency}</span>
                     {getCurrencySymbol(currency)} {amount.toFixed(2)}
                   </p>
                 ))
@@ -818,20 +818,20 @@ export default function StudentBilling() {
       </div>
 
       {/* TABLE DATA */}
-      <div className="bg-white/40 dark:bg-slate-900/20 backdrop-blur-xl rounded-b-2xl border border-slate-200/50 dark:border-white/10 overflow-hidden flex-1 flex flex-col min-h-[400px]">
-        <div className="overflow-auto flex-1 relative custom-scrollbar">
-          <table className="w-full text-left border-collapse block md:table">
-            <thead className="hidden md:table-header-group bg-slate-100/50 dark:bg-slate-900/60 backdrop-blur-md border-b border-slate-200/50 dark:border-white/10 sticky top-0 z-10">
+      <div className="flex-1 flex flex-col min-h-[400px]">
+        <div className="overflow-auto flex-1 relative custom-scrollbar px-1">
+          <table className="w-full text-left border-collapse md:border-separate md:border-spacing-y-4 block md:table">
+            <thead className="hidden md:table-header-group sticky top-0 z-10">
               <tr>
-                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Student</th>
-                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Rates Applied</th>
-                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Activity</th>
-                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Period</th>
-                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest">Outstanding</th>
-                <th className="p-5 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Student</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Rates Applied</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Activity</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Period</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Outstanding</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-white/5 block md:table-row-group">
+            <tbody className="block md:table-row-group">
               {processedProfiles.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-16 text-center">
@@ -852,9 +852,9 @@ export default function StudentBilling() {
                   const isOfficiallyEnrolled = stats.isEnrolled
 
                   return (
-                    <tr key={profile.id} className="block md:table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-all duration-300 border-b border-slate-100 dark:border-white/5 p-4 md:p-0 relative group">
+                    <tr key={profile.id} className="block md:table-row bg-white/60 dark:bg-[#020617]/40 backdrop-blur-2xl hover:bg-white/80 dark:hover:bg-white/[0.08] transition-all duration-300 md:rounded-2xl shadow-sm hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] md:shadow-none border border-slate-200/50 dark:border-white/10 md:border-transparent mb-4 md:mb-0 relative group">
                       {/* Name */}
-                      <td className="block md:table-cell p-0 md:p-5 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-start md:items-center">
+                      <td className="block md:table-cell px-6 py-5 md:first:rounded-l-2xl whitespace-normal md:whitespace-nowrap flex justify-between items-start md:items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-white/10 md:border-l">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Student</span>
                         <div className="text-right md:text-left flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg hidden sm:flex">
@@ -870,7 +870,7 @@ export default function StudentBilling() {
                       </td>
 
                       {/* Rates Applied */}
-                      <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-center">
+                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Rates Applied</span>
                         <div className="flex flex-wrap gap-1.5 justify-end md:justify-start">
                           {stats.activeRates.length > 0 ? (
@@ -888,10 +888,10 @@ export default function StudentBilling() {
                       </td>
 
                       {/* Activity Status */}
-                      <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-center">
+                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Activity</span>
                         {!isOfficiallyEnrolled ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-[11px] uppercase tracking-wider border border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-[11px] uppercase tracking-[0.15em] border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]">
                             Unenrolled
                           </span>
                         ) : hasClasses ? (
@@ -907,7 +907,7 @@ export default function StudentBilling() {
                       </td>
 
                       {/* Period Hours & Due */}
-                      <td className="block md:table-cell p-0 md:p-4 mb-2 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-start">
+                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-start border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase mt-1">Period</span>
                         <div className="text-right md:text-left">
                         <div className={`inline-flex items-center gap-1.5 font-bold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400'}`}>
@@ -923,7 +923,7 @@ export default function StudentBilling() {
                       </td>
 
                       {/* Total Amount Due */}
-                      <td className="block md:table-cell p-0 md:p-4 mb-3 md:mb-0 whitespace-normal md:whitespace-nowrap flex justify-between items-center">
+                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
                         <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Outstanding</span>
                         <div className="flex items-center gap-2">
                           <span className={`inline-flex items-center font-bold text-lg ${stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : stats.totalDue < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
@@ -940,7 +940,7 @@ export default function StudentBilling() {
                       </td>
                       
                       {/* Actions */}
-                      <td className="block md:table-cell p-0 md:p-5 whitespace-normal md:whitespace-nowrap text-right pt-3 md:pt-4 border-t border-slate-100 dark:border-white/5 md:border-none">
+                      <td className="block md:table-cell px-6 py-5 md:last:rounded-r-2xl whitespace-normal md:whitespace-nowrap text-right border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-white/10 md:border-r">
                         <div className="flex justify-end gap-2">
                            <button 
                             onClick={() => handleViewHistory(profile)}
