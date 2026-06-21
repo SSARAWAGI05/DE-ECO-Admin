@@ -137,6 +137,8 @@ function App() {
       <Navbar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -146,12 +148,6 @@ function App() {
         </main>
       </div>
 
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
     </div>
   )
 }

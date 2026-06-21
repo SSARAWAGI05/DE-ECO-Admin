@@ -397,7 +397,7 @@ export default function LiveClasses() {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 p-3 bg-slate-50 dark:bg-neutral-800/50/50 flex items-center justify-end gap-2 shrink-0">
+                <div className="border-t border-slate-100 dark:border-white/10 p-3 bg-slate-50 dark:bg-transparent flex items-center justify-end gap-2 shrink-0">
                   {c.meeting_link && (
                     <a
                       href={c.meeting_link}
