@@ -67,7 +67,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
             {/* Pulsing Aura */}
             <div className="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/30 blur-3xl rounded-full scale-150 animate-pulse duration-1000"></div>
             
-            <div className="relative bg-white/40 dark:bg-white/5 p-6 rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/20 dark:shadow-[#0ea5e9]/20 backdrop-blur-xl animate-float">
+            <div className="relative bg-white dark:bg-white p-6 rounded-full border border-slate-200 dark:border-white/10 shadow-2xl shadow-indigo-500/20 dark:shadow-[#0ea5e9]/20 animate-float">
               <img 
                 src="/logo.png" 
                 alt="DEECO Logo" 
