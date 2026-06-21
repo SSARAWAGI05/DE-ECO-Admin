@@ -975,7 +975,7 @@ export default function StudentBilling() {
       {/* SETTLE MODAL */}
       {settleProfile && (
         <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">Settle Balance</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
               Record a payment from <span className="font-bold text-slate-800 dark:text-slate-200">{settleProfile.first_name}</span>.
@@ -1022,7 +1022,7 @@ export default function StudentBilling() {
       {/* ADD DUE AMOUNT MODAL */}
       {chargeProfile && (
         <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">Add Due Amount</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
               Manually add to the outstanding balance for <span className="font-bold text-slate-800 dark:text-slate-200">{chargeProfile.first_name}</span>.

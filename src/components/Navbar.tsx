@@ -71,7 +71,7 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
   return (
     <nav 
       ref={navRef}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl h-16 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 flex items-center justify-between px-6 transition-all"
+      className="hidden lg:flex fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-[98%] 2xl:max-w-[1400px] h-16 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 items-center justify-between px-4 transition-all"
     >
       {/* BRANDING */}
       <div className="flex items-center gap-3 shrink-0">

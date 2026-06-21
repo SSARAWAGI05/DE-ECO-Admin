@@ -269,7 +269,7 @@ export default function LiveClasses() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSettingsOpen(true)}
-              className="flex items-center justify-center gap-2 bg-white dark:bg-neutral-900 dark:bg-white border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 hover:border-slate-300 dark:border-neutral-700 transition-colors text-slate-700 dark:text-slate-300 px-5 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm"
+              className="flex items-center justify-center gap-2 bg-white/60 dark:bg-[#0B0F19]/50 backdrop-blur-md border-2 border-slate-200/50 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10 transition-colors text-slate-700 dark:text-slate-300 px-5 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm"
               title="Edit Default Meeting Link"
             >
               <LinkIcon className="w-5 h-5 text-slate-400" />
@@ -350,7 +350,7 @@ export default function LiveClasses() {
             }
 
             return (
-              <div key={c.id} className="group flex flex-col bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div key={c.id} className="group flex flex-col bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-slate-200/50 dark:border-white/10 overflow-hidden hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_30px_rgba(0,0,0,0.4)] transition-all duration-300 transform hover:-translate-y-1">
                 {/* Accent Bar */}
                 <div className={`h-1.5 w-full ${accentBar}`} />
                 
@@ -370,8 +370,8 @@ export default function LiveClasses() {
                   </p>
 
                   {/* Student Info */}
-                  <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-neutral-800/50 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 rounded-xl mb-5">
-                    <div className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900 dark:bg-white shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-center justify-center text-indigo-600 font-bold shrink-0">
+                  <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 rounded-xl mb-5">
+                    <div className="w-10 h-10 rounded-full bg-white/60 dark:bg-white/10 border border-slate-200/50 dark:border-white/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold shrink-0">
                       {getUserName(c.user_id).charAt(0).toUpperCase() || 'S'}
                     </div>
                     <div className="truncate">

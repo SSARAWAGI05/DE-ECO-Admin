@@ -348,38 +348,40 @@ export default function Invoices() {
             </div>
 
             {/* Table */}
-            <table className="w-full text-left mb-6 border-collapse">
-              <thead>
-                <tr className="border-y-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-slate-900 dark:text-slate-50">
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Date</th>
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Description</th>
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Duration</th>
-                  <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {studentClasses.map((c) => {
-                  const date = new Date(c.scheduled_datetime)
-                  const hours = (c.duration_minutes || 0) / 60
-                  const userEnrollments = courseEnrollments.filter(e => e.user_id === profile.id)
-                  const match = userEnrollments.find(e => e.courses?.title === c.title)
-                  const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
-                  const amt = hours * rate
-                  return (
-                    <tr key={c.id} className="border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 text-sm">
-                      <td className="py-4 text-slate-600 dark:text-slate-400">
-                        {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </td>
-                      <td className="py-4 font-medium text-slate-800 dark:text-slate-200">
-                        {c.title || 'Live Class'}
-                      </td>
-                      <td className="py-4 text-slate-600 dark:text-slate-400 text-right">{c.duration_minutes} mins</td>
-                      <td className="py-4 font-medium text-slate-900 dark:text-slate-50 text-right">{currencySym}{amt.toFixed(2)}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto w-full mb-6">
+              <table className="w-full text-left border-collapse min-w-[400px]">
+                <thead>
+                  <tr className="border-y-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-slate-900 dark:text-slate-50">
+                    <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Date</th>
+                    <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400">Description</th>
+                    <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Duration</th>
+                    <th className="py-3 font-bold uppercase tracking-wider text-xs text-slate-500 dark:text-slate-400 text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentClasses.map((c) => {
+                    const date = new Date(c.scheduled_datetime)
+                    const hours = (c.duration_minutes || 0) / 60
+                    const userEnrollments = courseEnrollments.filter(e => e.user_id === profile.id)
+                    const match = userEnrollments.find(e => e.courses?.title === c.title)
+                    const rate = match && match.custom_hourly_rate != null ? match.custom_hourly_rate : (profile.hourly_rate || 0)
+                    const amt = hours * rate
+                    return (
+                      <tr key={c.id} className="border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 text-sm">
+                        <td className="py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                          {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </td>
+                        <td className="py-4 font-medium text-slate-800 dark:text-slate-200 min-w-[150px]">
+                          {c.title || 'Live Class'}
+                        </td>
+                        <td className="py-4 text-slate-600 dark:text-slate-400 text-right whitespace-nowrap">{c.duration_minutes} mins</td>
+                        <td className="py-4 font-medium text-slate-900 dark:text-slate-50 text-right whitespace-nowrap">{currencySym}{amt.toFixed(2)}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             {/* Totals Section */}
             <div className="flex justify-end mb-16">
@@ -467,7 +469,7 @@ export default function Invoices() {
       </div>
 
       {/* Controls */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 mb-8">
+      <div className="bg-white/60 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 mb-8 shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
         <div className="flex flex-col md:flex-row gap-6 items-end">
           <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -558,7 +560,7 @@ export default function Invoices() {
           <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-t-slate-900 rounded-full" />
         </div>
       ) : studentSummaries.length === 0 ? (
-        <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-16 flex flex-col items-center justify-center text-center">
+        <div className="bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md rounded-3xl border border-slate-200/50 dark:border-white/10 p-16 flex flex-col items-center justify-center text-center shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
           <Receipt className="w-16 h-16 text-slate-300 mb-4" />
           <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Classes Found</h3>
           <p className="text-slate-500 dark:text-slate-400">There are no completed classes in the selected date range.</p>
@@ -568,7 +570,7 @@ export default function Invoices() {
           {studentSummaries.map(summary => {
             const currencySym = CURRENCIES[summary.profile.billing_currency] || summary.profile.billing_currency || ''
             return (
-              <div key={summary.profile.id} className="bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden flex flex-col">
+              <div key={summary.profile.id} className="bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-slate-200/50 dark:border-white/10 overflow-hidden flex flex-col transition-transform hover:-translate-y-1">
                 <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
                   <h3 className="text-lg font-black text-slate-900 dark:text-slate-50 truncate">
                     {summary.profile.first_name} {summary.profile.last_name}
@@ -589,10 +591,10 @@ export default function Invoices() {
                     <span className="text-xl font-black text-indigo-600">{currencySym}{summary.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="p-4 bg-white dark:bg-neutral-900 dark:bg-white border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
+                <div className="p-4 bg-white/50 dark:bg-white/5 border-t border-slate-200/50 dark:border-white/10">
                   <button
                     onClick={() => setViewInvoiceFor(summary.profile.id)}
-                    className="w-full flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 dark:bg-indigo-500 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-all shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]"
                   >
                     <Printer size={18} />
                     View & Print Invoice

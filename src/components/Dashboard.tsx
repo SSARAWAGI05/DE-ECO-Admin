@@ -210,10 +210,10 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HERO */}
       <div className="pb-4">
-        <h1 className="text-4xl font-black tracking-tight text-white mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-2 drop-shadow-sm dark:drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
           Welcome back
         </h1>
-        <p className="text-slate-300 font-medium text-lg">
+        <p className="text-slate-500 dark:text-slate-300 font-medium text-lg">
           Here’s what’s happening on DE-ECO today.
         </p>
       </div>
@@ -230,9 +230,9 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* CLASSES */}
-        <div className="lg:col-span-2 bg-white/10 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
-          <h2 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-3">
-            <span className="w-2 h-8 rounded-full bg-gradient-to-b from-indigo-400 to-indigo-600 shadow-[0_0_15px_rgba(129,140,248,0.5)]"></span>
+        <div className="lg:col-span-2 bg-white/60 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+          <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+            <span className="w-2 h-8 rounded-full bg-gradient-to-b from-indigo-400 to-indigo-600 shadow-sm dark:shadow-[0_0_15px_rgba(129,140,248,0.5)]"></span>
             Upcoming Live Classes
           </h2>
 
@@ -246,10 +246,10 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
               return (
                 <div
                   key={c.id}
-                  className="flex flex-col sm:flex-row justify-between sm:items-center bg-white/5 dark:bg-[#0B0F19]/60 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors group"
+                  className="flex flex-col sm:flex-row justify-between sm:items-center bg-white/50 dark:bg-[#0B0F19]/60 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-2xl p-5 hover:bg-white/80 dark:hover:bg-white/10 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-lg text-white group-hover:text-indigo-300 transition-colors">
+                    <p className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                       {c.title}
                     </p>
                     <p className="text-sm text-slate-400 mt-1.5 flex items-center gap-2 font-medium">
@@ -277,18 +277,18 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         </div>
 
         {/* ACTIVITY */}
-        <div className="bg-white/10 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
-          <h2 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-3">
-            <span className="w-2 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600 shadow-[0_0_15px_rgba(52,211,153,0.5)]"></span>
+        <div className="bg-white/60 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+          <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+            <span className="w-2 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600 shadow-sm dark:shadow-[0_0_15px_rgba(52,211,153,0.5)]"></span>
             Activity Feed
           </h2>
 
           <div className="space-y-4">
             {activity.map((a, i) => (
-              <div key={i} className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                <div className="w-2.5 h-2.5 mt-1.5 bg-emerald-400 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.8)] shrink-0" />
+              <div key={i} className="flex gap-4 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 hover:bg-white/80 dark:hover:bg-white/10 transition-colors">
+                <div className="w-2.5 h-2.5 mt-1.5 bg-emerald-500 dark:bg-emerald-400 rounded-full shadow-sm dark:shadow-[0_0_10px_rgba(52,211,153,0.8)] shrink-0" />
                 <div>
-                  <p className="text-sm font-bold text-white">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
                     {a.label}
                   </p>
                   <p className="text-xs text-slate-400 font-medium mt-1">
@@ -308,9 +308,9 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="bg-white/10 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
-        <h2 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-3">
-          <span className="w-2 h-8 rounded-full bg-gradient-to-b from-cyan-400 to-cyan-600 shadow-[0_0_15px_rgba(34,211,238,0.5)]"></span>
+      <div className="bg-white/60 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+        <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+          <span className="w-2 h-8 rounded-full bg-gradient-to-b from-cyan-400 to-cyan-600 shadow-sm dark:shadow-[0_0_15px_rgba(34,211,238,0.5)]"></span>
           Quick Actions
         </h2>
 
@@ -360,9 +360,9 @@ function Action({ icon: Icon, label, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex items-center gap-4 bg-white/5 dark:bg-[#0B0F19]/50 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 transition-all duration-300 text-white group hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+      className="flex items-center gap-4 bg-white/50 dark:bg-[#0B0F19]/50 hover:bg-white/80 dark:hover:bg-white/10 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-2xl p-5 transition-all duration-300 text-slate-900 dark:text-white group shadow-sm dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
     >
-      <div className="p-3 bg-white/5 rounded-xl group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">
+      <div className="p-3 bg-slate-100 dark:bg-white/5 rounded-xl group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
         <Icon className="w-6 h-6" />
       </div>
       <span className="text-sm font-bold tracking-wide">{label}</span>

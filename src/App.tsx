@@ -133,7 +133,7 @@ function App() {
   }
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-transparent overflow-hidden font-sans flex flex-col relative pt-24">
+    <div className="h-screen bg-slate-50 dark:bg-transparent overflow-hidden font-sans flex flex-col relative pt-0 lg:pt-24">
       <Navbar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
