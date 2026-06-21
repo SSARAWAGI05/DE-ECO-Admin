@@ -85,10 +85,6 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
             <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 dark:from-indigo-400 dark:via-sky-400 dark:to-rose-400 animate-gradient-x drop-shadow-sm pb-2">
               Welcome to DEECO
             </h1>
-            
-            <p className="text-xl sm:text-2xl font-medium text-slate-600 dark:text-slate-300 leading-relaxed drop-shadow-sm">
-              The premium administrative operating system. Manage your academy, orchestrate live classes, and handle student billing with absolute precision.
-            </p>
           </div>
 
           {/* Quick Action Navigation */}
