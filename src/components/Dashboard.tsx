@@ -209,29 +209,30 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
   return (
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       {/* HERO */}
-      <div className="pb-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-1">
+      <div className="pb-4">
+        <h1 className="text-4xl font-black tracking-tight text-white mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
           Welcome back
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 font-medium">
+        <p className="text-slate-300 font-medium text-lg">
           Here’s what’s happening on DE-ECO today.
         </p>
       </div>
 
       {/* SIGNAL STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Stat label="Upcoming Classes" value={stats.upcoming} icon={Calendar} accent="indigo" />
-        <Stat label="Live Now" value={stats.ongoing} icon={Zap} accent="rose" />
+        <Stat label="Live Now" value={stats.ongoing} icon={Zap} accent="pink" />
         <Stat label="New Enrollments" value={stats.enrollments} icon={Users} accent="emerald" />
-        <Stat label="New Messages" value={stats.messages} icon={Mail} accent="slate" />
+        <Stat label="New Messages" value={stats.messages} icon={Mail} accent="cyan" />
       </div>
 
 
       {/* MAIN GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* CLASSES */}
-        <div className="lg:col-span-2 bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
-          <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
+        <div className="lg:col-span-2 bg-white/10 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+          <h2 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-3">
+            <span className="w-2 h-8 rounded-full bg-gradient-to-b from-indigo-400 to-indigo-600 shadow-[0_0_15px_rgba(129,140,248,0.5)]"></span>
             Upcoming Live Classes
           </h2>
 
@@ -245,19 +246,21 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
               return (
                 <div
                   key={c.id}
-                  className="flex justify-between items-center border rounded-xl p-4 hover:shadow-md transition"
+                  className="flex flex-col sm:flex-row justify-between sm:items-center bg-white/5 dark:bg-[#0B0F19]/60 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors group"
                 >
                   <div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-bold text-lg text-white group-hover:text-indigo-300 transition-colors">
                       {c.title}
                     </p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {start.toLocaleString()} · {c.duration_minutes} min · {c.instructor_name}
+                    <p className="text-sm text-slate-400 mt-1.5 flex items-center gap-2 font-medium">
+                      <Clock className="w-4 h-4 text-indigo-400" />
+                      {start.toLocaleString()} <span className="text-slate-600">•</span> {c.duration_minutes} min <span className="text-slate-600">•</span> {c.instructor_name}
                     </p>
                   </div>
 
                   {isLive && (
-                    <span className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded-full font-medium">
+                    <span className="mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs bg-pink-500/10 text-pink-400 border border-pink-500/30 px-4 py-2 rounded-full font-black tracking-widest uppercase shadow-[0_0_20px_rgba(236,72,153,0.2)]">
+                      <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
                       LIVE
                     </span>
                   )}
@@ -266,7 +269,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
             })}
 
             {!classes.length && (
-              <p className="text-gray-500 text-sm">
+              <p className="text-slate-400 text-sm italic py-4">
                 No upcoming classes scheduled
               </p>
             )}
@@ -274,20 +277,21 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         </div>
 
         {/* ACTIVITY */}
-        <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
-          <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
+        <div className="bg-white/10 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+          <h2 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-3">
+            <span className="w-2 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600 shadow-[0_0_15px_rgba(52,211,153,0.5)]"></span>
             Activity Feed
           </h2>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {activity.map((a, i) => (
-              <div key={i} className="flex gap-3">
-                <div className="w-2 h-2 mt-2 bg-green-500 rounded-full" />
+              <div key={i} className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                <div className="w-2.5 h-2.5 mt-1.5 bg-emerald-400 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.8)] shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-gray-800">
+                  <p className="text-sm font-bold text-white">
                     {a.label}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-slate-400 font-medium mt-1">
                     {a.time}
                   </p>
                 </div>
@@ -295,7 +299,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
             ))}
 
             {!activity.length && (
-              <p className="text-gray-500 text-sm">
+              <p className="text-slate-400 text-sm italic py-4">
                 No recent activity
               </p>
             )}
@@ -304,8 +308,9 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6">
-        <h2 className="text-lg font-semibold mb-5 text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="bg-white/10 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-white/10 p-6 sm:p-8 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+        <h2 className="text-xl font-bold mb-6 text-white tracking-tight flex items-center gap-3">
+          <span className="w-2 h-8 rounded-full bg-gradient-to-b from-cyan-400 to-cyan-600 shadow-[0_0_15px_rgba(34,211,238,0.5)]"></span>
           Quick Actions
         </h2>
 
@@ -323,14 +328,29 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
 /* ================= SUB COMPONENTS ================= */
 
 function Stat({ label, value, icon: Icon, accent }: any) {
+  const accentColors: any = {
+    indigo: 'from-indigo-500 to-purple-500 shadow-[0_0_20px_rgba(99,102,241,0.4)] text-indigo-100',
+    pink: 'from-pink-500 to-rose-500 shadow-[0_0_20px_rgba(236,72,153,0.4)] text-pink-100',
+    emerald: 'from-emerald-400 to-teal-500 shadow-[0_0_20px_rgba(52,211,153,0.4)] text-emerald-100',
+    cyan: 'from-cyan-400 to-blue-500 shadow-[0_0_20px_rgba(34,211,238,0.4)] text-cyan-100',
+  }
+
+  const iconColors: any = {
+    indigo: 'text-indigo-300 drop-shadow-[0_0_8px_rgba(165,180,252,0.8)]',
+    pink: 'text-pink-300 drop-shadow-[0_0_8px_rgba(249,168,212,0.8)]',
+    emerald: 'text-emerald-300 drop-shadow-[0_0_8px_rgba(110,231,183,0.8)]',
+    cyan: 'text-cyan-300 drop-shadow-[0_0_8px_rgba(103,232,249,0.8)]',
+  }
+
   return (
-    <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl p-5 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex items-center gap-4">
-      <div className="p-3 bg-slate-50 dark:bg-neutral-800/50 text-slate-700 dark:text-slate-300 rounded-lg">
-        <Icon className="w-5 h-5" />
+    <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br ${accentColors[accent] || accentColors.indigo} flex items-center gap-6 group hover:scale-[1.02] transition-transform duration-300 border border-white/20`}>
+      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+      <div className="relative z-10 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
+        <Icon className={`w-8 h-8 ${iconColors[accent] || iconColors.indigo}`} />
       </div>
-      <div>
-        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</p>
-        <p className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">{value}</p>
+      <div className="relative z-10">
+        <p className="text-xs font-bold uppercase tracking-[0.15em] opacity-80 mb-1">{label}</p>
+        <p className="text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">{value}</p>
       </div>
     </div>
   )
@@ -340,10 +360,12 @@ function Action({ icon: Icon, label, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-3 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-5 hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50 hover:border-slate-300 dark:border-neutral-700 transition bg-white dark:bg-neutral-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-50 group"
+      className="flex items-center gap-4 bg-white/5 dark:bg-[#0B0F19]/50 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 transition-all duration-300 text-white group hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
     >
-      <Icon className="w-6 h-6 text-slate-400 group-hover:text-slate-900 dark:text-slate-50 transition-colors" />
-      <span className="text-sm font-semibold tracking-tight">{label}</span>
+      <div className="p-3 bg-white/5 rounded-xl group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">
+        <Icon className="w-6 h-6" />
+      </div>
+      <span className="text-sm font-bold tracking-wide">{label}</span>
     </button>
   )
 }

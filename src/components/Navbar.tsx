@@ -47,46 +47,26 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
     setActiveDropdown(null)
   }
 
-  const navGroups = [
-    {
-      id: 'academics',
-      label: 'Academics',
-      icon: BookOpen,
-      items: [
-        { id: 'courses' as Section, label: 'Courses', icon: BookOpen },
-        { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
-        { id: 'classes' as Section, label: 'Live Classes', icon: Video },
-        { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
-        { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
-      ]
-    },
-    {
-      id: 'finance',
-      label: 'Finance',
-      icon: DollarSign,
-      items: [
-        { id: 'billing' as Section, label: 'Student Billing', icon: DollarSign },
-        { id: 'invoices' as Section, label: 'Invoices', icon: Receipt },
-        { id: 'earnings_analytics' as Section, label: 'Earnings', icon: BarChart },
-        { id: 'past_history' as Section, label: 'Class History', icon: History },
-      ]
-    },
-    {
-      id: 'comms',
-      label: 'Comms',
-      icon: Mail,
-      items: [
-        { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
-        { id: 'contact_messages' as Section, label: 'Messages', icon: Mail },
-        { id: 'market_pulse' as Section, label: 'Market Pulse', icon: TrendingUp },
-      ]
-    }
+  const topLevelNav = [
+    { id: 'dashboard' as Section, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
+    { id: 'classes' as Section, label: 'Live Classes', icon: Video },
+    { id: 'billing' as Section, label: 'Student Billing', icon: DollarSign },
+    { id: 'invoices' as Section, label: 'Invoices', icon: Receipt },
+    { id: 'earnings_analytics' as Section, label: 'Earnings', icon: BarChart },
+    { id: 'past_history' as Section, label: 'Class History', icon: History },
   ]
 
-  const isGroupActive = (groupId: string) => {
-    const group = navGroups.find(g => g.id === groupId)
-    return group?.items.some(item => item.id === activeSection)
-  }
+  const otherTabs = [
+    { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
+    { id: 'courses' as Section, label: 'Courses', icon: BookOpen },
+    { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
+    { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
+    { id: 'market_pulse' as Section, label: 'Market Pulse', icon: TrendingUp },
+    { id: 'contact_messages' as Section, label: 'Messages', icon: Mail },
+  ]
+
+  const isOtherTabsActive = otherTabs.some(item => item.id === activeSection)
 
   return (
     <nav 
@@ -102,68 +82,67 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
       </div>
 
       {/* NAVIGATION ITEMS */}
-      <div className="hidden md:flex items-center gap-2">
-        {/* Dashboard Standalone */}
-        <button
-          onClick={() => handleNavClick('dashboard')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold border border-transparent ${
-            activeSection === 'dashboard'
-              ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          <LayoutDashboard className={`w-4 h-4 ${activeSection === 'dashboard' ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-          Dashboard
-        </button>
-
-        {/* Dropdown Groups */}
-        {navGroups.map(group => {
-          const isActive = isGroupActive(group.id)
-          const isOpen = activeDropdown === group.id
-          const GroupIcon = group.icon
-
+      <div className="hidden md:flex items-center gap-1 xl:gap-2">
+        {/* Top Level Nav Items */}
+        {topLevelNav.map(item => {
+          const ItemIcon = item.icon
+          const isActive = activeSection === item.id
+          
           return (
-            <div key={group.id} className="relative">
-              <button
-                onClick={() => setActiveDropdown(isOpen ? null : group.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold border border-transparent ${
-                  isActive || isOpen
-                    ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <GroupIcon className={`w-4 h-4 ${isActive || isOpen ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-                {group.label}
-                <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* Dropdown Menu */}
-              {isOpen && (
-                <div className="absolute top-full left-0 mt-3 w-56 bg-white/80 dark:bg-[#0B0F19]/90 backdrop-blur-3xl border border-white/60 dark:border-white/10 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-4 duration-200">
-                  {group.items.map(item => {
-                    const ItemIcon = item.icon
-                    const isItemActive = activeSection === item.id
-
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => handleNavClick(item.id)}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-semibold group ${
-                          isItemActive
-                            ? 'bg-indigo-50 dark:bg-[#4ade80]/10 text-indigo-700 dark:text-[#4ade80]'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/5'
-                        }`}
-                      >
-                        <ItemIcon className={`w-4 h-4 ${isItemActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 dark:group-hover:text-white'}`} />
-                        {item.label}
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.id)}
+              className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-full transition-all duration-300 text-xs lg:text-sm font-bold border border-transparent whitespace-nowrap ${
+                isActive
+                  ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <ItemIcon className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
+              <span className="hidden xl:inline">{item.label}</span>
+            </button>
           )
         })}
+
+        {/* Other Tabs Dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setActiveDropdown(activeDropdown === 'others' ? null : 'others')}
+            className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-full transition-all duration-300 text-xs lg:text-sm font-bold border border-transparent whitespace-nowrap ${
+              isOtherTabsActive || activeDropdown === 'others'
+                ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <ChevronDown className={`w-3 h-3 transition-transform ${activeDropdown === 'others' ? 'rotate-180' : ''}`} />
+            Other Tabs
+          </button>
+
+          {/* Dropdown Menu */}
+          {activeDropdown === 'others' && (
+            <div className="absolute top-full right-0 mt-3 w-56 bg-white/80 dark:bg-[#0B0F19]/90 backdrop-blur-3xl border border-white/60 dark:border-white/10 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-4 duration-200 z-50">
+              {otherTabs.map(item => {
+                const ItemIcon = item.icon
+                const isItemActive = activeSection === item.id
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-semibold group ${
+                      isItemActive
+                        ? 'bg-indigo-50 dark:bg-[#4ade80]/10 text-indigo-700 dark:text-[#4ade80]'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/5'
+                    }`}
+                  >
+                    <ItemIcon className={`w-4 h-4 ${isItemActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 dark:group-hover:text-white'}`} />
+                    {item.label}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* RIGHT ACTIONS */}

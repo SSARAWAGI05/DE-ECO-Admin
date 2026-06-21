@@ -104,8 +104,8 @@ export default function PastClassHistory() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Student List */}
-        <div className={`${selectedProfile ? 'hidden lg:flex' : 'flex'} bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden flex-col h-[600px] lg:h-[650px]`}>
-          <div className="p-4 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-slate-50 dark:bg-neutral-800/50">
+        <div className={`${selectedProfile ? 'hidden lg:flex' : 'flex'} bg-white/40 dark:bg-[#020617]/30 backdrop-blur-2xl rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.1)] border border-slate-200/50 dark:border-white/10 overflow-hidden flex-col h-[600px] lg:h-[650px]`}>
+          <div className="p-4 border-b border-slate-200/50 dark:border-white/10 bg-white/30 dark:bg-slate-900/40">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
@@ -113,7 +113,7 @@ export default function PastClassHistory() {
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-white/50 dark:bg-[#020617]/50 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/50 outline-none text-slate-900 dark:text-slate-50 placeholder:text-slate-400 transition-shadow"
               />
             </div>
             <label className="flex items-center gap-2 mt-3 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
@@ -135,14 +135,14 @@ export default function PastClassHistory() {
                   <button
                     key={profile.id}
                     onClick={() => setSelectedProfile(profile)}
-                    className={`w-full text-left p-3 rounded-lg flex items-center gap-3 transition-colors ${
+                    className={`w-full text-left p-3 rounded-xl flex items-center gap-3 transition-all duration-300 ${
                       selectedProfile?.id === profile.id 
-                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' 
-                        : 'hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-slate-300'
+                        ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]' 
+                        : 'hover:bg-white/60 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300 border border-transparent'
                     }`}
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                      selectedProfile?.id === profile.id ? 'bg-white dark:bg-neutral-900 dark:bg-white/20 text-white dark:text-slate-900' : 'bg-slate-200 text-slate-600 dark:text-slate-400'
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${
+                      selectedProfile?.id === profile.id ? 'bg-indigo-500 dark:bg-[#4ade80] text-white dark:text-[#020617] shadow-lg' : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400'
                     }`}>
                       {profile.first_name?.[0] || 'U'}
                     </div>
@@ -160,7 +160,7 @@ export default function PastClassHistory() {
         </div>
 
         {/* Right Col: Class History */}
-        <div className={`${!selectedProfile ? 'hidden lg:flex' : 'flex'} lg:col-span-2 bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-sm border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-4 sm:p-6 lg:p-8 h-[600px] lg:h-[650px] flex-col`}>
+        <div className={`${!selectedProfile ? 'hidden lg:flex' : 'flex'} lg:col-span-2 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-2xl rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.1)] border border-slate-200/50 dark:border-white/10 p-4 sm:p-6 lg:p-8 h-[600px] lg:h-[650px] flex-col relative overflow-hidden`}>
           {!selectedProfile ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400">
               <History className="w-16 h-16 mb-4 opacity-50" />
@@ -199,11 +199,11 @@ export default function PastClassHistory() {
                 </div>
               ) : (
                 <div className="flex-1 overflow-y-auto -mx-2 px-2">
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {pastClasses.map(c => {
                       const earned = ((c.duration_minutes || 0) / 60) * (selectedProfile.hourly_rate || 0)
                       return (
-                        <div key={c.id} className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div key={c.id} className="bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow group">
                           <div>
                             <h4 className="font-bold text-slate-900 dark:text-slate-50">{c.title || 'Unknown Class'}</h4>
                             <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-1">
@@ -215,12 +215,12 @@ export default function PastClassHistory() {
                             </p>
                           </div>
                           <div className="shrink-0 flex items-center gap-3">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/5 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-[10px] tracking-[0.1em] font-bold uppercase border border-slate-200/50 dark:border-white/10">
                               Completed
                             </span>
                             <button
                               onClick={() => handleCancelClass(c.id)}
-                              className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:text-rose-800 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 px-3 py-1.5 rounded-full transition-colors"
+                              className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:text-white bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-600 dark:hover:bg-rose-500 border border-rose-200 dark:border-rose-500/20 px-4 py-2 rounded-xl transition-all shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]"
                             >
                               Cancel Class
                             </button>

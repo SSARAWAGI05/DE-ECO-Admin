@@ -209,33 +209,33 @@ export default function ClassEnrollments() {
       </div>
 
       {/* SEARCH BAR */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white p-5 rounded-t-xl border border-b-0 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shrink-0">
+      <div className="shrink-0 mb-6">
         <div className="relative w-full max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
           </div>
-          <input
-            placeholder="Search by name or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-slate-900 text-sm font-medium outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
-          />
+            <input
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-[#020617]/50 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500/50 text-sm font-medium outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400 shadow-sm"
+            />
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-b-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 overflow-hidden flex-1 flex flex-col min-h-[400px]">
-        <div className="overflow-auto flex-1 relative">
-          <table className="hidden md:table w-full text-left border-collapse min-w-[900px]">
-            <thead className="bg-slate-50 dark:bg-neutral-800/50 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700 sticky top-0 z-10 shadow-sm">
+      <div className="flex-1 flex flex-col min-h-[400px]">
+        <div className="overflow-auto flex-1 relative custom-scrollbar px-1">
+          <table className="hidden md:table w-full text-left border-collapse border-spacing-y-4 min-w-[900px] border-separate">
+            <thead className="sticky top-0 z-10">
               <tr>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Student Details</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Account Status</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Hourly Rate & Currency</th>
-                <th className="p-4 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider bg-slate-50 dark:bg-neutral-800/50">Actions</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Student Details</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Account Status</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Hourly Rate & Currency</th>
+                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+            <tbody>
               {filteredProfiles.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="p-12 text-center">
@@ -244,20 +244,20 @@ export default function ClassEnrollments() {
                 </tr>
               ) : (
                 filteredProfiles.map((profile) => (
-                  <tr key={profile.id} className="hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50/50 transition-colors">
+                  <tr key={profile.id} className="bg-white/60 dark:bg-[#020617]/40 backdrop-blur-2xl hover:bg-white/80 dark:hover:bg-white/[0.08] transition-all duration-300 rounded-2xl shadow-sm hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] group mb-4 relative">
                     
-                    <td className="p-4 whitespace-nowrap">
-                      <div className="font-bold text-slate-900 dark:text-slate-50">
+                    <td className="px-6 py-5 whitespace-nowrap first:rounded-l-2xl border-y border-slate-200/50 dark:border-white/5 border-l group-hover:border-white/10 border-transparent transition-colors">
+                      <div className="font-bold text-slate-900 dark:text-slate-50 text-base">
                         {profile.first_name} {profile.last_name}
                       </div>
                       <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 mb-2">{profile.email}</div>
                       
                       <div className="text-xs flex flex-col gap-1 max-w-[200px]">
-                        <label className="font-semibold text-slate-600 dark:text-slate-400">Guardian Email</label>
+                        <label className="font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.1em]">Guardian Email</label>
                         <input
                           type="email"
                           placeholder="guardian@example.com"
-                          className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 px-2 py-1.5 rounded text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-shadow disabled:opacity-50"
+                          className="bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-white/10 px-3 py-2 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-shadow disabled:opacity-50 font-medium"
                           defaultValue={profile.guardian_email || ''}
                           onBlur={(e) => {
                             if (e.target.value !== (profile.guardian_email || '')) {
@@ -269,19 +269,19 @@ export default function ClassEnrollments() {
                       </div>
                     </td>
 
-                    <td className="p-4 whitespace-nowrap">
+                    <td className="px-6 py-5 whitespace-nowrap border-y border-slate-200/50 dark:border-white/5 group-hover:border-white/10 border-transparent transition-colors">
                       <button
                         onClick={() => handleUpdateProfile(profile.id, { is_active: !profile.is_active })}
                         disabled={isSaving === profile.id}
                         className={`
                           relative inline-flex items-center w-32 h-10 rounded-full transition-colors focus:outline-none shadow-sm
-                          ${profile.is_active ? 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20' : 'bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700'}
+                          ${profile.is_active ? 'bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-900/10 dark:bg-white/5 border border-slate-200/50 dark:border-white/10'}
                           ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
                         `}
                       >
                         <div
                           className={`
-                            absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-neutral-900 dark:bg-white shadow-sm transition-transform duration-300 border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50
+                            absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-[#0f172a] shadow-sm transition-transform duration-300 border border-slate-100 dark:border-white/10
                             ${profile.is_active ? 'translate-x-22 text-emerald-600 dark:text-emerald-400' : 'translate-x-0 text-slate-400'}
                           `}
                         >
@@ -298,16 +298,16 @@ export default function ClassEnrollments() {
                       </button>
                     </td>
 
-                    <td className="p-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2 bg-slate-50 dark:bg-neutral-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-neutral-700 max-w-[200px] focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
+                    <td className="px-6 py-5 whitespace-nowrap border-y border-slate-200/50 dark:border-white/5 group-hover:border-white/10 border-transparent transition-colors">
+                      <div className="flex items-center gap-2 bg-white/50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-200/50 dark:border-white/10 max-w-[200px] focus-within:ring-2 focus-within:ring-indigo-500/50 transition-shadow">
                         <select 
-                          className="bg-transparent border-r border-slate-200 dark:border-neutral-800 dark:border-neutral-700 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
+                          className="bg-transparent border-r border-slate-200/50 dark:border-white/10 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
                           value={profile.billing_currency || 'INR'}
                           onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
                           disabled={isSaving === profile.id}
                         >
                           {CURRENCIES.map(c => (
-                            <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                            <option key={c.code} value={c.code} className="dark:bg-slate-900">{c.code} ({c.symbol})</option>
                           ))}
                         </select>
                         <input
@@ -328,12 +328,12 @@ export default function ClassEnrollments() {
                       </div>
                     </td>
 
-                    <td className="p-4 whitespace-nowrap">
+                    <td className="px-6 py-5 whitespace-nowrap last:rounded-r-2xl border-y border-slate-200/50 dark:border-white/5 border-r group-hover:border-white/10 border-transparent transition-colors">
                       <button
                         onClick={() => setSelectedProfile(profile)}
-                        className="flex items-center gap-2 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+                        className="flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-[#4ade80] dark:bg-[#4ade80]/10 dark:hover:bg-[#4ade80]/20 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm border border-indigo-500/30 dark:border-[#4ade80]/30 shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]"
                       >
-                        <Settings size={16} /> Manage Enrollments
+                        <Settings size={16} /> Manage
                       </button>
                     </td>
 
