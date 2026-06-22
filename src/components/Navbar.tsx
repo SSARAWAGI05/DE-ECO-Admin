@@ -58,12 +58,12 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
     { id: 'invoices' as Section, label: 'Invoices', icon: Receipt },
     { id: 'earnings_analytics' as Section, label: 'Earnings', icon: BarChart },
     { id: 'past_history' as Section, label: 'Class History', icon: History },
+    { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
   ]
 
   const otherTabs = [
     { id: 'announcements' as Section, label: 'Announcements', icon: Bell },
     { id: 'courses' as Section, label: 'Courses', icon: BookOpen },
-    { id: 'notes' as Section, label: 'Class Notes', icon: FileText },
     { id: 'recordings' as Section, label: 'Recordings', icon: PlayCircle },
     { id: 'market_pulse' as Section, label: 'Market Pulse', icon: TrendingUp },
     { id: 'contact_messages' as Section, label: 'Messages', icon: Mail },
@@ -114,14 +114,14 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
         <div className="relative">
           <button
             onClick={() => setActiveDropdown(activeDropdown === 'others' ? null : 'others')}
-            className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-full transition-all duration-300 text-[10px] lg:text-xs font-bold border border-transparent whitespace-nowrap ${
+            className={`flex items-center justify-center p-1.5 lg:p-2 rounded-full transition-all duration-300 border border-transparent ${
               isOtherTabsActive || activeDropdown === 'others'
                 ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
                 : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
             }`}
+            title="More Options"
           >
-            <ChevronDown className={`w-3 h-3 transition-transform ${activeDropdown === 'others' ? 'rotate-180' : ''}`} />
-            Other Tabs
+            <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === 'others' ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Dropdown Menu */}
