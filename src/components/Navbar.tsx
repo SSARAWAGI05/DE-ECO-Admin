@@ -31,6 +31,7 @@ interface NavbarProps {
 export default function Navbar({ activeSection, setActiveSection, sidebarOpen, setSidebarOpen }: NavbarProps) {
   const { isDark, toggleDarkMode } = useDarkMode()
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [mobileOthersOpen, setMobileOthersOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
 
   // Close dropdown on outside click
@@ -206,25 +207,33 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
             )
           })}
 
-          <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-2 mt-6">Other Tools</div>
-          {otherTabs.map(item => {
-            const ItemIcon = item.icon
-            const isActive = activeSection === item.id
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-bold border border-transparent ${
-                  isActive
-                    ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`}
-              >
-                <ItemIcon className={`w-5 h-5 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-                {item.label}
-              </button>
-            )
-          })}
+          <button 
+            onClick={() => setMobileOthersOpen(!mobileOthersOpen)}
+            className="w-full flex items-center justify-between px-2 mt-6 mb-2 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          >
+            <span>Other Tools</span>
+            <ChevronDown className={`w-4 h-4 transition-transform ${mobileOthersOpen ? 'rotate-180' : ''}`} />
+          </button>
+          <div className={`space-y-2 overflow-hidden transition-all duration-300 ease-in-out ${mobileOthersOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+            {otherTabs.map(item => {
+              const ItemIcon = item.icon
+              const isActive = activeSection === item.id
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-bold border border-transparent ${
+                    isActive
+                      ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
+                  }`}
+                >
+                  <ItemIcon className={`w-5 h-5 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
+                  {item.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <div className="p-4 border-t border-slate-200/50 dark:border-white/10 shrink-0">
