@@ -202,7 +202,7 @@ export default function AdminCourses() {
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
               <input
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Course Title"
                 value={formData.title}
                 onChange={(e) =>
@@ -212,7 +212,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Short Description (Optional)"
                 value={formData.description}
                 onChange={(e) =>
@@ -221,7 +221,7 @@ export default function AdminCourses() {
               />
 
               <select
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
                 value={formData.level}
                 onChange={(e) =>
                   setFormData({ ...formData, level: e.target.value as any })
@@ -234,7 +234,7 @@ export default function AdminCourses() {
 
               <input
                 type="number"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Duration (weeks)"
                 value={formData.duration_weeks}
                 onChange={(e) =>
@@ -245,7 +245,7 @@ export default function AdminCourses() {
               {/* THUMBNAIL URL */}
               <input
                 type="url"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Thumbnail Image URL (https://...)"
                 value={formData.thumbnail_url}
                 onChange={(e) =>
@@ -267,7 +267,7 @@ export default function AdminCourses() {
               )}
 
               <input
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Instructor Name"
                 value={formData.instructor_name}
                 onChange={(e) =>
@@ -277,7 +277,7 @@ export default function AdminCourses() {
 
               <input
                 type="number"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Price (INR)"
                 value={formData.price}
                 onChange={(e) =>
@@ -287,7 +287,7 @@ export default function AdminCourses() {
 
               <input
                 type="date"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700 dark:text-slate-300"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700 dark:text-slate-300"
                 value={formData.enrollment_deadline}
                 onChange={(e) =>
                   setFormData({ ...formData, enrollment_deadline: e.target.value })
@@ -295,7 +295,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="What you'll learn (one per line)"
                 value={formData.what_you_learn}
                 onChange={(e) =>
@@ -304,7 +304,7 @@ export default function AdminCourses() {
               />
 
               <textarea
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Prerequisites (one per line)"
                 value={formData.prerequisites}
                 onChange={(e) =>
@@ -316,7 +316,7 @@ export default function AdminCourses() {
                 <label className="flex items-center gap-3 cursor-pointer text-slate-700 dark:text-slate-300 font-medium">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 text-slate-900 dark:text-slate-50 border-slate-300 dark:border-neutral-700 rounded focus:ring-slate-900"
+                    className="bg-white dark:bg-neutral-800 w-5 h-5 text-slate-900 dark:text-slate-50 border-slate-300 dark:border-neutral-700 rounded focus:ring-slate-900"
                     checked={formData.is_active}
                     onChange={(e) =>
                       setFormData({ ...formData, is_active: e.target.checked })
@@ -328,7 +328,7 @@ export default function AdminCourses() {
                 <label className="flex items-center gap-3 cursor-pointer text-slate-700 dark:text-slate-300 font-medium">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 text-slate-900 dark:text-slate-50 border-slate-300 dark:border-neutral-700 rounded focus:ring-slate-900"
+                    className="bg-white dark:bg-neutral-800 w-5 h-5 text-slate-900 dark:text-slate-50 border-slate-300 dark:border-neutral-700 rounded focus:ring-slate-900"
                     checked={formData.featured}
                     onChange={(e) =>
                       setFormData({ ...formData, featured: e.target.checked })

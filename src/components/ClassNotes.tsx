@@ -325,7 +325,7 @@ export default function ClassNotes() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Student</label>
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900"
+                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-800"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -347,7 +347,7 @@ export default function ClassNotes() {
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Title</label>
                 <input
                   placeholder="e.g. Chapter 1 Notes"
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -387,7 +387,7 @@ export default function ClassNotes() {
                 <input
                   type="url"
                   placeholder="https://drive.google.com/..."
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400 disabled:bg-slate-100 dark:bg-neutral-800 disabled:text-slate-500 dark:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400 disabled:bg-slate-100 dark:bg-neutral-800 disabled:text-slate-500 dark:text-slate-400"
                   value={formData.file_url}
                   onChange={(e) =>
                     setFormData({ ...formData, file_url: e.target.value })

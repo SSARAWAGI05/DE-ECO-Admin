@@ -393,7 +393,7 @@ export default function ClassEnrollments() {
 
                   <div className="flex flex-col gap-2">
                     <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase">Hourly Rate & Currency</span>
-                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-neutral-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-neutral-700 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
+                    <div className="bg-white dark:bg-neutral-800 flex items-center gap-2 bg-slate-50 dark:bg-neutral-800/50 p-1.5 rounded-lg border border-slate-300 dark:border-neutral-700 focus-within:ring-2 focus-within:ring-slate-900 transition-shadow">
                       <select 
                         className="bg-transparent border-r border-slate-200 dark:border-neutral-800 dark:border-neutral-700 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
                         value={profile.billing_currency || 'INR'}
@@ -587,7 +587,7 @@ export default function ClassEnrollments() {
                 <select
                   value={newEnrollmentId}
                   onChange={(e) => setNewEnrollmentId(e.target.value)}
-                  className="flex-1 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                  className="bg-white dark:bg-neutral-800 flex-1 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
                   required
                 >
                   <option value="">-- Select a Course to Enroll --</option>

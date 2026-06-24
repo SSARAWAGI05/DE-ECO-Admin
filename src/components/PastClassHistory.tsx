@@ -121,7 +121,7 @@ export default function PastClassHistory() {
                 type="checkbox" 
                 checked={showActiveOnly}
                 onChange={(e) => setShowActiveOnly(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 dark:border-neutral-700 text-slate-900 dark:text-slate-50 focus:ring-slate-900 cursor-pointer"
+                className="bg-white dark:bg-neutral-800 w-4 h-4 rounded border-slate-300 dark:border-neutral-700 text-slate-900 dark:text-slate-50 focus:ring-slate-900 cursor-pointer"
               />
               Show Active Students Only
             </label>

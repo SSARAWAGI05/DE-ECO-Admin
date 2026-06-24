@@ -625,7 +625,7 @@ export default function LiveClasses() {
                   <div className="relative flex items-center">
                     <input
                       type="checkbox"
-                      className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 dark:border-neutral-700 checked:border-indigo-600 checked:bg-indigo-600 transition-all outline-none"
+                      className="bg-white dark:bg-neutral-800 peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 dark:border-neutral-700 checked:border-indigo-600 checked:bg-indigo-600 transition-all outline-none"
                       checked={formData.send_email}
                       onChange={(e) => setFormData({ ...formData, send_email: e.target.checked })}
                     />

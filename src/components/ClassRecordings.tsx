@@ -228,7 +228,7 @@ export default function ClassRecordings() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Class (Optional)</label>
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900"
+                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-800"
                   value={formData.class_id}
                   onChange={(e) =>
                     setFormData({ ...formData, class_id: e.target.value })
@@ -247,7 +247,7 @@ export default function ClassRecordings() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Student</label>
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900"
+                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-800"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -268,7 +268,7 @@ export default function ClassRecordings() {
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Title</label>
                 <input
                   placeholder="e.g. Session 1 Recording"
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -282,7 +282,7 @@ export default function ClassRecordings() {
                 <input
                   type="url"
                   placeholder="https://..."
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
                   value={formData.video_url}
                   onChange={(e) =>
                     setFormData({ ...formData, video_url: e.target.value })

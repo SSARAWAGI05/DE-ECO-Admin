@@ -142,7 +142,7 @@ const AdminContactMessages: React.FC = () => {
                       e.target.value as ContactMessage["status"]
                     )
                   }
-                  className="bg-white dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 font-medium disabled:opacity-70"
+                  className="bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 font-medium disabled:opacity-70"
                 >
                   <option value="new">New</option>
                   <option value="in_progress">In Progress</option>
@@ -192,7 +192,7 @@ const AdminContactMessages: React.FC = () => {
                 onBlur={(e) =>
                   updateAdminNotes(msg.id, e.target.value)
                 }
-                className="bg-white dark:bg-neutral-900 w-full border border-slate-300 dark:border-neutral-700 rounded-lg p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 rounded-lg p-4 text-sm min-h-[100px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 placeholder="Add internal notes here..."
               />
             </div>

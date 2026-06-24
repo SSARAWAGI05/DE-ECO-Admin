@@ -204,7 +204,7 @@ export default function MarketPulse() {
             >
               <input
                 placeholder="Title"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -214,7 +214,7 @@ export default function MarketPulse() {
 
               <input
                 placeholder="Reel URL"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 value={formData.reel_url}
                 onChange={(e) =>
                   setFormData({ ...formData, reel_url: e.target.value })
@@ -224,7 +224,7 @@ export default function MarketPulse() {
 
               <input
                 placeholder="Thumbnail URL"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                 value={formData.thumbnail_url}
                 onChange={(e) =>
                   setFormData({
@@ -236,7 +236,7 @@ export default function MarketPulse() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
                   value={formData.platform}
                   onChange={(e) =>
                     setFormData({
@@ -252,7 +252,7 @@ export default function MarketPulse() {
 
                 <input
                   placeholder="Tag (e.g. BOJ, FED)"
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                   value={formData.tag}
                   onChange={(e) =>
                     setFormData({ ...formData, tag: e.target.value })
@@ -265,7 +265,7 @@ export default function MarketPulse() {
                 <input
                   type="number"
                   placeholder="Duration (seconds)"
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                   value={formData.duration_seconds}
                   onChange={(e) =>
                     setFormData({
@@ -277,7 +277,7 @@ export default function MarketPulse() {
                 <input
                   type="number"
                   placeholder="View Count (Optional)"
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
                   value={formData.view_count}
                   onChange={(e) =>
                     setFormData({
@@ -290,7 +290,7 @@ export default function MarketPulse() {
 
               <input
                 type="datetime-local"
-                className="w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700 dark:text-slate-300"
+                className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-700 dark:text-slate-300"
                 value={formData.published_at}
                 onChange={(e) =>
                   setFormData({

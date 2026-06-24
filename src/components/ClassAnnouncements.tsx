@@ -152,7 +152,7 @@ const AdminAnnouncements: React.FC = () => {
 
           {/* CLASS */}
           <select
-            className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
+            className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
             value={form.classId}
             onChange={(e) =>
               setForm({ ...form, classId: e.target.value })
@@ -167,7 +167,7 @@ const AdminAnnouncements: React.FC = () => {
           </select>
 
           <input
-            className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+            className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
             placeholder="Title"
             required
             value={form.title}
@@ -177,7 +177,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <textarea
-            className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
+            className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 min-h-[120px] focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400"
             placeholder="Message"
             required
             value={form.message}
@@ -187,7 +187,7 @@ const AdminAnnouncements: React.FC = () => {
           />
 
           <select
-            className="w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
+            className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
             value={form.priority}
             onChange={(e) =>
               setForm({ ...form, priority: e.target.value })
