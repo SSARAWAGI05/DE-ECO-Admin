@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --chart-line: #0f172a;
+    --chart-grid: #e2e8f0;
+    --chart-text: #64748b;
+  }
+  .dark {
+    --chart-line: #818cf8;
+    --chart-grid: rgba(255, 255, 255, 0.1);
+    --chart-text: #94a3b8;
+  }
+
   body {
     @apply antialiased text-slate-900 bg-[#f8fafc] transition-colors duration-300;
   }

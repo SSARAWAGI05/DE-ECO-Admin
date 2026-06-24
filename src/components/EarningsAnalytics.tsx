@@ -439,22 +439,22 @@ export default function EarningsAnalytics() {
                 }}>
                   <defs>
                     <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0f172a" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#0f172a" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="var(--chart-line)" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="var(--chart-line)" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
                   <XAxis 
                     dataKey="label" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: 'var(--chart-text)', fontSize: 12 }}
                     dy={10}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: 'var(--chart-text)', fontSize: 12 }}
                     tickFormatter={(val) => `₹${val}`}
                     dx={-10}
                   />
@@ -477,11 +477,11 @@ export default function EarningsAnalytics() {
                   <Area 
                     type="monotone" 
                     dataKey="chartTotal" 
-                    stroke="#0f172a" 
+                    stroke="var(--chart-line)" 
                     strokeWidth={3}
                     fillOpacity={1} 
                     fill="url(#colorEarnings)" 
-                    activeDot={{ r: 6, fill: '#0f172a', stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: 'var(--chart-line)', stroke: '#fff', strokeWidth: 2 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
