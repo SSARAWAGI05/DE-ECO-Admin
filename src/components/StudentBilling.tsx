@@ -557,7 +557,7 @@ export default function StudentBilling() {
         <div className="w-full max-w-[210mm] flex flex-col sm:flex-row justify-between gap-4 print:hidden z-50 mb-6">
           <button 
             onClick={() => { setReceiptRecord(null); setReceiptProfile(null); }}
-            className="flex items-center justify-center sm:justify-start gap-2 bg-white dark:bg-neutral-900 dark:bg-white px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50 font-bold text-slate-700 dark:text-slate-300 transition-colors w-full sm:w-auto"
+            className="flex items-center justify-center sm:justify-start gap-2 bg-white dark:bg-neutral-900 px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50 font-bold text-slate-700 dark:text-slate-300 transition-colors w-full sm:w-auto"
           >
             <ArrowLeft size={20} /> Back to Dashboard
           </button>
@@ -579,7 +579,7 @@ export default function StudentBilling() {
         </div>
 
         <div className="w-full max-w-[100vw] overflow-x-auto print:overflow-visible pb-12">
-          <div id="receipt-pdf-content" className="bg-white dark:bg-neutral-900 dark:bg-white w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 dark:text-slate-200 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
+          <div id="receipt-pdf-content" className="bg-white dark:bg-neutral-900 w-[210mm] min-w-[210mm] min-h-[297mm] shadow-2xl p-12 sm:p-16 text-slate-800 dark:text-slate-200 mx-auto print:shadow-none print:m-0 flex flex-col font-sans relative overflow-hidden">
             {/* Watermark */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0 print:opacity-[0.1]">
               <img src="/logo.png" alt="" className="w-[80%] max-w-lg object-contain grayscale" />
@@ -680,13 +680,13 @@ export default function StudentBilling() {
             body * { visibility: hidden; }
             .print\\:hidden { display: none !important; }
             .min-h-screen { background: white !important; }
-            .bg-white dark:bg-neutral-900 dark:bg-white.w-\\[210mm\\] {
+            .bg-white dark:bg-neutral-900.w-\\[210mm\\] {
               visibility: visible !important;
               position: absolute;
               left: 0;
               top: 0;
             }
-            .bg-white dark:bg-neutral-900 dark:bg-white.w-\\[210mm\\] * {
+            .bg-white dark:bg-neutral-900.w-\\[210mm\\] * {
               visibility: visible !important;
             }
           }

@@ -431,9 +431,9 @@ export default function LiveClasses() {
 
       {/* SIDE PANEL */}
       {panelOpen && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm z-50 flex justify-end">
-          <div className="w-full max-w-lg bg-white dark:bg-neutral-900 dark:bg-white h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-neutral-800 dark:border-neutral-700 animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0 bg-white dark:bg-neutral-900 dark:bg-white">
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm z-50 flex justify-end">
+          <div className="w-full max-w-lg bg-white dark:bg-neutral-900 h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-neutral-800 dark:border-neutral-700 animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0 bg-white dark:bg-neutral-900">
               <h2 className="text-2xl font-black text-slate-900 dark:text-slate-50">
                 {editingId ? 'Edit Class' : 'Schedule Class'}
               </h2>
@@ -574,7 +574,7 @@ export default function LiveClasses() {
                       className={`px-5 py-2.5 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
                         formData.duration_minutes === d.toString()
                           ? 'bg-indigo-600 text-white dark:text-slate-900 border-indigo-600 shadow-md'
-                          : 'bg-white dark:bg-neutral-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-neutral-700 border-slate-200 dark:border-neutral-800 dark:border-neutral-700'
+                          : 'bg-white dark:bg-neutral-900 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-neutral-700 border-slate-200 dark:border-neutral-800 dark:border-neutral-700'
                       }`}
                     >
                       {d} min
@@ -593,7 +593,7 @@ export default function LiveClasses() {
                     className={`px-5 py-2.5 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
                       customDuration
                         ? 'bg-indigo-600 text-white dark:text-slate-900 border-indigo-600 shadow-md'
-                        : 'bg-white dark:bg-neutral-900 dark:bg-white text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-neutral-700 border-slate-200 dark:border-neutral-800 dark:border-neutral-700'
+                        : 'bg-white dark:bg-neutral-900 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:border-neutral-700 border-slate-200 dark:border-neutral-800 dark:border-neutral-700'
                     }`}
                   >
                     Custom
@@ -652,8 +652,8 @@ export default function LiveClasses() {
 
       {/* SETTINGS MODAL */}
       {settingsOpen && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-white dark:bg-neutral-900 dark:bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-50 text-xl">Default Meeting Link</h3>
               <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-slate-900 dark:text-slate-50 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 p-1.5 rounded-full transition-colors">

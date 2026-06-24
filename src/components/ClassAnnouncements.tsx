@@ -138,7 +138,7 @@ const AdminAnnouncements: React.FC = () => {
     <div className="max-w-5xl mx-auto w-full overflow-x-hidden p-4 sm:p-6 lg:p-10 ">
 
       {/* FORM */}
-      <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 sm:p-8">
+      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 sm:p-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
             {editingId ? "Edit Announcement" : "Create Announcement"}
@@ -220,13 +220,13 @@ const AdminAnnouncements: React.FC = () => {
         <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">All Announcements</h3>
 
         {announcements.length === 0 && (
-          <p className="text-slate-500 dark:text-slate-400 font-medium bg-white dark:bg-neutral-900 dark:bg-white p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-center">No announcements yet.</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 text-center">No announcements yet.</p>
         )}
 
         {announcements.map((a) => (
           <div
             key={a.id}
-            className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
+            className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-6 flex flex-col sm:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
           >
             <div>
               <div className="flex items-center gap-3 mb-2">

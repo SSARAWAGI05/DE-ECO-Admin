@@ -187,8 +187,8 @@ export default function MarketPulse() {
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
             <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                 {editingId ? 'Edit Reel' : 'New Reel'}
@@ -318,7 +318,7 @@ export default function MarketPulse() {
         {reels.map((r) => (
           <div
             key={r.id}
-            className="bg-white dark:bg-neutral-900 dark:bg-white p-6 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
+            className="bg-white dark:bg-neutral-900 p-6 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow"
           >
             <div>
               <h3 className="font-bold text-xl text-slate-900 dark:text-slate-50 mb-1">{r.title}</h3>

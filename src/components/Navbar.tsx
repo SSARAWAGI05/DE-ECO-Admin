@@ -76,11 +76,11 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
     <>
       <nav 
         ref={navRef}
-        className="hidden lg:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-max max-w-[98%] h-14 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 items-center gap-8 xl:gap-16 px-6 transition-all"
+        className="hidden xl:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-max max-w-[98%] h-14 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 items-center gap-8 xl:gap-16 px-6 transition-all"
       >
       {/* BRANDING */}
       <div className="flex items-center gap-2 shrink-0 pl-1">
-        <div className="bg-white dark:bg-white rounded-full p-1 flex items-center justify-center shadow-sm">
+        <div className="bg-white dark:bg-neutral-900 rounded-full p-1 flex items-center justify-center shadow-sm">
           <img src="/logo.png" alt="DEECO Logo" className="w-5 h-5 object-contain" />
         </div>
         <div>
@@ -106,7 +106,7 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
               }`}
             >
               <ItemIcon className={`w-3 h-3 lg:w-3.5 lg:h-3.5 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-              <span className="hidden xl:inline">{item.label}</span>
+              <span className="inline">{item.label}</span>
             </button>
           )
         })}
@@ -168,15 +168,15 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
       {/* MOBILE SIDEBAR */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-sm z-40 xl:hidden transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <aside className={`fixed top-0 left-0 h-full w-72 bg-white/95 dark:bg-[#020617]/95 backdrop-blur-2xl z-50 transform transition-transform duration-300 ease-in-out border-r border-slate-200/50 dark:border-white/10 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:hidden flex flex-col`}>
+      <aside className={`fixed top-0 left-0 h-full w-72 bg-white/95 dark:bg-[#020617]/95 backdrop-blur-2xl z-50 transform transition-transform duration-300 ease-in-out border-r border-slate-200/50 dark:border-white/10 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} xl:hidden flex flex-col`}>
         <div className="p-4 border-b border-slate-200/50 dark:border-white/10 flex items-center justify-between shrink-0 h-16">
           <div className="flex items-center gap-3">
-            <div className="bg-white dark:bg-white rounded-full p-1.5 flex items-center justify-center shadow-sm">
+            <div className="bg-white dark:bg-neutral-900 rounded-full p-1.5 flex items-center justify-center shadow-sm">
               <img src="/logo.png" alt="DEECO Logo" className="w-6 h-6 object-contain" />
             </div>
             <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white leading-none">DEECO</h1>

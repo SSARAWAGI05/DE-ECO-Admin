@@ -1,4 +1,4 @@
-import { Zap, Sparkles, ChevronRight, LayoutDashboard, Users, Video } from 'lucide-react'
+import { Zap, Sparkles, ChevronRight, LayoutDashboard, Users, Video, DollarSign, BarChart } from 'lucide-react'
 
 interface DashboardProps {
   setActiveSection?: (section: any) => void
@@ -67,7 +67,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
             {/* Pulsing Aura */}
             <div className="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/30 blur-3xl rounded-full scale-150 animate-pulse duration-1000"></div>
             
-            <div className="relative bg-white dark:bg-white p-6 rounded-full border border-slate-200 dark:border-white/10 shadow-2xl shadow-indigo-500/20 dark:shadow-[#0ea5e9]/20 animate-float">
+            <div className="relative bg-white dark:bg-neutral-900 p-6 rounded-full border border-slate-200 dark:border-white/10 shadow-2xl shadow-indigo-500/20 dark:shadow-[#0ea5e9]/20 animate-float">
               <img 
                 src="/logo.png" 
                 alt="DEECO Logo" 
@@ -88,7 +88,7 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
           </div>
 
           {/* Quick Action Navigation */}
-          <div className="mt-14 w-full flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+          <div className="mt-14 w-full flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 flex-wrap">
             
             {setActiveSection && (
               <>
@@ -104,10 +104,28 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
 
                 <button
                   onClick={() => setActiveSection('classes')}
-                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
+                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
                 >
                   <Video className="w-6 h-6 text-slate-400 dark:text-slate-300" />
                   <span>Live Classes</span>
+                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => setActiveSection('billing')}
+                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
+                >
+                  <DollarSign className="w-6 h-6 text-slate-400 dark:text-slate-300" />
+                  <span>Student Billing</span>
+                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => setActiveSection('earnings_analytics')}
+                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
+                >
+                  <BarChart className="w-6 h-6 text-slate-400 dark:text-slate-300" />
+                  <span>Earnings</span>
                   <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </button>
               </>

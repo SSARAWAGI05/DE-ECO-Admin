@@ -6,9 +6,9 @@ interface MobileHeaderProps {
 
 export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
   return (
-    <header className="lg:hidden bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md border-b border-slate-200/50 dark:border-white/10 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
+    <header className="xl:hidden bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md border-b border-slate-200/50 dark:border-white/10 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <div className="bg-white dark:bg-white rounded-full p-1.5 flex items-center justify-center shadow-sm">
+        <div className="bg-white dark:bg-neutral-900 rounded-full p-1.5 flex items-center justify-center shadow-sm">
           <img src="/logo.png" alt="DEECO Logo" className="w-6 h-6 object-contain" />
         </div>
         <div>

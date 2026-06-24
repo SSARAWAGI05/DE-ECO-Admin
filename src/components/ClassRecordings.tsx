@@ -212,9 +212,9 @@ export default function ClassRecordings() {
 
       {/* MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-slate-900 dark:bg-white/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white dark:bg-neutral-900 dark:bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 sticky top-0 bg-white dark:bg-neutral-900 dark:bg-white/95 backdrop-blur z-10">
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-t-2xl sm:rounded-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 sticky top-0 bg-white dark:bg-neutral-900/95 backdrop-blur z-10">
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-50">
                 {editingId ? 'Edit Recording' : 'Add Recording'}
               </h2>
@@ -228,7 +228,7 @@ export default function ClassRecordings() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Class (Optional)</label>
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900 dark:bg-white"
+                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900"
                   value={formData.class_id}
                   onChange={(e) =>
                     setFormData({ ...formData, class_id: e.target.value })
@@ -247,7 +247,7 @@ export default function ClassRecordings() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Student</label>
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900 dark:bg-white"
+                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-900"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
@@ -309,7 +309,7 @@ export default function ClassRecordings() {
         {recordings.map((r) => (
           <div
             key={r.id}
-            className="bg-white dark:bg-neutral-900 dark:bg-white rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 hover:shadow-sm transition-shadow p-6 flex flex-col"
+            className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 hover:shadow-sm transition-shadow p-6 flex flex-col"
           >
             <div className="flex gap-4 flex-1">
               <div className="bg-slate-50 dark:bg-neutral-800/50 p-3.5 rounded-lg border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex-shrink-0 h-fit">
