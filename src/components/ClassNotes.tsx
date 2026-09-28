@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Edit2, Trash2, X, Download, FileText, UploadCloud } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, Download, FileText, UploadCloud, Mail } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 import { useGoogleLogin } from '@react-oauth/google'
 import { sendNotesEmail } from '../lib/emailService'
@@ -46,6 +46,7 @@ export default function ClassNotes() {
     user_id: '',      // required
     title: '',        // required
     file_url: '',     // required
+    send_email: true, // toggle to send email
   })
 
   /* ================= INITIAL LOAD ================= */
@@ -129,8 +130,8 @@ export default function ClassNotes() {
       return
     }
 
-    // Trigger email if it's a new note
-    if (!editingId) {
+    // Trigger email if send_email toggle is enabled
+    if (formData.send_email) {
       const student = users.find(u => u.id === formData.user_id)
       if (student && student.email) {
         const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
@@ -246,6 +247,7 @@ export default function ClassNotes() {
       user_id: note.user_id,
       title: note.title,
       file_url: note.file_url,
+      send_email: false,
     })
     setEditingId(note.id)
     setShowForm(true)
@@ -272,7 +274,7 @@ export default function ClassNotes() {
     setShowForm(false)
     setEditingId(null)
     setSelectedFile(null)
-    setFormData({ class_id: '', user_id: '', title: '', file_url: '' })
+    setFormData({ class_id: '', user_id: '', title: '', file_url: '', send_email: true })
   }
 
   const getClassTitle = (classId: string | null) => {
@@ -394,6 +396,28 @@ export default function ClassNotes() {
                   }
                   disabled={!!selectedFile}
                 />
+              </div>
+
+              {/* EMAIL NOTIFICATION TOGGLE */}
+              <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-neutral-800/50 rounded-lg border border-slate-200 dark:border-neutral-800">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg transition-colors ${formData.send_email ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-neutral-800 text-slate-400'}`}>
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Send Email Notification</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Notify student with note details and access link</p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={formData.send_email}
+                    onChange={(e) => setFormData({ ...formData, send_email: e.target.checked })}
+                  />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-neutral-600 peer-checked:bg-indigo-600 dark:peer-checked:bg-indigo-500"></div>
+                </label>
               </div>
 
               <button
