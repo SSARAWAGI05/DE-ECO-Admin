@@ -43,7 +43,11 @@ import {
   UserCheck,
   GraduationCap,
   Mail,
-  Users
+  Users,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Paperclip
 } from 'lucide-react'
 
 /* ================= TYPES ================= */
@@ -137,6 +141,9 @@ export interface ExamSubmission {
     teacherComment?: string
     isCorrect?: boolean
   }[]
+  submissionFileUrl?: string
+  submissionFileName?: string
+  submissionFileSize?: string
 }
 
 /* ================= INITIAL SEED DATA ================= */
@@ -991,6 +998,7 @@ export default function AdminExams() {
   const [examModalTab, setExamModalTab] = useState<'settings' | 'questions'>('settings')
   const [editingExamId, setEditingExamId] = useState<string | null>(null)
   const [evaluatingSub, setEvaluatingSub] = useState<ExamSubmission | null>(null)
+  const [showPdfPreview, setShowPdfPreview] = useState(false)
 
   // Courses & Students from Supabase
   const [coursesList, setCoursesList] = useState<CourseOption[]>([
@@ -1197,38 +1205,50 @@ export default function AdminExams() {
 
         if (!error && data) {
           const completedSubmissions = data.filter((d: any) => d.status !== 'in_progress');
-          const mapped: ExamSubmission[] = completedSubmissions.map((d: any) => ({
-            id: d.id,
-            examId: d.exam_id,
-            examTitle: d.exam_title,
-            course: d.course_title || '',
-            instructor: d.instructor_name || 'Rishika',
-            studentEmail: d.student_email,
-            studentName: d.student_name || undefined,
-            submittedAt: d.submitted_at ? new Date(d.submitted_at).toLocaleString() : 'Just now',
-            status: d.status || 'under_evaluation',
-            totalMarks: Number(d.total_marks) || 100,
-            scoreObtained: d.score_obtained !== null && d.score_obtained !== undefined ? Number(d.score_obtained) : undefined,
-            percentage: d.percentage !== null && d.percentage !== undefined ? Number(d.percentage) : undefined,
-            grade: d.grade || undefined,
-            isPassed: d.is_passed !== null && d.is_passed !== undefined ? Boolean(d.is_passed) : undefined,
-            timeSpentMinutes: Number(d.time_spent_minutes) || 0,
-            userId: d.user_id || undefined,
-            teacherFeedback: (() => {
-              const tf = d.teacher_feedback;
-              if (!tf) return undefined;
-              const cleanOverall = tf.overall && tf.overall !== 'Good attempt on the paper.' ? String(tf.overall).trim() : '';
-              const cleanStrengths = Array.isArray(tf.strengths)
-                ? tf.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts')
-                : [];
-              const cleanImprovements = Array.isArray(tf.improvements)
-                ? tf.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted')
-                : [];
-              if (!cleanOverall && cleanStrengths.length === 0 && cleanImprovements.length === 0) return undefined;
-              return { ...tf, overall: cleanOverall, strengths: cleanStrengths, improvements: cleanImprovements };
-            })(),
-            answers: Array.isArray(d.answers) ? d.answers : []
-          }))
+          const mapped: ExamSubmission[] = completedSubmissions.map((d: any) => {
+            const attachedAns = Array.isArray(d.answers)
+              ? d.answers.find((a: any) => a.questionId === '__attachment__' || a._meta?.fileUrl)
+              : null;
+            const fileUrl = d.submission_file_url || d.file_url || d.attachment_url || attachedAns?._meta?.fileUrl || (attachedAns?.questionId === '__attachment__' ? attachedAns.studentAnswer : undefined) || undefined;
+            const fileName = d.submission_file_name || d.file_name || attachedAns?._meta?.fileName || (fileUrl ? 'Handwritten_Answer_Sheet.pdf' : undefined);
+            const fileSize = d.submission_file_size || attachedAns?._meta?.fileSize || undefined;
+
+            return {
+              id: d.id,
+              examId: d.exam_id,
+              examTitle: d.exam_title,
+              course: d.course_title || '',
+              instructor: d.instructor_name || 'Rishika',
+              studentEmail: d.student_email,
+              studentName: d.student_name || undefined,
+              submittedAt: d.submitted_at ? new Date(d.submitted_at).toLocaleString() : 'Just now',
+              status: d.status || 'under_evaluation',
+              totalMarks: Number(d.total_marks) || 100,
+              scoreObtained: d.score_obtained !== null && d.score_obtained !== undefined ? Number(d.score_obtained) : undefined,
+              percentage: d.percentage !== null && d.percentage !== undefined ? Number(d.percentage) : undefined,
+              grade: d.grade || undefined,
+              isPassed: d.is_passed !== null && d.is_passed !== undefined ? Boolean(d.is_passed) : undefined,
+              timeSpentMinutes: Number(d.time_spent_minutes) || 0,
+              userId: d.user_id || undefined,
+              teacherFeedback: (() => {
+                const tf = d.teacher_feedback;
+                if (!tf) return undefined;
+                const cleanOverall = tf.overall && tf.overall !== 'Good attempt on the paper.' ? String(tf.overall).trim() : '';
+                const cleanStrengths = Array.isArray(tf.strengths)
+                  ? tf.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts')
+                  : [];
+                const cleanImprovements = Array.isArray(tf.improvements)
+                  ? tf.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted')
+                  : [];
+                if (!cleanOverall && cleanStrengths.length === 0 && cleanImprovements.length === 0) return undefined;
+                return { ...tf, overall: cleanOverall, strengths: cleanStrengths, improvements: cleanImprovements };
+              })(),
+              submissionFileUrl: fileUrl,
+              submissionFileName: fileName,
+              submissionFileSize: fileSize,
+              answers: Array.isArray(d.answers) ? d.answers.filter((a: any) => a.questionId !== '__attachment__') : []
+            };
+          });
           setSubmissions(mapped)
           localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(mapped))
         }
@@ -1788,6 +1808,7 @@ export default function AdminExams() {
 
   const handleOpenEvaluation = (sub: ExamSubmission) => {
     setEvaluatingSub(sub)
+    setShowPdfPreview(false)
 
     const initialMarks: Record<string, number> = {}
     const initialComments: Record<string, string> = {}
@@ -2459,6 +2480,43 @@ export default function AdminExams() {
                       </div>
                     </div>
 
+                    {/* Attached Handwritten PDF Sheet */}
+                    {sub.submissionFileUrl && (
+                      <div className="mb-3 p-2.5 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 flex items-center justify-between text-xs gap-2">
+                        <div className="flex items-center gap-2 min-w-0 pr-1">
+                          <div className="p-1.5 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 shrink-0">
+                            <FileText size={15} />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="font-bold text-indigo-950 dark:text-indigo-200 truncate block text-[11px]">
+                              {sub.submissionFileName || 'Handwritten Answer Sheet.pdf'}
+                            </span>
+                            <span className="text-[10px] text-indigo-600 dark:text-indigo-400 block font-medium">
+                              PDF Paper Attached {sub.submissionFileSize ? `• ${sub.submissionFileSize}` : ''}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <a
+                            href={sub.submissionFileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold shadow-xs transition"
+                          >
+                            <ExternalLink size={11} /> <span>View</span>
+                          </a>
+                          <a
+                            href={sub.submissionFileUrl}
+                            download={sub.submissionFileName || 'Handwritten_Sheet.pdf'}
+                            className="p-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-neutral-700 transition"
+                            title="Download PDF"
+                          >
+                            <Download size={13} />
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Score / Status Strip */}
                     {isGraded ? (
                       <div className="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-900/40 flex items-center justify-between text-xs mb-3">
@@ -2545,7 +2603,22 @@ export default function AdminExams() {
                         </td>
 
                         <td className="px-5 py-4">
-                          <div className="font-medium text-slate-900 dark:text-white text-xs">{sub.examTitle}</div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-medium text-slate-900 dark:text-white text-xs">{sub.examTitle}</span>
+                            {sub.submissionFileUrl && (
+                              <a
+                                href={sub.submissionFileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition shrink-0"
+                                title={`View handwritten answer sheet: ${sub.submissionFileName || 'Answer Sheet.pdf'}`}
+                              >
+                                <Paperclip size={10} />
+                                <span>PDF Paper</span>
+                                <ExternalLink size={9} />
+                              </a>
+                            )}
+                          </div>
                           <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{(() => {
                             const raw = (sub.course || '').trim();
                             if (/^1-on-1/i.test(raw)) {
@@ -3416,6 +3489,84 @@ export default function AdminExams() {
 
             {/* SCROLLABLE QUESTIONS GRADING BODY */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 pb-28 sm:pb-6">
+              {/* ATTACHED HANDWRITTEN PDF BANNER */}
+              {evaluatingSub.submissionFileUrl && (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/30 border border-indigo-200/80 dark:border-indigo-800/60 shadow-xs space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="p-2.5 rounded-xl bg-indigo-600 text-white shrink-0 shadow-xs">
+                        <FileText size={20} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-indigo-950 dark:text-indigo-200 text-sm truncate">
+                            {evaluatingSub.submissionFileName || 'Handwritten Answer Sheet.pdf'}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-indigo-200/80 dark:bg-indigo-900/80 text-indigo-800 dark:text-indigo-200 text-[10px] font-bold shrink-0">
+                            STUDENT ATTACHMENT
+                          </span>
+                        </div>
+                        <p className="text-xs text-indigo-700/90 dark:text-indigo-300/80 mt-0.5">
+                          Student attached physical handwritten paper {evaluatingSub.submissionFileSize ? `(${evaluatingSub.submissionFileSize})` : ''}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => setShowPdfPreview(!showPdfPreview)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer shadow-xs ${
+                          showPdfPreview
+                            ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            : 'bg-white dark:bg-neutral-800 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50'
+                        }`}
+                      >
+                        {showPdfPreview ? <EyeOff size={14} /> : <Eye size={14} />}
+                        <span>{showPdfPreview ? 'Hide Preview' : 'In-App Preview'}</span>
+                      </button>
+
+                      <a
+                        href={evaluatingSub.submissionFileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition"
+                      >
+                        <ExternalLink size={14} />
+                        <span>Open in New Tab</span>
+                      </a>
+
+                      <a
+                        href={evaluatingSub.submissionFileUrl}
+                        download={evaluatingSub.submissionFileName || 'Handwritten_Sheet.pdf'}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-neutral-800 hover:bg-indigo-50 dark:hover:bg-neutral-700 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition"
+                        title="Download PDF"
+                      >
+                        <Download size={14} />
+                        <span className="hidden sm:inline">Download</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Inline PDF Preview Frame */}
+                  {showPdfPreview && (
+                    <div className="pt-2 animate-in fade-in duration-200">
+                      <div className="rounded-xl overflow-hidden border border-indigo-200/80 dark:border-indigo-800/80 bg-slate-900 shadow-md">
+                        <div className="bg-slate-900 text-slate-300 px-3 py-1.5 text-[11px] font-mono flex items-center justify-between border-b border-slate-800">
+                          <span className="truncate">{evaluatingSub.submissionFileName || 'Answer Sheet Preview'}</span>
+                          <span className="text-[10px] text-slate-400">PDF Document</span>
+                        </div>
+                        <iframe
+                          src={evaluatingSub.submissionFileUrl}
+                          title="Student Answer Sheet"
+                          className="w-full h-[500px] bg-white border-0"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {evaluatingSub.answers.map((ans, idx) => (
                 <div
                   key={ans.questionId || idx}
