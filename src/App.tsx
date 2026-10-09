@@ -14,6 +14,7 @@ import StudentBilling from './components/StudentBilling' // ✅ NEW
 import PastClassHistory from './components/PastClassHistory'
 import EarningsAnalytics from './components/EarningsAnalytics'
 import Invoices from './components/Invoices'
+import AdminExams from './components/AdminExams'
 import { useDarkMode } from './hooks/useDarkMode'
 
 type Section =
@@ -30,6 +31,7 @@ type Section =
   | 'invoices'
   | 'past_history'
   | 'earnings_analytics'
+  | 'exams'
 
 function App() {
   useDarkMode() // Initialize theme
@@ -122,6 +124,8 @@ function App() {
         return <PastClassHistory />
       case 'earnings_analytics':
         return <EarningsAnalytics />
+      case 'exams':
+        return <AdminExams />
       default:
         return <Dashboard />
     }

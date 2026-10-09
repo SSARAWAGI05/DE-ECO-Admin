@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import {
   LayoutDashboard, BookOpen, Video, Users, FileText, PlayCircle,
   DollarSign, Receipt, BarChart, History,
-  Bell, Mail, TrendingUp, Moon, Sun, ChevronDown, X
+  Bell, Mail, TrendingUp, Moon, Sun, ChevronDown, X, Award
 } from 'lucide-react'
 import { useDarkMode } from '../hooks/useDarkMode'
 
@@ -20,6 +20,7 @@ type Section =
   | 'invoices'
   | 'past_history'
   | 'earnings_analytics'
+  | 'exams'
 
 interface NavbarProps {
   activeSection: Section
@@ -55,6 +56,7 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
     { id: 'dashboard' as Section, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'enrollments' as Section, label: 'Enrollments', icon: Users },
     { id: 'classes' as Section, label: 'Live Classes', icon: Video },
+    { id: 'exams' as Section, label: 'Exams & Grading', icon: Award },
     { id: 'billing' as Section, label: 'Student Billing', icon: DollarSign },
     { id: 'invoices' as Section, label: 'Invoices', icon: Receipt },
     { id: 'earnings_analytics' as Section, label: 'Earnings', icon: BarChart },
