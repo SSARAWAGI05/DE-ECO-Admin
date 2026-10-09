@@ -1280,7 +1280,7 @@ export default function AdminExams() {
 
                   {/* Scheduling Mode (Specific Date/Time vs Anytime / Self-Paced) */}
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/80 dark:bg-neutral-850/60">
+                    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/80 dark:bg-neutral-800/90">
                       <label className="flex items-center gap-2.5 cursor-pointer select-none">
                         <input
                           type="checkbox"
@@ -1529,7 +1529,7 @@ export default function AdminExams() {
                       <button
                         type="button"
                         onClick={() => openNewQuestionForm('mcq')}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-indigo-200 dark:border-neutral-700 bg-indigo-50/50 dark:bg-neutral-800 text-indigo-700 dark:text-neutral-200 hover:bg-indigo-100 dark:hover:bg-neutral-750 transition cursor-pointer"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-indigo-200 dark:border-neutral-700 bg-indigo-50/50 dark:bg-neutral-800 text-indigo-700 dark:text-neutral-200 hover:bg-indigo-100 dark:hover:bg-neutral-700 transition cursor-pointer"
                       >
                         <Plus size={16} className="text-indigo-600 dark:text-indigo-400" />
                         <span className="text-xs font-bold">+ Add MCQ</span>
@@ -1538,7 +1538,7 @@ export default function AdminExams() {
                       <button
                         type="button"
                         onClick={() => openNewQuestionForm('descriptive')}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-emerald-200 dark:border-neutral-700 bg-emerald-50/50 dark:bg-neutral-800 text-emerald-700 dark:text-neutral-200 hover:bg-emerald-100 dark:hover:bg-neutral-750 transition cursor-pointer"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-emerald-200 dark:border-neutral-700 bg-emerald-50/50 dark:bg-neutral-800 text-emerald-700 dark:text-neutral-200 hover:bg-emerald-100 dark:hover:bg-neutral-700 transition cursor-pointer"
                       >
                         <Plus size={16} className="text-emerald-600 dark:text-emerald-400" />
                         <span className="text-xs font-bold">+ Add Descriptive</span>
@@ -1560,7 +1560,7 @@ export default function AdminExams() {
 
                   {/* ACTIVE QUESTION EDITOR CARD */}
                   {isQuestionFormOpen && (
-                    <div className="p-5 rounded-2xl border border-indigo-500/80 dark:border-neutral-700 bg-slate-50/50 dark:bg-neutral-850/60 dark:bg-neutral-900 space-y-4 animate-in fade-in duration-150">
+                    <div className="p-5 rounded-2xl border border-indigo-500/80 dark:border-neutral-700 bg-slate-50/50 dark:bg-neutral-800/90 dark:bg-neutral-900 space-y-4 animate-in fade-in duration-150">
                       
                       {/* Editor Title & Type */}
                       <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-neutral-800">
@@ -1807,7 +1807,7 @@ export default function AdminExams() {
                                   className={`text-[11px] px-2 py-0.5 rounded border ${
                                     opt.id === q.correctAnswer
                                       ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold'
-                                      : 'border-slate-200 dark:border-neutral-750 text-slate-600 dark:text-neutral-400'
+                                      : 'border-slate-200 dark:border-neutral-700 text-slate-600 dark:text-neutral-400'
                                   }`}
                                 >
                                   {opt.id}. {opt.text} {opt.id === q.correctAnswer && '✓'}
@@ -1998,7 +1998,7 @@ export default function AdminExams() {
         <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-slate-50/50 dark:bg-neutral-850/50">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between bg-slate-100 dark:bg-neutral-900">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center shadow-xs">
                   <Sparkles size={18} />
@@ -2057,7 +2057,7 @@ export default function AdminExams() {
                 </div>
 
                 {(!aiApiKey || isApiKeyExpanded) && (
-                  <div className="pt-2 border-t border-slate-200 dark:border-neutral-750 flex items-center gap-2">
+                  <div className="pt-2 border-t border-slate-200 dark:border-neutral-700 flex items-center gap-2">
                     <input
                       type="password"
                       placeholder="gsk_..."
@@ -2119,7 +2119,7 @@ export default function AdminExams() {
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={handleFileDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed border-slate-300 dark:border-neutral-750 hover:border-violet-500 dark:hover:border-violet-500 rounded-2xl p-6 text-center cursor-pointer transition bg-slate-50/50 dark:bg-neutral-850/50 group"
+                    className="border-2 border-dashed border-slate-300 dark:border-neutral-700 hover:border-violet-500 dark:hover:border-violet-500 rounded-2xl p-6 text-center cursor-pointer transition bg-slate-50 dark:bg-neutral-800/50 group"
                   >
                     <div className="w-12 h-12 mx-auto rounded-xl bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 flex items-center justify-center mb-3 group-hover:scale-105 transition">
                       <UploadCloud size={24} />
@@ -2166,7 +2166,7 @@ export default function AdminExams() {
                           readOnly
                           rows={4}
                           value={aiExtractedPdfText}
-                          className="w-full bg-slate-100 dark:bg-neutral-850 border border-slate-200 dark:border-neutral-750 rounded-xl p-3 text-[11px] font-mono text-slate-700 dark:text-neutral-300 outline-none"
+                          className="w-full bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-[11px] font-mono text-slate-700 dark:text-neutral-300 outline-none"
                         />
                       )}
                     </div>
@@ -2190,7 +2190,7 @@ export default function AdminExams() {
                     placeholder="Paste ChatGPT output here...&#10;&#10;Example:&#10;1. What is the multiplier in macroeconomics?&#10;A. 1 / (1 - MPC)&#10;B. MPC / MPS&#10;C. 1 - MPS&#10;Answer: A [2 Marks]&#10;&#10;2. Discuss monetary transmission mechanism. [5 Marks]"
                     value={aiPastedText}
                     onChange={(e) => setAiPastedText(e.target.value)}
-                    className="w-full bg-white dark:bg-neutral-850 border border-slate-300 dark:border-neutral-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-500 font-mono leading-relaxed"
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-500 font-mono leading-relaxed"
                   />
                   <p className="text-[11px] text-slate-500 dark:text-neutral-400">
                     💡 Tip: You can paste the direct answer from ChatGPT without modifying the formatting. Groq will parse the questions, options, and marks cleanly.
@@ -2264,18 +2264,18 @@ export default function AdminExams() {
                     {aiParseResult.questions.map((q, idx) => (
                       <div
                         key={idx}
-                        className="p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-850/50 space-y-1.5"
+                        className="p-3.5 rounded-xl border border-slate-200 dark:border-neutral-700/80 bg-white dark:bg-neutral-800/90 space-y-2 shadow-2xs"
                       >
                         <div className="flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-800 dark:text-neutral-200">
+                            <span className="font-bold text-slate-900 dark:text-white">
                               Q{idx + 1}
                             </span>
-                            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-neutral-750 text-slate-700 dark:text-neutral-300">
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-neutral-700 text-slate-700 dark:text-neutral-200">
                               {q.type === 'mcq' ? 'MCQ' : 'Descriptive'}
                             </span>
                             {q.marks > 0 && (
-                              <span className="text-[11px] text-slate-500 dark:text-neutral-400">
+                              <span className="text-[11px] font-medium text-slate-500 dark:text-neutral-400">
                                 {q.marks} {q.marks === 1 ? 'Mark' : 'Marks'}
                               </span>
                             )}
@@ -2288,7 +2288,7 @@ export default function AdminExams() {
                           )}
                         </div>
 
-                        <p className="text-xs text-slate-800 dark:text-neutral-200 line-clamp-2">
+                        <p className="text-xs font-medium text-slate-900 dark:text-neutral-100 leading-relaxed">
                           {q.question}
                         </p>
 
