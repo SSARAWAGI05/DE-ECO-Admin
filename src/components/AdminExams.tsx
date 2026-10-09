@@ -2521,6 +2521,7 @@ export default function AdminExams() {
                           ))}
                         </div>
                     </div>
+                  </div>
                 );
               })()}
 
