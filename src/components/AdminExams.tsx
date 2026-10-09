@@ -2047,9 +2047,25 @@ export default function AdminExams() {
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
                         {ex.questions.length > 0 ? (
-                          <span>{ex.questions.length} questions ({ex.questions.filter(q => q.type === 'mcq').length} MCQ, {ex.questions.filter(q => q.type === 'descriptive').length} Descriptive)</span>
+                          <span>
+                            {ex.questions.length} questions ({(() => {
+                              const mcq = ex.questions.filter((q) => q.type === 'mcq').length
+                              const desc = ex.questions.filter((q) => q.type === 'descriptive').length
+                              if (mcq > 0 && desc > 0) return `${mcq} MCQ, ${desc} Descriptive`
+                              if (mcq > 0) return `${mcq} MCQ`
+                              if (desc > 0) return `${desc} Descriptive`
+                              return `${ex.questions.length} Qs`
+                            })()})
+                          </span>
                         ) : (
-                          <span className="text-slate-400">{ex.mcqCount + ex.descriptiveCount} Qs (Default)</span>
+                          <span className="text-slate-400">
+                            {(() => {
+                              if (ex.mcqCount > 0 && ex.descriptiveCount > 0) return `${ex.mcqCount} MCQ, ${ex.descriptiveCount} Descriptive`
+                              if (ex.mcqCount > 0) return `${ex.mcqCount} MCQ`
+                              if (ex.descriptiveCount > 0) return `${ex.descriptiveCount} Descriptive`
+                              return `${ex.mcqCount + ex.descriptiveCount} Qs (Default)`
+                            })()}
+                          </span>
                         )}
                       </td>
 
@@ -2576,8 +2592,14 @@ export default function AdminExams() {
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">
-                          {examForm.questions.filter((q) => q.type === 'mcq').length} MCQs •{' '}
-                          {examForm.questions.filter((q) => q.type === 'descriptive').length} Descriptive
+                          {(() => {
+                            const mcqs = examForm.questions.filter((q) => q.type === 'mcq').length
+                            const descs = examForm.questions.filter((q) => q.type === 'descriptive').length
+                            if (mcqs > 0 && descs > 0) return `${mcqs} MCQs • ${descs} Descriptive`
+                            if (mcqs > 0) return `${mcqs} MCQs`
+                            if (descs > 0) return `${descs} Descriptive`
+                            return 'No questions added yet'
+                          })()}
                         </p>
                       </div>
 
@@ -3344,9 +3366,16 @@ export default function AdminExams() {
                         <span>Successfully Extracted {aiParseResult.questions.length} Questions</span>
                       </p>
                       <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
-                        {aiParseResult.questions.filter((q) => q.type === 'mcq').length} MCQs •{' '}
-                        {aiParseResult.questions.filter((q) => q.type === 'descriptive').length} Descriptive •{' '}
-                        {aiParseResult.totalMarks} Total Marks
+                        {(() => {
+                          const mcqs = aiParseResult.questions.filter((q) => q.type === 'mcq').length
+                          const descs = aiParseResult.questions.filter((q) => q.type === 'descriptive').length
+                          const parts: string[] = []
+                          if (mcqs > 0) parts.push(`${mcqs} MCQs`)
+                          if (descs > 0) parts.push(`${descs} Descriptive`)
+                          if (parts.length === 0) parts.push(`${aiParseResult.questions.length} Questions`)
+                          return parts.join(' • ')
+                        })()}{' '}
+                        • {aiParseResult.totalMarks} Total Marks
                         {aiParseResult.examTitle ? ` • "${aiParseResult.examTitle}"` : ''}
                       </p>
                     </div>
