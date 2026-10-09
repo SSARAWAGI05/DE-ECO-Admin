@@ -1706,7 +1706,7 @@ export default function AdminExams() {
       mcq_count: mcqCount,
       descriptive_count: descriptiveCount,
       syllabus: [],
-      instructions: ['Auto-saved in real time. Please submit before timer expires.'],
+      instructions: ['Please submit before timer expires, and keep saving your progress.'],
       questions: examForm.questions,
       is_active: true,
       updated_at: new Date().toISOString()
@@ -1747,7 +1747,7 @@ export default function AdminExams() {
       mcqCount,
       descriptiveCount,
       syllabus: [],
-      instructions: ['Auto-saved in real time. Please submit before timer expires.'],
+      instructions: ['Please submit before timer expires, and keep saving your progress.'],
       questions: examForm.questions
     }
 
