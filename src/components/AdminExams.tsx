@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   Clock,
   Award,
+  Download,
   FileText,
   AlertCircle,
   Settings,
@@ -136,230 +137,735 @@ export interface ExamSubmission {
 
 /* ================= INITIAL SEED DATA ================= */
 
-const INITIAL_EXAMS: Exam[] = [
-  {
-    id: 'a1111111-1111-4111-8111-111111111111',
-    title: 'Macroeconomics Mid-Term Examination 2026',
-    course: 'Macroeconomic Theory & Policy',
-    instructor: 'Rishika',
-    status: 'live',
-    scheduledDate: 'Active Now',
-    scheduledTime: 'Closes today at 6:00 PM IST',
-    durationMinutes: 45,
-    totalMarks: 100,
-    passingMarks: 20,
-    mcqCount: 4,
-    descriptiveCount: 2,
-    syllabus: [
-      'National Income Accounting & GDP Deflator',
-      'Keynesian Autonomous Investment Multiplier',
-      'Open Market Operations & Reserve Requirements'
-    ],
-    instructions: [
-      'Total duration is 45 minutes.',
-      'Student answers are auto-saved in real time.'
-    ],
-    questions: [
-      {
-        id: 'q1',
-        number: 1,
-        type: 'mcq',
-        question: 'Which of the following is NOT included in the calculation of Gross Domestic Product (GDP) using the expenditure approach?',
-        marks: 5,
-        options: [
-          { id: 'A', text: 'Gross Private Domestic Investment (capital goods & inventory changes)' },
-          { id: 'B', text: 'Government transfer payments (e.g., social security and unemployment pensions)' },
-          { id: 'C', text: 'Government consumption expenditures and gross public investment' },
-          { id: 'D', text: 'Net Exports of goods and services (Exports minus Imports)' }
-        ],
-        correctAnswer: 'B'
-      },
-      {
-        id: 'q2',
-        number: 2,
-        type: 'mcq',
-        question: 'In a closed Keynesian macroeconomic model with no government sector, if the Marginal Propensity to Consume (MPC) is 0.8, what is the value of the autonomous investment multiplier?',
-        marks: 5,
-        options: [
-          { id: 'A', text: '2.5' },
-          { id: 'B', text: '4.0' },
-          { id: 'C', text: '5.0' },
-          { id: 'D', text: '8.0' }
-        ],
-        correctAnswer: 'C'
-      },
-      {
-        id: 'q3',
-        number: 3,
-        type: 'mcq',
-        question: 'When the Central Bank conducts Open Market Operations by purchasing government bonds from commercial banks, what is the primary consequence on the banking system and market interest rates?',
-        marks: 5,
-        options: [
-          { id: 'A', text: 'Commercial bank reserves decrease, constraining credit and elevating bond yields' },
-          { id: 'B', text: 'Commercial bank excess reserves rise, credit availability expands, and short-term interest rates fall' },
-          { id: 'C', text: 'The statutory reserve requirement ratio automatically quadruples' }
-        ],
-        correctAnswer: 'B'
-      },
-      {
-        id: 'q4',
-        number: 4,
-        type: 'mcq',
-        question: 'The traditional short-run Phillips curve illustrates an inverse empirical trade-off between which pair of macroeconomic indicators?',
-        marks: 5,
-        options: [
-          { id: 'A', text: 'Fiscal deficit and the foreign currency exchange rate' },
-          { id: 'B', text: 'The inflation rate and the unemployment rate' },
-          { id: 'C', text: 'Nominal interest rates and capital account surplus' }
-        ],
-        correctAnswer: 'B'
-      },
-      {
-        id: 'q5',
-        number: 5,
-        type: 'descriptive',
-        question: "Define the Keynesian concept of a 'Liquidity Trap'. Explain the precise economic conditions under which it develops and why conventional expansionary monetary policy becomes powerless.",
-        marks: 15
-      },
-      {
-        id: 'q6',
-        number: 6,
-        type: 'descriptive',
-        question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation.',
-        marks: 15
-      }
-    ]
-  },
-  {
-    id: 'a2222222-2222-4222-8222-222222222222',
-    title: 'Microeconomics & Market Structures Unit Test',
-    course: 'Foundations of Microeconomics',
-    instructor: 'Rishika',
-    status: 'live',
-    scheduledDate: 'Oct 15, 2026',
-    scheduledTime: '10:00 AM - 11:00 AM IST',
-    durationMinutes: 60,
-    totalMarks: 60,
-    passingMarks: 24,
-    mcqCount: 6,
-    descriptiveCount: 2,
-    syllabus: [],
-    instructions: ['Scheduled live exam.'],
-    questions: []
-  }
-]
-
-const INITIAL_SUBMISSIONS: ExamSubmission[] = [
-  {
-    id: 'b1111111-1111-4111-8111-111111111111',
-    examId: 'a1111111-1111-4111-8111-111111111111',
-    examTitle: 'Macroeconomics Mid-Term Examination 2026',
-    course: 'Macroeconomic Theory & Policy',
-    instructor: 'Rishika',
-    studentEmail: 'aditya.sharma@example.com',
-    studentName: 'Aditya Sharma',
-    submittedAt: 'Today • 2:15 PM',
-    status: 'under_evaluation',
-    totalMarks: 50,
-    scoreObtained: 20,
-    timeSpentMinutes: 41,
-    answers: [
-      {
-        questionId: 'q1',
-        questionNumber: 1,
-        type: 'mcq',
-        question: 'Which of the following is NOT included in the calculation of Gross Domestic Product (GDP) using the expenditure approach?',
-        marks: 5,
-        studentAnswer: 'B',
-        correctAnswer: 'B',
-        isCorrect: true,
-        marksAwarded: 5
-      },
-      {
-        questionId: 'q2',
-        questionNumber: 2,
-        type: 'mcq',
-        question: 'In a closed Keynesian macroeconomic model with no government sector, if MPC is 0.8, autonomous multiplier is:',
-        marks: 5,
-        studentAnswer: 'C',
-        correctAnswer: 'C',
-        isCorrect: true,
-        marksAwarded: 5
-      },
-      {
-        questionId: 'q3',
-        questionNumber: 3,
-        type: 'mcq',
-        question: 'Consequence of Central Bank Open Market Purchases on reserves:',
-        marks: 5,
-        studentAnswer: 'B',
-        correctAnswer: 'B',
-        isCorrect: true,
-        marksAwarded: 5
-      },
-      {
-        questionId: 'q4',
-        questionNumber: 4,
-        type: 'mcq',
-        question: 'Trade-off in short-run Phillips curve:',
-        marks: 5,
-        studentAnswer: 'B',
-        correctAnswer: 'B',
-        isCorrect: true,
-        marksAwarded: 5
-      },
-      {
-        questionId: 'q5',
-        questionNumber: 5,
-        type: 'descriptive',
-        question: "Define the Keynesian concept of a 'Liquidity Trap' and why conventional monetary policy fails.",
-        marks: 15,
-        studentAnswer: 'A liquidity trap happens when interest rates are practically zero. Even if the central bank floods money, nobody invests because they prefer holding cash.',
-        marksAwarded: undefined,
-        teacherComment: ''
-      },
-      {
-        questionId: 'q6',
-        questionNumber: 6,
-        type: 'descriptive',
-        question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation.',
-        marks: 15,
-        studentAnswer: 'Demand-pull inflation is caused by aggregate demand exceeding productive capacity. Cost-push is caused by supply shocks like oil price spikes.',
-        marksAwarded: undefined,
-        teacherComment: ''
-      }
-    ]
-  },
-  {
-    id: 'b2222222-2222-4222-8222-222222222222',
-    examId: 'a1111111-1111-4111-8111-111111111111',
-    examTitle: 'Macroeconomics Mid-Term Examination 2026',
-    course: 'Macroeconomic Theory & Policy',
-    instructor: 'Rishika',
-    studentEmail: 'priya.patel@example.com',
-    studentName: 'Priya Patel',
-    submittedAt: 'Yesterday • 4:30 PM',
-    status: 'graded',
-    totalMarks: 50,
-    scoreObtained: 44,
-    percentage: 88,
-    grade: 'A Distinction',
-    isPassed: true,
-    timeSpentMinutes: 38,
-    teacherFeedback: {
-      overall: 'Exceptional answers. Clear understanding of macroeconomic models.',
-      strengths: ['Analytical rigor in Phillips curve trade-off'],
-      improvements: ['Include graphical AD-AS shifts'],
-      evaluatedAt: 'Yesterday • 6:00 PM'
-    },
-    answers: []
-  }
-]
+const INITIAL_EXAMS: Exam[] = []
+const INITIAL_SUBMISSIONS: ExamSubmission[] = []
 
 /* ================= STORAGE KEYS ================= */
 const EXAMS_STORAGE_KEY = 'deeco_admin_exams'
 const SUBMISSIONS_STORAGE_KEY = 'deeco_exam_results'
 const OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+
+
+/* ========================================================================= */
+/* =========== DE-ECO OFFICIAL REPORT CARD & TRANSCRIPT DOWNLOADER ========= */
+/* ========================================================================= */
+
+const escapeHtml = (str: string = ''): string => {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+const stripHtmlTags = (html: string = ''): string => {
+  return html.replace(/<[^>]*>/g, '').trim();
+};
+
+export const downloadReportCard = (
+  data: any,
+  options?: { studentName?: string; studentEmail?: string }
+) => {
+  const candidateName = options?.studentName || data.studentName || 'Student';
+  const candidateEmail = options?.studentEmail || data.studentEmail || 'Registered Student';
+  const examTitle = data.examTitle || 'Academic Examination';
+  const courseTitle = data.course || 'Economics & Finance Curriculum';
+  const instructor = data.instructor || 'Instructor Rishika';
+  const totalMarks = Number(data.totalMarks) || 100;
+  const scoreObtained = data.scoreObtained !== undefined ? Number(data.scoreObtained) : 0;
+  const percentage = data.percentage !== undefined ? Number(data.percentage) : Math.round((scoreObtained / (totalMarks || 1)) * 100);
+  const grade = data.grade || (data.isPassed ? 'A Distinction' : 'Needs Retake');
+  const isPassed = data.isPassed !== undefined ? Boolean(data.isPassed) : percentage >= 40;
+  const timeSpent = Number(data.timeSpentMinutes) || 0;
+  const submittedAt = data.submittedAt || new Date().toLocaleDateString('en-US');
+  const feedback = data.teacherFeedback;
+  const transcriptCode = 'DEECO-' + (data.id ? String(data.id).slice(0, 8).toUpperCase() : 'TRANSCRIPT');
+
+  const answersList: any[] = Array.isArray(data.answers) ? data.answers : [];
+  const mcqQuestions = answersList.filter((a) => a.type === 'mcq');
+  const descriptiveQuestions = answersList.filter((a) => a.type === 'descriptive');
+
+  const mcqTotal = mcqQuestions.reduce((acc, q) => acc + (Number(q.marks) || 0), 0);
+  const mcqAwarded = mcqQuestions.reduce(
+    (acc, q) => acc + (q.marksAwarded !== undefined ? Number(q.marksAwarded) : (q.isCorrect ? Number(q.marks) : 0)),
+    0
+  );
+
+  const descTotal = descriptiveQuestions.reduce((acc, q) => acc + (Number(q.marks) || 0), 0);
+  const descAwarded = descriptiveQuestions.reduce((acc, q) => acc + (q.marksAwarded !== undefined ? Number(q.marksAwarded) : 0), 0);
+
+  const issueDate = new Date().toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
+  const html = '<!DOCTYPE html>' +
+'<html lang="en">' +
+'<head>' +
+'  <meta charset="UTF-8">' +
+'  <meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+'  <title>DE-ECO Official Report Card - ' + escapeHtml(examTitle) + '</title>' +
+'  <style>' +
+'    @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap");' +
+'    @page {' +
+'      size: A4;' +
+'      margin: 10mm 12mm;' +
+'    }' +
+'    * {' +
+'      box-sizing: border-box;' +
+'      margin: 0;' +
+'      padding: 0;' +
+'      -webkit-print-color-adjust: exact !important;' +
+'      print-color-adjust: exact !important;' +
+'    }' +
+'    body {' +
+'      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;' +
+'      background-color: #f8fafc;' +
+'      color: #0f172a;' +
+'      line-height: 1.45;' +
+'      padding: 20px;' +
+'    }' +
+'    .report-card-wrapper {' +
+'      max-width: 860px;' +
+'      margin: 0 auto;' +
+'      background: #ffffff;' +
+'      border: 1px solid #e2e8f0;' +
+'      border-radius: 16px;' +
+'      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);' +
+'      overflow: hidden;' +
+'      position: relative;' +
+'    }' +
+'    .action-bar {' +
+'      position: sticky;' +
+'      top: 0;' +
+'      z-index: 100;' +
+'      display: flex;' +
+'      justify-content: space-between;' +
+'      align-items: center;' +
+'      background: #0f172a;' +
+'      color: #ffffff;' +
+'      padding: 12px 24px;' +
+'      border-radius: 12px;' +
+'      margin-bottom: 20px;' +
+'      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);' +
+'    }' +
+'    .action-bar h3 {' +
+'      font-size: 14px;' +
+'      font-weight: 700;' +
+'      display: flex;' +
+'      align-items: center;' +
+'      gap: 8px;' +
+'    }' +
+'    .action-btns {' +
+'      display: flex;' +
+'      gap: 10px;' +
+'    }' +
+'    .btn {' +
+'      cursor: pointer;' +
+'      border: none;' +
+'      border-radius: 8px;' +
+'      padding: 8px 16px;' +
+'      font-size: 13px;' +
+'      font-weight: 700;' +
+'      display: inline-flex;' +
+'      align-items: center;' +
+'      gap: 6px;' +
+'      text-decoration: none;' +
+'    }' +
+'    .btn-primary {' +
+'      background: #10b981;' +
+'      color: #ffffff;' +
+'    }' +
+'    .btn-primary:hover {' +
+'      background: #059669;' +
+'    }' +
+'    .btn-secondary {' +
+'      background: #334155;' +
+'      color: #ffffff;' +
+'    }' +
+'    .btn-secondary:hover {' +
+'      background: #475569;' +
+'    }' +
+'    @media print {' +
+'      body {' +
+'        background: #ffffff;' +
+'        padding: 0;' +
+'      }' +
+'      .action-bar {' +
+'        display: none !important;' +
+'      }' +
+'      .report-card-wrapper {' +
+'        border: none;' +
+'        box-shadow: none;' +
+'        max-width: 100%;' +
+'        border-radius: 0;' +
+'      }' +
+'      .keep-together {' +
+'        break-inside: avoid;' +
+'        page-break-inside: avoid;' +
+'      }' +
+'    }' +
+'    .header-banner {' +
+'      background: linear-gradient(135deg, #0b1329 0%, #172554 100%);' +
+'      color: #ffffff;' +
+'      padding: 28px 36px;' +
+'      border-bottom: 4px solid #10b981;' +
+'    }' +
+'    .header-top {' +
+'      display: flex;' +
+'      justify-content: space-between;' +
+'      align-items: center;' +
+'      margin-bottom: 18px;' +
+'    }' +
+'    .brand-group {' +
+'      display: flex;' +
+'      align-items: center;' +
+'      gap: 14px;' +
+'    }' +
+'    .brand-logo-img {' +
+'      height: 44px;' +
+'      width: auto;' +
+'      object-fit: contain;' +
+'      background: #ffffff;' +
+'      padding: 4px 8px;' +
+'      border-radius: 8px;' +
+'    }' +
+'    .brand-text-name {' +
+'      font-size: 24px;' +
+'      font-weight: 900;' +
+'      letter-spacing: -0.5px;' +
+'      color: #ffffff;' +
+'      line-height: 1.1;' +
+'    }' +
+'    .brand-text-sub {' +
+'      font-size: 10px;' +
+'      font-weight: 700;' +
+'      letter-spacing: 1.5px;' +
+'      text-transform: uppercase;' +
+'      color: #94a3b8;' +
+'    }' +
+'    .header-doc-meta {' +
+'      text-align: right;' +
+'    }' +
+'    .doc-badge {' +
+'      display: inline-block;' +
+'      background: rgba(16, 185, 129, 0.2);' +
+'      color: #34d399;' +
+'      border: 1px solid rgba(52, 211, 153, 0.4);' +
+'      font-size: 10px;' +
+'      font-weight: 800;' +
+'      letter-spacing: 1px;' +
+'      text-transform: uppercase;' +
+'      padding: 4px 10px;' +
+'      border-radius: 20px;' +
+'      margin-bottom: 4px;' +
+'    }' +
+'    .doc-code {' +
+'      font-size: 12px;' +
+'      font-weight: 600;' +
+'      color: #cbd5e1;' +
+'    }' +
+'    .header-title-box h1 {' +
+'      font-size: 22px;' +
+'      font-weight: 900;' +
+'      color: #ffffff;' +
+'      margin-bottom: 4px;' +
+'      letter-spacing: -0.3px;' +
+'    }' +
+'    .header-title-box p {' +
+'      font-size: 13px;' +
+'      color: #cbd5e1;' +
+'      font-weight: 500;' +
+'    }' +
+'    .card-content {' +
+'      padding: 28px 36px;' +
+'    }' +
+'    .meta-grid {' +
+'      display: grid;' +
+'      grid-template-columns: repeat(2, 1fr);' +
+'      gap: 12px;' +
+'      background: #f8fafc;' +
+'      border: 1px solid #e2e8f0;' +
+'      border-radius: 12px;' +
+'      padding: 16px 20px;' +
+'      margin-bottom: 24px;' +
+'    }' +
+'    .meta-item {' +
+'      display: flex;' +
+'      flex-direction: column;' +
+'    }' +
+'    .meta-label {' +
+'      font-size: 10px;' +
+'      font-weight: 700;' +
+'      text-transform: uppercase;' +
+'      letter-spacing: 0.8px;' +
+'      color: #64748b;' +
+'      margin-bottom: 2px;' +
+'    }' +
+'    .meta-val {' +
+'      font-size: 13px;' +
+'      font-weight: 700;' +
+'      color: #0f172a;' +
+'    }' +
+'    .score-summary-grid {' +
+'      display: grid;' +
+'      grid-template-columns: repeat(4, 1fr);' +
+'      gap: 12px;' +
+'      margin-bottom: 24px;' +
+'    }' +
+'    .score-box {' +
+'      border: 1px solid #e2e8f0;' +
+'      background: #ffffff;' +
+'      border-radius: 12px;' +
+'      padding: 14px;' +
+'      text-align: center;' +
+'    }' +
+'    .score-box-primary {' +
+'      background: #f0fdf4;' +
+'      border-color: #bbf7d0;' +
+'    }' +
+'    .score-box-accent {' +
+'      background: #eff6ff;' +
+'      border-color: #bfdbfe;' +
+'    }' +
+'    .score-box-label {' +
+'      font-size: 10px;' +
+'      font-weight: 800;' +
+'      text-transform: uppercase;' +
+'      letter-spacing: 0.6px;' +
+'      color: #64748b;' +
+'      margin-bottom: 4px;' +
+'    }' +
+'    .score-box-val {' +
+'      font-size: 26px;' +
+'      font-weight: 900;' +
+'      color: #0f172a;' +
+'      line-height: 1.1;' +
+'    }' +
+'    .score-box-sub {' +
+'      font-size: 11px;' +
+'      font-weight: 600;' +
+'      color: #64748b;' +
+'      margin-top: 2px;' +
+'    }' +
+'    .status-badge-pass {' +
+'      display: inline-block;' +
+'      background: #059669;' +
+'      color: #ffffff;' +
+'      font-size: 11px;' +
+'      font-weight: 800;' +
+'      letter-spacing: 0.5px;' +
+'      padding: 3px 10px;' +
+'      border-radius: 6px;' +
+'    }' +
+'    .status-badge-fail {' +
+'      display: inline-block;' +
+'      background: #dc2626;' +
+'      color: #ffffff;' +
+'      font-size: 11px;' +
+'      font-weight: 800;' +
+'      letter-spacing: 0.5px;' +
+'      padding: 3px 10px;' +
+'      border-radius: 6px;' +
+'    }' +
+'    .breakdown-table {' +
+'      width: 100%;' +
+'      border-collapse: collapse;' +
+'      margin-bottom: 24px;' +
+'      border-radius: 8px;' +
+'      overflow: hidden;' +
+'      border: 1px solid #e2e8f0;' +
+'    }' +
+'    .breakdown-table th {' +
+'      background: #f1f5f9;' +
+'      font-size: 11px;' +
+'      font-weight: 800;' +
+'      text-transform: uppercase;' +
+'      letter-spacing: 0.6px;' +
+'      color: #475569;' +
+'      padding: 10px 14px;' +
+'      text-align: left;' +
+'      border-bottom: 1px solid #e2e8f0;' +
+'    }' +
+'    .breakdown-table td {' +
+'      font-size: 12px;' +
+'      padding: 10px 14px;' +
+'      border-bottom: 1px solid #f1f5f9;' +
+'      color: #1e293b;' +
+'    }' +
+'    .breakdown-table tr:last-child td {' +
+'      border-bottom: none;' +
+'      font-weight: 700;' +
+'      background: #f8fafc;' +
+'    }' +
+'    .section-title {' +
+'      font-size: 13px;' +
+'      font-weight: 800;' +
+'      text-transform: uppercase;' +
+'      letter-spacing: 0.5px;' +
+'      color: #0f172a;' +
+'      margin-bottom: 12px;' +
+'      padding-bottom: 6px;' +
+'      border-bottom: 2px solid #e2e8f0;' +
+'    }' +
+'    .feedback-box {' +
+'      background: #fffbeb;' +
+'      border: 1px solid #fde68a;' +
+'      border-left: 4px solid #f59e0b;' +
+'      border-radius: 10px;' +
+'      padding: 16px 20px;' +
+'      margin-bottom: 24px;' +
+'    }' +
+'    .feedback-header {' +
+'      display: flex;' +
+'      justify-content: space-between;' +
+'      align-items: center;' +
+'      margin-bottom: 6px;' +
+'    }' +
+'    .feedback-header h4 {' +
+'      font-size: 13px;' +
+'      font-weight: 800;' +
+'      color: #92400e;' +
+'    }' +
+'    .feedback-eval-meta {' +
+'      font-size: 11px;' +
+'      font-weight: 600;' +
+'      color: #b45309;' +
+'    }' +
+'    .feedback-body {' +
+'      font-size: 12.5px;' +
+'      color: #78350f;' +
+'      line-height: 1.5;' +
+'      font-style: italic;' +
+'      margin-bottom: 10px;' +
+'    }' +
+'    .feedback-pillars {' +
+'      display: grid;' +
+'      grid-template-columns: 1fr 1fr;' +
+'      gap: 12px;' +
+'      padding-top: 10px;' +
+'      border-top: 1px dashed rgba(245, 158, 11, 0.4);' +
+'    }' +
+'    .pillar-col h5 {' +
+'      font-size: 11px;' +
+'      font-weight: 800;' +
+'      text-transform: uppercase;' +
+'      letter-spacing: 0.5px;' +
+'      margin-bottom: 4px;' +
+'    }' +
+'    .pillar-col.strengths h5 { color: #047857; }' +
+'    .pillar-col.improvements h5 { color: #b45309; }' +
+'    .pillar-col ul { list-style-type: none; padding-left: 0; }' +
+'    .pillar-col li {' +
+'      font-size: 11.5px;' +
+'      line-height: 1.4;' +
+'      margin-bottom: 3px;' +
+'      padding-left: 14px;' +
+'      position: relative;' +
+'    }' +
+'    .pillar-col.strengths li::before {' +
+'      content: "✓";' +
+'      position: absolute;' +
+'      left: 0;' +
+'      color: #059669;' +
+'      font-weight: 900;' +
+'    }' +
+'    .pillar-col.improvements li::before {' +
+'      content: "•";' +
+'      position: absolute;' +
+'      left: 0;' +
+'      color: #d97706;' +
+'      font-weight: 900;' +
+'    }' +
+'    .question-list {' +
+'      display: flex;' +
+'      flex-direction: column;' +
+'      gap: 10px;' +
+'      margin-bottom: 24px;' +
+'    }' +
+'    .q-card {' +
+'      border: 1px solid #e2e8f0;' +
+'      border-radius: 10px;' +
+'      padding: 12px 14px;' +
+'      background: #ffffff;' +
+'      break-inside: avoid;' +
+'    }' +
+'    .q-card-head {' +
+'      display: flex;' +
+'      justify-content: space-between;' +
+'      align-items: center;' +
+'      margin-bottom: 4px;' +
+'    }' +
+'    .q-badge-row {' +
+'      display: flex;' +
+'      align-items: center;' +
+'      gap: 8px;' +
+'    }' +
+'    .q-num {' +
+'      font-size: 11px;' +
+'      font-weight: 800;' +
+'      background: #0f172a;' +
+'      color: #ffffff;' +
+'      padding: 2px 7px;' +
+'      border-radius: 4px;' +
+'    }' +
+'    .q-type {' +
+'      font-size: 10px;' +
+'      font-weight: 700;' +
+'      text-transform: uppercase;' +
+'      color: #64748b;' +
+'    }' +
+'    .q-marks {' +
+'      font-size: 12px;' +
+'      font-weight: 800;' +
+'      color: #0f172a;' +
+'    }' +
+'    .q-text {' +
+'      font-size: 12px;' +
+'      font-weight: 600;' +
+'      color: #1e293b;' +
+'      margin-bottom: 6px;' +
+'    }' +
+'    .q-answer-box {' +
+'      background: #f8fafc;' +
+'      border-left: 3px solid #cbd5e1;' +
+'      padding: 6px 10px;' +
+'      font-size: 11.5px;' +
+'      color: #334155;' +
+'      margin-bottom: 4px;' +
+'      border-radius: 0 6px 6px 0;' +
+'    }' +
+'    .q-teacher-remark {' +
+'      background: #fefce8;' +
+'      border-left: 3px solid #facc15;' +
+'      padding: 6px 10px;' +
+'      font-size: 11.5px;' +
+'      color: #854d0e;' +
+'      border-radius: 0 6px 6px 0;' +
+'      font-style: italic;' +
+'    }' +
+'    .auth-footer {' +
+'      border-top: 2px solid #e2e8f0;' +
+'      padding-top: 20px;' +
+'      margin-top: 16px;' +
+'      display: flex;' +
+'      justify-content: space-between;' +
+'      align-items: flex-end;' +
+'      break-inside: avoid;' +
+'    }' +
+'    .auth-seal-block {' +
+'      display: flex;' +
+'      align-items: center;' +
+'      gap: 12px;' +
+'    }' +
+'    .seal-badge {' +
+'      width: 58px;' +
+'      height: 58px;' +
+'      border: 3px double #0f172a;' +
+'      border-radius: 50%;' +
+'      display: flex;' +
+'      flex-direction: column;' +
+'      align-items: center;' +
+'      justify-content: center;' +
+'      text-align: center;' +
+'      background: #f8fafc;' +
+'    }' +
+'    .seal-text-top { font-size: 6px; font-weight: 900; letter-spacing: 0.5px; color: #0f172a; }' +
+'    .seal-icon { font-size: 13px; line-height: 1; color: #059669; margin: 1px 0; }' +
+'    .seal-text-bot { font-size: 5.5px; font-weight: 800; color: #64748b; }' +
+'    .auth-meta-text {' +
+'      font-size: 10.5px;' +
+'      color: #64748b;' +
+'      line-height: 1.4;' +
+'    }' +
+'    .sig-block { text-align: right; }' +
+'    .sig-name {' +
+'      font-family: "Playfair Display", Georgia, serif;' +
+'      font-size: 19px;' +
+'      font-style: italic;' +
+'      color: #0f172a;' +
+'      font-weight: 700;' +
+'      margin-bottom: 2px;' +
+'    }' +
+'    .sig-line {' +
+'      width: 150px;' +
+'      height: 1px;' +
+'      background: #cbd5e1;' +
+'      margin-left: auto;' +
+'      margin-bottom: 4px;' +
+'    }' +
+'    .sig-title { font-size: 11px; font-weight: 800; color: #1e293b; }' +
+'    .sig-org { font-size: 10px; color: #64748b; font-weight: 600; }' +
+'    .doc-legal-note {' +
+'      text-align: center;' +
+'      font-size: 9.5px;' +
+'      color: #94a3b8;' +
+'      margin-top: 16px;' +
+'      padding-top: 10px;' +
+'      border-top: 1px solid #f1f5f9;' +
+'    }' +
+'  </style>' +
+'</head>' +
+'<body>' +
+'  <div class="action-bar">' +
+'    <h3>🎓 DE-ECO Official Academic Report Card</h3>' +
+'    <div class="action-btns">' +
+'      <button onclick="window.print()" class="btn btn-primary">🖨️ Save as PDF / Print</button>' +
+'      <button onclick="window.close()" class="btn btn-secondary">✕ Close</button>' +
+'    </div>' +
+'  </div>' +
+'  <div class="report-card-wrapper">' +
+'    <header class="header-banner">' +
+'      <div class="header-top">' +
+'        <div class="brand-group">' +
+'          <img src="/logo/De-Eco-logo.png" alt="DE-ECO" class="brand-logo-img" onerror="this.style.display=\'none\'" />' +
+'          <div>' +
+'            <div class="brand-text-name">DE-ECO</div>' +
+'            <div class="brand-text-sub">Academic Assessment & Evaluation</div>' +
+'          </div>' +
+'        </div>' +
+'        <div class="header-doc-meta">' +
+'          <span class="doc-badge">Verified Performance Record</span>' +
+'          <div class="doc-code">Transcript ID: ' + escapeHtml(transcriptCode) + '</div>' +
+'          <div class="doc-code">Issue Date: ' + escapeHtml(issueDate) + '</div>' +
+'        </div>' +
+'      </div>' +
+'      <div class="header-title-box">' +
+'        <h1>' + escapeHtml(examTitle) + '</h1>' +
+'        <p>Comprehensive Academic Evaluation & Performance Transcript</p>' +
+'      </div>' +
+'    </header>' +
+'    <div class="card-content">' +
+'      <div class="meta-grid">' +
+'        <div class="meta-item"><span class="meta-label">Candidate Name</span><span class="meta-val">' + escapeHtml(candidateName) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Course Title</span><span class="meta-val">' + escapeHtml(courseTitle) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Candidate Email</span><span class="meta-val">' + escapeHtml(candidateEmail) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Evaluating Faculty</span><span class="meta-val">' + escapeHtml(instructor) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Submission Date</span><span class="meta-val">' + escapeHtml(submittedAt) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Time Spent</span><span class="meta-val">' + timeSpent + ' Minutes</span></div>' +
+'      </div>' +
+'      <div class="score-summary-grid keep-together">' +
+'        <div class="score-box score-box-primary">' +
+'          <div class="score-box-label">Total Score Secured</div>' +
+'          <div class="score-box-val" style="color: #047857;">' + scoreObtained + ' <span style="font-size: 15px; color: #64748b; font-weight: 600;">/ ' + totalMarks + '</span></div>' +
+'          <div class="score-box-sub">Aggregate Marks</div>' +
+'        </div>' +
+'        <div class="score-box score-box-accent">' +
+'          <div class="score-box-label">Percentage</div>' +
+'          <div class="score-box-val" style="color: #1d4ed8;">' + percentage + '%</div>' +
+'          <div class="score-box-sub">Overall Proficiency</div>' +
+'        </div>' +
+'        <div class="score-box">' +
+'          <div class="score-box-label">Academic Grade</div>' +
+'          <div class="score-box-val" style="font-size: 18px; color: #0f172a;">' + escapeHtml(grade) + '</div>' +
+'          <div class="score-box-sub">Evaluation Tier</div>' +
+'        </div>' +
+'        <div class="score-box">' +
+'          <div class="score-box-label">Result Status</div>' +
+'          <div style="margin-top: 6px;"><span class="' + (isPassed ? 'status-badge-pass' : 'status-badge-fail') + '">' + (isPassed ? '✓ PASSED' : '✗ NEEDS RETAKE') + '</span></div>' +
+'          <div class="score-box-sub" style="margin-top: 6px;">Official Verification</div>' +
+'        </div>' +
+'      </div>' +
+'      <table class="breakdown-table keep-together">' +
+'        <thead><tr><th>Assessment Component</th><th>Questions</th><th>Max Marks</th><th>Marks Awarded</th><th>Accuracy</th></tr></thead>' +
+'        <tbody>' +
+'          <tr><td><strong>Section A: Multiple Choice Questions</strong></td><td>' + mcqQuestions.length + '</td><td>' + mcqTotal + '</td><td>' + mcqAwarded + '</td><td>' + (mcqTotal > 0 ? Math.round((mcqAwarded / mcqTotal) * 100) : 0) + '%</td></tr>' +
+'          <tr><td><strong>Section B: Descriptive Responses</strong></td><td>' + descriptiveQuestions.length + '</td><td>' + descTotal + '</td><td>' + descAwarded + '</td><td>' + (descTotal > 0 ? Math.round((descAwarded / descTotal) * 100) : 0) + '%</td></tr>' +
+'          <tr><td>TOTAL PERFORMANCE</td><td>' + answersList.length + '</td><td>' + totalMarks + '</td><td>' + scoreObtained + '</td><td>' + percentage + '%</td></tr>' +
+'        </tbody>' +
+'      </table>' +
+      (feedback ?
+'      <div class="feedback-box keep-together">' +
+'        <div class="feedback-header"><h4><span>✍️</span> Official Faculty Evaluation & Commentary</h4><span class="feedback-eval-meta">' + escapeHtml(feedback.evaluatedAt || ('Evaluated by ' + instructor)) + '</span></div>' +
+        (feedback.overall ? '<p class="feedback-body">"' + escapeHtml(feedback.overall) + '"</p>' : '') +
+        ((feedback.strengths && feedback.strengths.length > 0) || (feedback.improvements && feedback.improvements.length > 0) ?
+'        <div class="feedback-pillars">' +
+          (feedback.strengths && feedback.strengths.length > 0 ? '<div class="pillar-col strengths"><h5>Key Strengths</h5><ul>' + feedback.strengths.map((s: string) => '<li>' + escapeHtml(s) + '</li>').join('') + '</ul></div>' : '') +
+          (feedback.improvements && feedback.improvements.length > 0 ? '<div class="pillar-col improvements"><h5>Areas for Growth</h5><ul>' + feedback.improvements.map((i: string) => '<li>' + escapeHtml(i) + '</li>').join('') + '</ul></div>' : '') +
+'        </div>' : '') +
+'      </div>' : '') +
+'      <h3 class="section-title">Itemized Assessment Details</h3>' +
+'      <div class="question-list">' +
+        answersList.map((ans, idx) => {
+          const isMcq = ans.type === 'mcq';
+          const marksAwarded = ans.marksAwarded !== undefined ? Number(ans.marksAwarded) : (isMcq && ans.isCorrect ? ans.marks : 0);
+          const studentAnsText = stripHtmlTags(ans.studentAnswer || '');
+          return '<div class="q-card keep-together">' +
+            '<div class="q-card-head">' +
+              '<div class="q-badge-row"><span class="q-num">Q' + (ans.questionNumber || idx + 1) + '</span><span class="q-type">' + (isMcq ? 'Multiple Choice' : 'Descriptive Response') + '</span></div>' +
+              '<div class="q-marks"><span style="color: ' + (marksAwarded >= ans.marks ? '#059669' : marksAwarded > 0 ? '#d97706' : '#dc2626') + '">' + marksAwarded + '</span> / ' + ans.marks + ' Marks</div>' +
+            '</div>' +
+            '<div class="q-text">' + escapeHtml(ans.question) + '</div>' +
+            '<div class="q-answer-box"><strong>Candidate Response:</strong> ' +
+              (isMcq ? 'Option ' + escapeHtml(ans.studentAnswer || 'Unanswered') + (ans.isCorrect ? ' <span style="color:#059669; font-weight:800;">(Correct)</span>' : ' <span style="color:#dc2626; font-weight:800;">(Incorrect)</span>') : escapeHtml(studentAnsText || '(No response recorded)')) +
+              (isMcq && ans.correctAnswer ? '<div style="margin-top: 4px; color: #475569;"><strong>Correct Key:</strong> Option ' + escapeHtml(ans.correctAnswer) + '</div>' : '') +
+            '</div>' +
+            (ans.teacherComment ? '<div class="q-teacher-remark"><strong>Faculty Annotation:</strong> "' + escapeHtml(ans.teacherComment) + '"</div>' : '') +
+          '</div>';
+        }).join('') +
+'      </div>' +
+'      <footer class="auth-footer keep-together">' +
+'        <div class="auth-seal-block">' +
+'          <div class="seal-badge">' +
+'            <span class="seal-text-top">DE-ECO</span>' +
+'            <span class="seal-icon">★</span>' +
+'            <span class="seal-text-bot">VERIFIED</span>' +
+'          </div>' +
+'          <div class="auth-meta-text">' +
+'            <strong>Certified Academic Document</strong><br>' +
+'            Digitally authenticated via DE-ECO Assessment Engine.<br>' +
+'            Verify certificate at <span style="color:#0284c7;">https://deeco.in</span>' +
+'          </div>' +
+'        </div>' +
+'        <div class="sig-block">' +
+'          <div class="sig-name">Rishika</div>' +
+'          <div class="sig-line"></div>' +
+'          <div class="sig-title">Instructor Rishika</div>' +
+'          <div class="sig-org">Lead Faculty, DE-ECO Academy</div>' +
+'        </div>' +
+'      </footer>' +
+'      <div class="doc-legal-note">© ' + new Date().getFullYear() + ' DE-ECO. All rights reserved. Official examination transcript.</div>' +
+'    </div>' +
+'  </div>' +
+'  <script>' +
+'    window.addEventListener("load", function() {' +
+'      setTimeout(function() { window.print(); }, 500);' +
+'    });' +
+'  <\/script>' +
+'</body>' +
+'</html>';
+
+  const printWindow = window.open('', '_blank', 'width=950,height=1000');
+  if (printWindow) {
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+  } else {
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+    const doc = iframe.contentWindow?.document || iframe.contentDocument;
+    if (doc) {
+      doc.open();
+      doc.write(html);
+      doc.close();
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+        }, 1000);
+      }, 500);
+    }
+  }
+};
 
 /* ================= MAIN COMPONENT ================= */
 
@@ -485,26 +991,39 @@ export default function AdminExams() {
 
   useEffect(() => {
     // 1. Initial quick load from local cache for instant UI rendering
+    const isMockId = (id: string) =>
+      /^(a1111111|a2222222|a3333333|a4444444|b1111111|b2222222|exam-|res-)/i.test(id || '')
+
     try {
       const savedExams = localStorage.getItem(EXAMS_STORAGE_KEY)
       if (savedExams) {
-        setExams(JSON.parse(savedExams))
+        const parsed: Exam[] = JSON.parse(savedExams)
+        const filtered = parsed.filter(e => !isMockId(e.id))
+        setExams(filtered)
+        if (filtered.length !== parsed.length) {
+          localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(filtered))
+        }
       } else {
-        setExams(INITIAL_EXAMS)
+        setExams([])
       }
     } catch {
-      setExams(INITIAL_EXAMS)
+      setExams([])
     }
 
     try {
       const savedSubs = localStorage.getItem(SUBMISSIONS_STORAGE_KEY)
       if (savedSubs) {
-        setSubmissions(JSON.parse(savedSubs))
+        const parsed: ExamSubmission[] = JSON.parse(savedSubs)
+        const filtered = parsed.filter(s => !isMockId(s.id))
+        setSubmissions(filtered)
+        if (filtered.length !== parsed.length) {
+          localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(filtered))
+        }
       } else {
-        setSubmissions(INITIAL_SUBMISSIONS)
+        setSubmissions([])
       }
     } catch {
-      setSubmissions(INITIAL_SUBMISSIONS)
+      setSubmissions([])
     }
 
     // 2. Fetch courses and students from Supabase
@@ -545,7 +1064,7 @@ export default function AdminExams() {
           .select('*')
           .order('created_at', { ascending: false })
 
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           const mapped: Exam[] = data.map((d: any) => ({
             id: d.id,
             title: d.title,
@@ -583,7 +1102,7 @@ export default function AdminExams() {
           .select('*')
           .order('submitted_at', { ascending: false })
 
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           const mapped: ExamSubmission[] = data.map((d: any) => ({
             id: d.id,
             examId: d.exam_id,
@@ -601,7 +1120,19 @@ export default function AdminExams() {
             isPassed: d.is_passed !== null && d.is_passed !== undefined ? Boolean(d.is_passed) : undefined,
             timeSpentMinutes: Number(d.time_spent_minutes) || 0,
             userId: d.user_id || undefined,
-            teacherFeedback: d.teacher_feedback || undefined,
+            teacherFeedback: (() => {
+              const tf = d.teacher_feedback;
+              if (!tf) return undefined;
+              const cleanOverall = tf.overall && tf.overall !== 'Good attempt on the paper.' ? String(tf.overall).trim() : '';
+              const cleanStrengths = Array.isArray(tf.strengths)
+                ? tf.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts')
+                : [];
+              const cleanImprovements = Array.isArray(tf.improvements)
+                ? tf.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted')
+                : [];
+              if (!cleanOverall && cleanStrengths.length === 0 && cleanImprovements.length === 0) return undefined;
+              return { ...tf, overall: cleanOverall, strengths: cleanStrengths, improvements: cleanImprovements };
+            })(),
             answers: Array.isArray(d.answers) ? d.answers : []
           }))
           setSubmissions(mapped)
@@ -1043,9 +1574,7 @@ export default function AdminExams() {
     const studentName = isStudent ? examForm.assignedStudentName.trim() : undefined
     const selectedCourseObj = coursesList.find((c) => c.title === examForm.course || c.id === examForm.courseId)
     const courseId = isStudent ? undefined : (selectedCourseObj?.id || examForm.courseId || undefined)
-    const resolvedCourse = isStudent
-      ? (studentName ? `1-on-1: ${studentName}` : `1-on-1: ${studentEmail}`)
-      : (examForm.course.trim() || 'General Examination')
+    const resolvedCourse = examForm.course.trim() || 'General Examination'
 
     const assignedStudentProfile = isStudent && studentEmail
       ? studentsList.find((s) => s.email && s.email.toLowerCase() === studentEmail)
@@ -1155,7 +1684,7 @@ export default function AdminExams() {
       } else {
         initialMarks[ans.questionId] = ans.marksAwarded !== undefined ? ans.marksAwarded : 0
       }
-      initialComments[ans.questionId] = ans.teacherComment || ''
+      initialComments[ans.questionId] = (ans.teacherComment && ans.teacherComment !== 'Pending instructor grading') ? ans.teacherComment : ''
     })
 
     setGradeMarks(initialMarks)
@@ -1194,12 +1723,12 @@ export default function AdminExams() {
       grade,
       isPassed: percentage >= 40,
       answers: updatedAnswers,
-      teacherFeedback: {
-        overall: overallFeedback.trim() || 'Good attempt on the paper.',
-        strengths: ['Demonstrated understanding of key concepts'],
-        improvements: ['Review questions where marks were deducted'],
-        evaluatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-      }
+      teacherFeedback: overallFeedback.trim()
+        ? {
+            overall: overallFeedback.trim(),
+            evaluatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+          }
+        : undefined
     }
 
     if (isValidUUID(evaluatingSub.id)) {
@@ -1448,7 +1977,7 @@ export default function AdminExams() {
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
                         {ex.questions.length > 0 ? (
-                          <span>{ex.questions.length} questions ({ex.questions.filter(q => q.type === 'mcq').length} MCQ, {ex.questions.filter(q => q.type === 'descriptive').length} Essay)</span>
+                          <span>{ex.questions.length} questions ({ex.questions.filter(q => q.type === 'mcq').length} MCQ, {ex.questions.filter(q => q.type === 'descriptive').length} Descriptive)</span>
                         ) : (
                           <span className="text-slate-400">{ex.mcqCount + ex.descriptiveCount} Qs (Default)</span>
                         )}
@@ -1560,16 +2089,29 @@ export default function AdminExams() {
                       </td>
 
                       <td className="px-5 py-4 text-right">
-                        <button
-                          onClick={() => handleOpenEvaluation(sub)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                            sub.status === 'graded'
-                              ? 'bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-slate-200'
-                              : 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-2xs'
-                          }`}
-                        >
-                          {sub.status === 'graded' ? 'View Review' : 'Grade Paper'}
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          {sub.status === 'graded' && (
+                            <button
+                              type="button"
+                              onClick={() => downloadReportCard(sub, { studentName: sub.studentName, studentEmail: sub.studentEmail })}
+                              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 transition cursor-pointer flex items-center gap-1"
+                              title="Download Official DE-ECO Report Card"
+                            >
+                              <Download size={13} />
+                              <span>PDF</span>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleOpenEvaluation(sub)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                              sub.status === 'graded'
+                                ? 'bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-slate-200'
+                                : 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-2xs'
+                            }`}
+                          >
+                            {sub.status === 'graded' ? 'View Review' : 'Grade Paper'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -2524,7 +3066,7 @@ export default function AdminExams() {
                   </span>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setEvaluatingSub(null)}
@@ -2532,6 +3074,16 @@ export default function AdminExams() {
                   >
                     Cancel
                   </button>
+                  {evaluatingSub.status === 'graded' && (
+                    <button
+                      type="button"
+                      onClick={() => downloadReportCard(evaluatingSub, { studentName: evaluatingSub.studentName, studentEmail: evaluatingSub.studentEmail })}
+                      className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-sm font-bold transition cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Download size={15} />
+                      <span>Download Report Card</span>
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={handlePublishGrade}
