@@ -1,41 +1,24 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
-  Award,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Plus,
-  Search,
-  Filter,
   Edit2,
   Trash2,
   X,
-  ChevronRight,
-  BookOpen,
-  User,
+  Search,
   Check,
-  Eye,
+  CheckCircle2,
+  Clock,
+  Award,
   FileText,
-  HelpCircle,
-  Sparkles,
-  BarChart2,
-  ArrowUpRight,
-  Send,
-  Save,
-  MessageSquare,
-  ThumbsUp,
-  AlertTriangle
+  AlertCircle
 } from 'lucide-react'
 
-/* ========================================================================= */
-/* ================================ TYPES ================================== */
-/* ========================================================================= */
+/* ================= TYPES ================= */
 
 export type QuestionType = 'mcq' | 'descriptive'
 
 export interface MCQOption {
-  id: string // "A", "B", "C", "D"
+  id: string
   text: string
 }
 
@@ -106,9 +89,7 @@ export interface ExamSubmission {
   }[]
 }
 
-/* ========================================================================= */
-/* ========================== INITIAL SEED DATA ============================ */
-/* ========================================================================= */
+/* ================= INITIAL SEED DATA ================= */
 
 const INITIAL_EXAMS: Exam[] = [
   {
@@ -222,7 +203,7 @@ const INITIAL_EXAMS: Exam[] = [
     course: 'Foundations of Microeconomics',
     instructor: 'Rishika',
     status: 'upcoming',
-    scheduledDate: 'In 2 Days (Wednesday)',
+    scheduledDate: 'Oct 15, 2026',
     scheduledTime: '10:00 AM - 11:00 AM IST',
     durationMinutes: 60,
     totalMarks: 60,
@@ -232,58 +213,11 @@ const INITIAL_EXAMS: Exam[] = [
     syllabus: [
       'Consumer Equilibrium & Indifference Curves',
       'Price Elasticity of Demand & Supply',
-      'Perfect Competition vs Pure Monopoly',
-      'Deadweight Loss & Welfare Economics'
+      'Perfect Competition vs Pure Monopoly'
     ],
     instructions: [
       'Scheduled live exam window opens precisely at 10:00 AM IST.',
       'Covers Chapters 3, 4 and 5 of Microeconomic Foundations.'
-    ],
-    questions: []
-  },
-  {
-    id: 'exam-intl-trade',
-    title: 'International Trade & Foreign Exchange Examination',
-    course: 'Global Economics & Currency Markets',
-    instructor: 'Rishika',
-    status: 'upcoming',
-    scheduledDate: 'Next Monday',
-    scheduledTime: '11:00 AM - 12:00 PM IST',
-    durationMinutes: 45,
-    totalMarks: 50,
-    passingMarks: 20,
-    mcqCount: 5,
-    descriptiveCount: 2,
-    syllabus: [
-      'Ricardian Comparative Advantage',
-      'Tariffs, Quotas & Subsidies Analysis',
-      'Floating vs Fixed Exchange Rate Systems'
-    ],
-    instructions: [
-      'Scheduled live exam window opens precisely at 11:00 AM IST.',
-      'Covers Chapters on International Trade and Currency Markets.'
-    ],
-    questions: []
-  },
-  {
-    id: 'exam-stats-probability',
-    title: 'Econometric Probability & Distributions Quiz',
-    course: 'Quantitative Economics & Data Analysis',
-    instructor: 'Rishika',
-    status: 'expired',
-    scheduledDate: 'Concluded',
-    scheduledTime: 'Ended yesterday at 11:30 AM IST',
-    durationMinutes: 40,
-    totalMarks: 40,
-    passingMarks: 16,
-    mcqCount: 5,
-    descriptiveCount: 1,
-    syllabus: [
-      'Normal, Binomial & Poisson Distributions',
-      'Hypothesis Testing & Z-Scores'
-    ],
-    instructions: [
-      'Exam submission window has expired for this test.'
     ],
     questions: []
   }
@@ -320,7 +254,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         questionId: 'q2',
         questionNumber: 2,
         type: 'mcq',
-        question: 'In a closed Keynesian macroeconomic model with no government sector, if the Marginal Propensity to Consume (MPC) is 0.8, what is the value of the autonomous investment multiplier?',
+        question: 'In a closed Keynesian macroeconomic model with no government sector, if MPC is 0.8, autonomous multiplier is:',
         marks: 5,
         studentAnswer: 'C',
         correctAnswer: 'C',
@@ -332,50 +266,50 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         questionId: 'q3',
         questionNumber: 3,
         type: 'mcq',
-        question: 'When the Central Bank conducts Open Market Operations by purchasing government bonds from commercial banks, what is the primary consequence on the banking system and market interest rates?',
+        question: 'Consequence of Central Bank Open Market Purchases on reserves:',
         marks: 5,
         studentAnswer: 'B',
         correctAnswer: 'B',
         isCorrect: true,
         marksAwarded: 5,
-        explanation: 'Reserves rise and rates fall.'
+        explanation: 'Injects liquidity, rates fall.'
       },
       {
         questionId: 'q4',
         questionNumber: 4,
         type: 'mcq',
-        question: 'The traditional short-run Phillips curve illustrates an inverse empirical trade-off between which pair of macroeconomic indicators?',
+        question: 'Trade-off in short-run Phillips curve:',
         marks: 5,
         studentAnswer: 'B',
         correctAnswer: 'B',
         isCorrect: true,
         marksAwarded: 5,
-        explanation: 'Trade-off between inflation and unemployment.'
+        explanation: 'Inflation vs unemployment.'
       },
       {
         questionId: 'q5',
         questionNumber: 5,
         type: 'descriptive',
-        question: "Define the Keynesian concept of a 'Liquidity Trap'. Explain the precise economic conditions under which it develops, why conventional expansionary monetary policy becomes powerless, and what alternative policy measures Keynesian economists advocate to re-ignite aggregate demand.",
+        question: "Define the Keynesian concept of a 'Liquidity Trap' and why conventional monetary policy fails.",
         marks: 15,
-        studentAnswer: 'A liquidity trap occurs when interest rates are so low that individuals prefer holding cash instead of bonds. In this state, central bank bond purchases fail to stimulate borrowing because interest rates cannot go much lower (zero lower bound). Therefore monetary policy is ineffective. Keynesians recommend fiscal stimulus via government infrastructure spending to inject demand directly into the economy.',
-        teacherComment: '',
-        marksAwarded: undefined
+        studentAnswer: 'A liquidity trap happens when interest rates are practically zero. Even if the central bank floods money, nobody invests because they prefer holding cash. Monetary expansion fails because the IS curve does not move from interest rate cuts.',
+        marksAwarded: undefined,
+        teacherComment: ''
       },
       {
         questionId: 'q6',
         questionNumber: 6,
         type: 'descriptive',
-        question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation. In your response, illustrate the shifting mechanisms in the Aggregate Demand (AD) and Short-Run Aggregate Supply (SRAS) framework, and evaluate the policy dilemma central banks face when confronting stagflation.',
+        question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation.',
         marks: 15,
-        studentAnswer: 'Demand-pull inflation is caused by excess aggregate demand pulling up price levels as AD shifts rightward past full employment. Cost-push inflation happens when production costs rise (e.g. oil supply shock), causing SRAS to shift leftward. This creates stagflation: falling GDP accompanied by rising inflation. Central banks face a conflict: raising interest rates reduces inflation but worsens unemployment.',
-        teacherComment: '',
-        marksAwarded: undefined
+        studentAnswer: 'Demand-pull inflation is caused by too much money chasing too few goods, shifting AD right. Cost-push is caused by supply shocks like oil price spikes shifting SRAS left, creating stagflation.',
+        marksAwarded: undefined,
+        teacherComment: ''
       }
     ]
   },
   {
-    id: 'res-micro-student2',
+    id: 'res-macro-student2',
     examId: 'exam-macro-midterm',
     examTitle: 'Macroeconomics Mid-Term Examination 2026',
     course: 'Macroeconomic Theory & Policy',
@@ -387,300 +321,284 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
     totalMarks: 50,
     scoreObtained: 44,
     percentage: 88,
-    grade: 'A+ Distinction',
+    grade: 'A Distinction',
     isPassed: true,
-    timeSpentMinutes: 39,
+    timeSpentMinutes: 38,
     teacherFeedback: {
-      evaluatedAt: 'Oct 8, 2026 by Rishika',
-      overall: 'Superb command over macroeconomic theory. Analytical clarity on the liquidity trap and Keynesian fiscal mechanics was exemplary.',
-      strengths: [
-        'Precise mathematical exposition of the autonomous multiplier',
-        'Flawless diagrammatic explanations for AD/SRAS shifts'
-      ],
-      improvements: [
-        'Include real-world examples (such as Japan in the 1990s or 2008 GFC) for historical context.'
-      ]
+      overall: 'Exceptional answers. Clear understanding of both macroeconomic models and policy trade-offs.',
+      strengths: ['Analytical rigor in Phillips curve trade-off', 'Clear explanation of Keynesian multiplier'],
+      improvements: ['Include graphical AD-AS shifts in stagflation'],
+      evaluatedAt: 'Yesterday • 6:00 PM'
     },
     answers: []
   }
 ]
 
-/* ========================================================================= */
-/* =============================== COMPONENT =============================== */
-/* ========================================================================= */
+/* ================= STORAGE KEYS ================= */
+const EXAMS_STORAGE_KEY = 'deeco_admin_exams'
+const SUBMISSIONS_STORAGE_KEY = 'deeco_exam_results'
+
+/* ================= MAIN COMPONENT ================= */
 
 export default function AdminExams() {
+  const [exams, setExams] = useState<Exam[]>([])
+  const [submissions, setSubmissions] = useState<ExamSubmission[]>([])
   const [activeTab, setActiveTab] = useState<'exams' | 'submissions'>('exams')
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'upcoming' | 'expired'>('all')
-  const [subFilter, setSubFilter] = useState<'all' | 'under_evaluation' | 'graded'>('all')
 
-  // Data states
-  const [exams, setExams] = useState<Exam[]>(() => {
-    try {
-      const saved = localStorage.getItem('deeco_admin_exams')
-      return saved ? JSON.parse(saved) : INITIAL_EXAMS
-    } catch {
-      return INITIAL_EXAMS
-    }
-  })
-
-  const [submissions, setSubmissions] = useState<ExamSubmission[]>(() => {
-    try {
-      const saved = localStorage.getItem('deeco_exam_results')
-      return saved ? JSON.parse(saved) : INITIAL_SUBMISSIONS
-    } catch {
-      return INITIAL_SUBMISSIONS
-    }
-  })
-
-  // Sync to local storage
-  useEffect(() => {
-    try {
-      localStorage.setItem('deeco_admin_exams', JSON.stringify(exams))
-    } catch (e) {
-      console.error('Failed to sync exams to storage:', e)
-    }
-  }, [exams])
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('deeco_exam_results', JSON.stringify(submissions))
-    } catch (e) {
-      console.error('Failed to sync submissions to storage:', e)
-    }
-  }, [submissions])
-
-  // Exam Builder / Editor Modal State
+  // Modals
   const [showExamModal, setShowExamModal] = useState(false)
-  const [editingExam, setEditingExam] = useState<Exam | null>(null)
-  const [examFormData, setExamFormData] = useState<Partial<Exam>>({
+  const [editingExamId, setEditingExamId] = useState<string | null>(null)
+  const [evaluatingSub, setEvaluatingSub] = useState<ExamSubmission | null>(null)
+
+  // Exam Form State
+  const [examForm, setExamForm] = useState({
     title: '',
-    course: 'Macroeconomic Theory & Policy',
+    course: '',
     instructor: 'Rishika',
-    status: 'upcoming',
-    scheduledDate: '',
+    status: 'live' as 'live' | 'upcoming' | 'expired',
+    scheduledDate: 'Active Now',
     scheduledTime: '',
     durationMinutes: 45,
     totalMarks: 50,
     passingMarks: 20,
-    syllabus: [''],
-    instructions: [''],
-    questions: []
+    questions: [] as ExamQuestion[]
   })
 
-  // Question Creator State inside Exam Modal
-  const [newQuestionType, setNewQuestionType] = useState<QuestionType>('mcq')
-  const [newQuestionText, setNewQuestionText] = useState('')
-  const [newQuestionMarks, setNewQuestionMarks] = useState(5)
-  const [newQuestionOptions, setNewQuestionOptions] = useState<MCQOption[]>([
+  // New Question Form State (inside Exam Modal)
+  const [newQType, setNewQType] = useState<QuestionType>('mcq')
+  const [newQPrompt, setNewQPrompt] = useState('')
+  const [newQMarks, setNewQMarks] = useState(5)
+  const [newQOptions, setNewQOptions] = useState([
     { id: 'A', text: '' },
     { id: 'B', text: '' },
     { id: 'C', text: '' },
     { id: 'D', text: '' }
   ])
-  const [newCorrectOption, setNewCorrectOption] = useState('A')
-  const [newExplanation, setNewExplanation] = useState('')
-  const [newModelAnswer, setNewModelAnswer] = useState('')
+  const [newQCorrect, setNewQCorrect] = useState('A')
+  const [newQModelAnswer, setNewQModelAnswer] = useState('')
 
-  // Grading Studio Modal State
-  const [gradingSubmission, setGradingSubmission] = useState<ExamSubmission | null>(null)
-  const [gradingMarks, setGradingMarks] = useState<Record<string, number>>({})
-  const [gradingComments, setGradingComments] = useState<Record<string, string>>({})
+  // Grading Form State (inside Evaluation Modal)
+  const [gradeMarks, setGradeMarks] = useState<Record<string, number>>({})
+  const [gradeComments, setGradeComments] = useState<Record<string, string>>({})
   const [overallFeedback, setOverallFeedback] = useState('')
-  const [feedbackStrengths, setFeedbackStrengths] = useState<string[]>([])
-  const [feedbackImprovements, setFeedbackImprovements] = useState<string[]>([])
-  const [newStrengthInput, setNewStrengthInput] = useState('')
-  const [newImprovementInput, setNewImprovementInput] = useState('')
 
-  /* ================= METRIC COMPUTATIONS ================= */
-  const scheduledCount = useMemo(() => {
-    return exams.filter((e) => e.status === 'live' || e.status === 'upcoming').length
-  }, [exams])
+  /* ================= LOAD DATA ================= */
 
-  const totalExamsGiven = useMemo(() => {
-    return submissions.length
-  }, [submissions])
+  useEffect(() => {
+    // Load exams
+    try {
+      const savedExams = localStorage.getItem(EXAMS_STORAGE_KEY)
+      if (savedExams) {
+        setExams(JSON.parse(savedExams))
+      } else {
+        setExams(INITIAL_EXAMS)
+        localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(INITIAL_EXAMS))
+      }
+    } catch {
+      setExams(INITIAL_EXAMS)
+    }
 
-  const waitingReviewCount = useMemo(() => {
-    return submissions.filter((s) => s.status === 'under_evaluation').length
-  }, [submissions])
+    // Load submissions
+    try {
+      const savedSubs = localStorage.getItem(SUBMISSIONS_STORAGE_KEY)
+      if (savedSubs) {
+        setSubmissions(JSON.parse(savedSubs))
+      } else {
+        setSubmissions(INITIAL_SUBMISSIONS)
+        localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(INITIAL_SUBMISSIONS))
+      }
+    } catch {
+      setSubmissions(INITIAL_SUBMISSIONS)
+    }
+  }, [])
 
-  const reviewedCount = useMemo(() => {
-    return submissions.filter((s) => s.status === 'graded').length
-  }, [submissions])
+  const saveExamsToStorage = (updated: Exam[]) => {
+    setExams(updated)
+    localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(updated))
+  }
 
-  /* ================= FILTERED LISTS ================= */
+  const saveSubmissionsToStorage = (updated: ExamSubmission[]) => {
+    setSubmissions(updated)
+    localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(updated))
+  }
+
+  /* ================= STATS ================= */
+
+  const liveExamsCount = useMemo(() => exams.filter((e) => e.status === 'live').length, [exams])
+  const pendingCount = useMemo(() => submissions.filter((s) => s.status === 'under_evaluation').length, [submissions])
+  const gradedCount = useMemo(() => submissions.filter((s) => s.status === 'graded').length, [submissions])
+
+  /* ================= FILTERED DATA ================= */
+
   const filteredExams = useMemo(() => {
-    return exams.filter((exam) => {
-      const matchesSearch =
-        exam.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        exam.course.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === 'all' || exam.status === statusFilter
-      return matchesSearch && matchesStatus
-    })
-  }, [exams, searchTerm, statusFilter])
+    if (!searchTerm.trim()) return exams
+    const q = searchTerm.toLowerCase()
+    return exams.filter((e) => e.title.toLowerCase().includes(q) || e.course.toLowerCase().includes(q))
+  }, [exams, searchTerm])
 
   const filteredSubmissions = useMemo(() => {
-    return submissions.filter((sub) => {
-      const matchesSearch =
-        sub.studentEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sub.examTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (sub.studentName && sub.studentName.toLowerCase().includes(searchTerm.toLowerCase()))
-      const matchesFilter = subFilter === 'all' || sub.status === subFilter
-      return matchesSearch && matchesFilter
-    })
-  }, [submissions, searchTerm, subFilter])
+    if (!searchTerm.trim()) return submissions
+    const q = searchTerm.toLowerCase()
+    return submissions.filter(
+      (s) =>
+        s.studentEmail.toLowerCase().includes(q) ||
+        (s.studentName && s.studentName.toLowerCase().includes(q)) ||
+        s.examTitle.toLowerCase().includes(q)
+    )
+  }, [submissions, searchTerm])
 
-  /* ================= EXAM BUILDER HANDLERS ================= */
-  const handleOpenCreateExam = () => {
-    setEditingExam(null)
-    setExamFormData({
+  /* ================= EXAM MODAL ACTIONS ================= */
+
+  const handleOpenAddExam = () => {
+    setEditingExamId(null)
+    setExamForm({
       title: '',
-      course: 'Macroeconomic Theory & Policy',
+      course: '',
       instructor: 'Rishika',
-      status: 'upcoming',
-      scheduledDate: 'Next Monday',
-      scheduledTime: '10:00 AM - 11:00 AM IST',
+      status: 'live',
+      scheduledDate: 'Active Now',
+      scheduledTime: '',
       durationMinutes: 45,
       totalMarks: 50,
       passingMarks: 20,
-      syllabus: ['Core Principles', 'Monetary Policy Framework'],
-      instructions: [
-        'Total duration is 45 minutes.',
-        'Review your answers thoroughly before submission.'
-      ],
       questions: []
     })
+    resetNewQForm()
     setShowExamModal(true)
   }
 
   const handleOpenEditExam = (exam: Exam) => {
-    setEditingExam(exam)
-    setExamFormData({
-      ...exam,
-      syllabus: exam.syllabus.length ? exam.syllabus : [''],
-      instructions: exam.instructions.length ? exam.instructions : ['']
+    setEditingExamId(exam.id)
+    setExamForm({
+      title: exam.title,
+      course: exam.course,
+      instructor: exam.instructor,
+      status: exam.status,
+      scheduledDate: exam.scheduledDate,
+      scheduledTime: exam.scheduledTime || '',
+      durationMinutes: exam.durationMinutes,
+      totalMarks: exam.totalMarks,
+      passingMarks: exam.passingMarks,
+      questions: exam.questions || []
     })
+    resetNewQForm()
     setShowExamModal(true)
   }
 
-  const handleDeleteExam = (id: string) => {
-    if (confirm('Are you sure you want to delete this examination?')) {
-      setExams((prev) => prev.filter((e) => e.id !== id))
-    }
-  }
-
-  const handleAddQuestionToForm = () => {
-    if (!newQuestionText.trim()) {
-      alert('Please enter question prompt')
-      return
-    }
-
-    const currentQuestions = examFormData.questions || []
-    const newNumber = currentQuestions.length + 1
-
-    const newQ: ExamQuestion = {
-      id: 'q_' + Date.now(),
-      number: newNumber,
-      type: newQuestionType,
-      question: newQuestionText.trim(),
-      marks: Number(newQuestionMarks) || 5,
-      ...(newQuestionType === 'mcq'
-        ? {
-            options: newQuestionOptions,
-            correctAnswer: newCorrectOption,
-            explanation: newExplanation
-          }
-        : {
-            modelAnswer: newModelAnswer
-          })
-    }
-
-    const updatedQuestions = [...currentQuestions, newQ]
-    const calculatedTotalMarks = updatedQuestions.reduce((acc, q) => acc + q.marks, 0)
-    const mcqCnt = updatedQuestions.filter((q) => q.type === 'mcq').length
-    const descCnt = updatedQuestions.filter((q) => q.type === 'descriptive').length
-
-    setExamFormData((prev) => ({
-      ...prev,
-      questions: updatedQuestions,
-      totalMarks: calculatedTotalMarks,
-      mcqCount: mcqCnt,
-      descriptiveCount: descCnt
-    }))
-
-    // Reset question builder inputs
-    setNewQuestionText('')
-    setNewExplanation('')
-    setNewModelAnswer('')
-    setNewQuestionOptions([
+  const resetNewQForm = () => {
+    setNewQPrompt('')
+    setNewQMarks(5)
+    setNewQOptions([
       { id: 'A', text: '' },
       { id: 'B', text: '' },
       { id: 'C', text: '' },
       { id: 'D', text: '' }
     ])
+    setNewQCorrect('A')
+    setNewQModelAnswer('')
   }
 
-  const handleRemoveQuestionFromForm = (qId: string) => {
-    const updated = (examFormData.questions || []).filter((q) => q.id !== qId)
-    const renumbered = updated.map((q, idx) => ({ ...q, number: idx + 1 }))
-    const calculatedTotal = renumbered.reduce((acc, q) => acc + q.marks, 0)
-
-    setExamFormData((prev) => ({
-      ...prev,
-      questions: renumbered,
-      totalMarks: calculatedTotal,
-      mcqCount: renumbered.filter((q) => q.type === 'mcq').length,
-      descriptiveCount: renumbered.filter((q) => q.type === 'descriptive').length
-    }))
-  }
-
-  const handleSaveExam = () => {
-    if (!examFormData.title?.trim()) {
-      alert('Please enter exam title')
+  const handleAddQuestionToForm = () => {
+    if (!newQPrompt.trim()) {
+      alert('Please enter the question prompt.')
       return
     }
 
-    const mcqCnt = (examFormData.questions || []).filter((q) => q.type === 'mcq').length
-    const descCnt = (examFormData.questions || []).filter((q) => q.type === 'descriptive').length
-    const calculatedTotal = (examFormData.questions || []).reduce((acc, q) => acc + q.marks, 0)
-
-    const finalExam: Exam = {
-      id: editingExam ? editingExam.id : 'exam-' + Date.now(),
-      title: examFormData.title || 'Untitled Exam',
-      course: examFormData.course || 'Macroeconomic Theory',
-      instructor: examFormData.instructor || 'Rishika',
-      status: examFormData.status || 'upcoming',
-      scheduledDate: examFormData.scheduledDate || 'Active',
-      scheduledTime: examFormData.scheduledTime || 'Flexible window',
-      durationMinutes: Number(examFormData.durationMinutes) || 45,
-      totalMarks: calculatedTotal || Number(examFormData.totalMarks) || 50,
-      passingMarks: Number(examFormData.passingMarks) || 20,
-      mcqCount: mcqCnt,
-      descriptiveCount: descCnt,
-      syllabus: (examFormData.syllabus || []).filter(Boolean),
-      instructions: (examFormData.instructions || []).filter(Boolean),
-      questions: examFormData.questions || []
+    const qNum = examForm.questions.length + 1
+    const newQ: ExamQuestion = {
+      id: 'q_' + Date.now(),
+      number: qNum,
+      type: newQType,
+      question: newQPrompt.trim(),
+      marks: Number(newQMarks) || 5,
+      ...(newQType === 'mcq'
+        ? {
+            options: newQOptions.map((o) => ({ ...o })),
+            correctAnswer: newQCorrect
+          }
+        : {
+            modelAnswer: newQModelAnswer.trim()
+          })
     }
 
-    if (editingExam) {
-      setExams((prev) => prev.map((e) => (e.id === editingExam.id ? finalExam : e)))
+    const updatedQs = [...examForm.questions, newQ]
+    const calcTotal = updatedQs.reduce((acc, q) => acc + q.marks, 0)
+
+    setExamForm((prev) => ({
+      ...prev,
+      questions: updatedQs,
+      totalMarks: calcTotal > 0 ? calcTotal : prev.totalMarks
+    }))
+
+    resetNewQForm()
+  }
+
+  const handleRemoveQuestionFromForm = (id: string) => {
+    const updatedQs = examForm.questions
+      .filter((q) => q.id !== id)
+      .map((q, idx) => ({ ...q, number: idx + 1 }))
+    const calcTotal = updatedQs.reduce((acc, q) => acc + q.marks, 0)
+
+    setExamForm((prev) => ({
+      ...prev,
+      questions: updatedQs,
+      totalMarks: calcTotal > 0 ? calcTotal : prev.totalMarks
+    }))
+  }
+
+  const handleSaveExam = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!examForm.title.trim() || !examForm.course.trim()) {
+      alert('Please fill in title and course name.')
+      return
+    }
+
+    const mcqCount = examForm.questions.filter((q) => q.type === 'mcq').length
+    const descriptiveCount = examForm.questions.filter((q) => q.type === 'descriptive').length
+
+    if (editingExamId) {
+      const updated = exams.map((ex) =>
+        ex.id === editingExamId
+          ? {
+              ...ex,
+              ...examForm,
+              mcqCount,
+              descriptiveCount
+            }
+          : ex
+      )
+      saveExamsToStorage(updated)
     } else {
-      setExams((prev) => [finalExam, ...prev])
+      const newExam: Exam = {
+        id: 'exam_' + Date.now(),
+        ...examForm,
+        mcqCount,
+        descriptiveCount,
+        syllabus: [],
+        instructions: ['Auto-saved in real time. Please submit before timer expires.']
+      }
+      saveExamsToStorage([newExam, ...exams])
     }
 
     setShowExamModal(false)
   }
 
-  /* ================= GRADING STUDIO HANDLERS ================= */
-  const handleOpenGradingStudio = (submission: ExamSubmission) => {
-    setGradingSubmission(submission)
+  const handleDeleteExam = (id: string) => {
+    if (!confirm('Are you sure you want to delete this exam?')) return
+    saveExamsToStorage(exams.filter((e) => e.id !== id))
+  }
 
+  /* ================= GRADING / EVALUATION ACTIONS ================= */
+
+  const handleOpenEvaluation = (sub: ExamSubmission) => {
+    setEvaluatingSub(sub)
+
+    // Pre-populate existing awarded marks and comments
     const initialMarks: Record<string, number> = {}
     const initialComments: Record<string, string> = {}
 
-    submission.answers.forEach((ans) => {
+    sub.answers.forEach((ans) => {
       if (ans.type === 'mcq') {
         initialMarks[ans.questionId] = ans.isCorrect ? ans.marks : 0
       } else {
@@ -689,1020 +607,721 @@ export default function AdminExams() {
       initialComments[ans.questionId] = ans.teacherComment || ''
     })
 
-    setGradingMarks(initialMarks)
-    setGradingComments(initialComments)
-    setOverallFeedback(submission.teacherFeedback?.overall || '')
-    setFeedbackStrengths(submission.teacherFeedback?.strengths || [
-      'Strong conceptual clarity in Section A',
-      'Accurate definition of core macroeconomic terms'
-    ])
-    setFeedbackImprovements(submission.teacherFeedback?.improvements || [
-      'Elaborate more on empirical examples in essay questions'
-    ])
+    setGradeMarks(initialMarks)
+    setGradeComments(initialComments)
+    setOverallFeedback(sub.teacherFeedback?.overall || '')
   }
 
-  const handleSaveGrading = () => {
-    if (!gradingSubmission) return
+  const handlePublishGrade = () => {
+    if (!evaluatingSub) return
 
     let totalScore = 0
-    const updatedAnswers = gradingSubmission.answers.map((ans) => {
-      const awarded = gradingMarks[ans.questionId] !== undefined ? gradingMarks[ans.questionId] : (ans.marksAwarded || 0)
+    const updatedAnswers = evaluatingSub.answers.map((ans) => {
+      const awarded = gradeMarks[ans.questionId] !== undefined ? gradeMarks[ans.questionId] : (ans.isCorrect ? ans.marks : 0)
       totalScore += awarded
       return {
         ...ans,
         marksAwarded: awarded,
-        teacherComment: gradingComments[ans.questionId] || ''
+        teacherComment: gradeComments[ans.questionId] || ''
       }
     })
 
-    const percentage = Math.round((totalScore / gradingSubmission.totalMarks) * 100)
+    const percentage = Math.round((totalScore / (evaluatingSub.totalMarks || 50)) * 100)
     let grade = 'B'
     if (percentage >= 90) grade = 'A+ Outstanding'
     else if (percentage >= 80) grade = 'A Distinction'
-    else if (percentage >= 70) grade = 'B+ Good'
-    else if (percentage >= 60) grade = 'B Fair'
-    else if (percentage >= 50) grade = 'C Pass'
-    else grade = 'Needs Improvement'
-
-    const isPassed = totalScore >= 20
+    else if (percentage >= 70) grade = 'B+ Meritorious'
+    else if (percentage >= 60) grade = 'B Qualified'
+    else if (percentage >= 40) grade = 'C Pass'
+    else grade = 'F Needs Retake'
 
     const updatedSub: ExamSubmission = {
-      ...gradingSubmission,
+      ...evaluatingSub,
       status: 'graded',
       scoreObtained: totalScore,
       percentage,
       grade,
-      isPassed,
+      isPassed: percentage >= 40,
+      answers: updatedAnswers,
       teacherFeedback: {
-        overall: overallFeedback || 'Well attempted! Detailed feedback recorded.',
-        strengths: feedbackStrengths.filter(Boolean),
-        improvements: feedbackImprovements.filter(Boolean),
-        evaluatedAt: 'Just now by Instructor Rishika'
-      },
-      answers: updatedAnswers
+        overall: overallFeedback.trim() || 'Good attempt on the paper.',
+        strengths: ['Demonstrated understanding of key concepts'],
+        improvements: ['Review questions where marks were deducted'],
+        evaluatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      }
     }
 
-    setSubmissions((prev) => prev.map((s) => (s.id === updatedSub.id ? updatedSub : s)))
-    setGradingSubmission(null)
-    alert(`Evaluation published successfully! Student score: ${totalScore}/${gradingSubmission.totalMarks} (${percentage}%)`)
+    const updatedAll = submissions.map((s) => (s.id === evaluatingSub.id ? updatedSub : s))
+    saveSubmissionsToStorage(updatedAll)
+    setEvaluatingSub(null)
   }
 
+  /* ================= UI RENDER ================= */
+
   return (
-    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full space-y-8">
-      {/* PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200 dark:border-neutral-800">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      {/* 1. HEADER (Matches AdminCourses.tsx clean aesthetic) */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-neutral-800 shrink-0">
         <div>
-          <div className="flex items-center gap-2.5 mb-1">
-            <span className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 shadow-xs">
-              <Award className="w-6 h-6" />
-            </span>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-              Exams & Assessment Studio
-            </h1>
-          </div>
-          <p className="text-slate-500 dark:text-slate-300 font-medium text-sm sm:text-base">
-            Author tests, schedule examination windows, and review student essay submissions.
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-1">
+            Exams & Grading
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
+            Manage examination papers and evaluate student submissions
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleOpenCreateExam}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-sm shadow-md transition-all active:scale-95 cursor-pointer"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Create New Exam</span>
-          </button>
+        <button
+          onClick={handleOpenAddExam}
+          className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-white dark:text-slate-900 px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto cursor-pointer"
+        >
+          <Plus size={18} /> Add Exam
+        </button>
+      </div>
+
+      {/* 2. COMPACT KPI STRIP (Minimal, to the point) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-slate-200 dark:border-neutral-800">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Exams</div>
+          <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{exams.length}</div>
+        </div>
+
+        <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-slate-200 dark:border-neutral-800">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Live Exams</div>
+          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{liveExamsCount}</div>
+        </div>
+
+        <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-slate-200 dark:border-neutral-800">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Pending Grading</div>
+          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">{pendingCount}</div>
+        </div>
+
+        <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-slate-200 dark:border-neutral-800">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Graded Papers</div>
+          <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{gradedCount}</div>
         </div>
       </div>
 
-      {/* 4 METRICS STRIP */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {/* Metric 1: Scheduled Exams */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900/80 border border-slate-200 dark:border-neutral-800 shadow-sm backdrop-blur-md relative overflow-hidden group hover:border-slate-300 dark:hover:border-neutral-700 transition">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300">
-              Scheduled Exams
-            </span>
-            <div className="p-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">
-              <Calendar className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">
-              {scheduledCount}
-            </span>
-            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center">
-              Active & Upcoming
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
-            Open in student examination catalog
-          </p>
-        </div>
-
-        {/* Metric 2: Exams Given (Submissions) */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900/80 border border-slate-200 dark:border-neutral-800 shadow-sm backdrop-blur-md relative overflow-hidden group hover:border-slate-300 dark:hover:border-neutral-700 transition">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300">
-              Exams Given
-            </span>
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
-              <FileText className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">
-              {totalExamsGiven}
-            </span>
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">
-              Attempts Total
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
-            Total candidate exam submissions
-          </p>
-        </div>
-
-        {/* Metric 3: Waiting for Review */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900/80 border border-slate-200 dark:border-neutral-800 shadow-sm backdrop-blur-md relative overflow-hidden group hover:border-amber-400/60 dark:hover:border-amber-500/50 transition">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300">
-              Waiting for Review
-            </span>
-            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-amber-600 dark:text-amber-300">
-              {waitingReviewCount}
-            </span>
-            {waitingReviewCount > 0 && (
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
-                Action Required
-              </span>
-            )}
-          </div>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
-            Descriptive papers pending evaluation
-          </p>
-        </div>
-
-        {/* Metric 4: Exams Reviewed */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900/80 border border-slate-200 dark:border-neutral-800 shadow-sm backdrop-blur-md relative overflow-hidden group hover:border-emerald-400/60 dark:hover:border-emerald-500/50 transition">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300">
-              Exams Reviewed
-            </span>
-            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-emerald-600 dark:text-emerald-300">
-              {reviewedCount}
-            </span>
-            <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-              Graded & Released
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
-            Scores and report cards finalized
-          </p>
-        </div>
-      </div>
-
-      {/* TABS & CONTROLS */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Toggle View Mode */}
-        <div className="flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-neutral-800/90 border border-slate-200 dark:border-neutral-700 w-fit">
+      {/* 3. TABS & SEARCH */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-neutral-800 p-1 rounded-lg w-fit">
           <button
             onClick={() => setActiveTab('exams')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-colors cursor-pointer ${
               activeTab === 'exams'
                 ? 'bg-white dark:bg-neutral-900 text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <BookOpen className="w-4 h-4" />
-            <span>Exams Repository ({exams.length})</span>
+            Exams ({exams.length})
           </button>
 
           <button
             onClick={() => setActiveTab('submissions')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer relative ${
+            className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
               activeTab === 'submissions'
                 ? 'bg-white dark:bg-neutral-900 text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Award className="w-4 h-4" />
-            <span>Student Submissions ({submissions.length})</span>
-            {waitingReviewCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse ml-0.5" />
+            <span>Submissions ({submissions.length})</span>
+            {pendingCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-white">
+                {pendingCount}
+              </span>
             )}
           </button>
         </div>
 
-        {/* Search & Filter Bar */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder={activeTab === 'exams' ? 'Search exams by title...' : 'Search student or exam...'}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl text-xs font-medium border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-
-          {activeTab === 'exams' ? (
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-700 dark:text-white focus:outline-none"
-            >
-              <option value="all">All Statuses</option>
-              <option value="live">Live Only</option>
-              <option value="upcoming">Upcoming Only</option>
-              <option value="expired">Expired Only</option>
-            </select>
-          ) : (
-            <select
-              value={subFilter}
-              onChange={(e) => setSubFilter(e.target.value as any)}
-              className="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-700 dark:text-white focus:outline-none"
-            >
-              <option value="all">All Submissions</option>
-              <option value="under_evaluation">Waiting for Review ({waitingReviewCount})</option>
-              <option value="graded">Graded ({reviewedCount})</option>
-            </select>
-          )}
+        <div className="relative w-full sm:w-72">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder={activeTab === 'exams' ? 'Search exams by title...' : 'Search student or exam...'}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 rounded-lg text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white"
+          />
         </div>
       </div>
 
-      {/* VIEW 1: EXAMS REPOSITORY */}
+      {/* 4. VIEW: EXAMS TABLE */}
       {activeTab === 'exams' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {filteredExams.map((exam) => (
-            <div
-              key={exam.id}
-              className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/80 p-5 sm:p-6 shadow-sm flex flex-col justify-between space-y-4 hover:border-slate-300 dark:hover:border-neutral-700 transition"
-            >
-              <div>
-                {/* Status & Course */}
-                <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-0.5 rounded-lg border border-indigo-200/60 dark:border-indigo-800/40">
-                    {exam.course}
-                  </span>
+        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 overflow-hidden shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 dark:bg-neutral-800/60 border-b border-slate-200 dark:border-neutral-800 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <tr>
+                  <th className="px-5 py-3.5">Exam Title & Course</th>
+                  <th className="px-5 py-3.5">Schedule</th>
+                  <th className="px-5 py-3.5">Duration & Marks</th>
+                  <th className="px-5 py-3.5">Questions</th>
+                  <th className="px-5 py-3.5">Status</th>
+                  <th className="px-5 py-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+                {filteredExams.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500">
+                      No exams found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredExams.map((ex) => (
+                    <tr key={ex.id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-800/40 transition-colors">
+                      <td className="px-5 py-4">
+                        <div className="font-semibold text-slate-900 dark:text-white">{ex.title}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{ex.course}</div>
+                      </td>
 
-                  <span
-                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${
-                      exam.status === 'live'
-                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                        : exam.status === 'upcoming'
-                        ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800'
-                        : 'bg-slate-100 dark:bg-neutral-800 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-neutral-700'
-                    }`}
-                  >
-                    {exam.status === 'live' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />}
-                    {exam.status.toUpperCase()}
-                  </span>
-                </div>
+                      <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
+                        <div>{ex.scheduledDate}</div>
+                        {ex.scheduledTime && (
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{ex.scheduledTime}</div>
+                        )}
+                      </td>
 
-                {/* Exam Title */}
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-snug">
-                  {exam.title}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-300 mt-1">
-                  Instructor: <span className="font-semibold text-slate-700 dark:text-white">{exam.instructor}</span> • Window: {exam.scheduledDate} ({exam.scheduledTime})
-                </p>
+                      <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
+                        <div>{ex.durationMinutes} mins</div>
+                        <div className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{ex.totalMarks} Marks (Pass: {ex.passingMarks})</div>
+                      </td>
 
-                {/* Exam Key Specs */}
-                <div className="grid grid-cols-3 gap-2.5 mt-4 py-3 border-y border-slate-100 dark:border-neutral-800/80 text-center">
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-neutral-800/60">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-300 block">Duration</span>
-                    <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">{exam.durationMinutes} Mins</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-neutral-800/60">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-300 block">Marks</span>
-                    <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">{exam.totalMarks} (Pass: {exam.passingMarks})</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-neutral-800/60">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-300 block">Questions</span>
-                    <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">
-                      {exam.questions.length || exam.mcqCount + exam.descriptiveCount} Qs
-                    </span>
-                  </div>
-                </div>
+                      <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
+                        {ex.questions.length > 0 ? (
+                          <span>{ex.questions.length} questions ({ex.questions.filter(q => q.type === 'mcq').length} MCQ, {ex.questions.filter(q => q.type === 'descriptive').length} Essay)</span>
+                        ) : (
+                          <span className="text-slate-400">{ex.mcqCount + ex.descriptiveCount} Qs (Default)</span>
+                        )}
+                      </td>
 
-                {/* Syllabus Preview */}
-                {exam.syllabus && exam.syllabus.length > 0 && (
-                  <div className="mt-3">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300 block mb-1">
-                      Topics Covered:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {exam.syllabus.slice(0, 3).map((item, idx) => (
-                        <span key={idx} className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-slate-200">
-                          {item}
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                            ex.status === 'live'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80'
+                              : ex.status === 'upcoming'
+                              ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border border-sky-200/80 dark:border-sky-800/80'
+                              : 'bg-slate-100 dark:bg-neutral-800 text-slate-500 dark:text-slate-400'
+                          }`}
+                        >
+                          {ex.status.toUpperCase()}
                         </span>
-                      ))}
-                      {exam.syllabus.length > 3 && (
-                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-800 text-slate-400 dark:text-slate-300">
-                          +{exam.syllabus.length - 3} more
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+                      </td>
 
-              {/* Actions Footer */}
-              <div className="pt-3 border-t border-slate-100 dark:border-neutral-800/80 flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-400 dark:text-slate-300">
-                  {exam.questions.length} Questions authored
-                </span>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleOpenEditExam(exam)}
-                    className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-neutral-800 text-slate-600 dark:text-slate-200 transition cursor-pointer"
-                    title="Edit Exam"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    onClick={() => handleDeleteExam(exam.id)}
-                    className="p-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                    title="Delete Exam"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {filteredExams.length === 0 && (
-            <div className="col-span-full py-16 text-center border-2 border-dashed border-slate-200 dark:border-neutral-800 rounded-3xl p-6">
-              <BookOpen className="w-12 h-12 text-slate-300 dark:text-neutral-700 mx-auto mb-3" />
-              <h4 className="text-base font-bold text-slate-700 dark:text-slate-200">No examinations found</h4>
-              <p className="text-xs text-slate-400 mt-1">Try adjusting your filters or click "Create New Exam".</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* VIEW 2: STUDENT SUBMISSIONS & GRADING */}
-      {activeTab === 'submissions' && (
-        <div className="space-y-4">
-          {filteredSubmissions.map((sub) => {
-            const isPending = sub.status === 'under_evaluation'
-
-            return (
-              <div
-                key={sub.id}
-                className={`rounded-2xl border p-5 sm:p-6 transition flex flex-col md:flex-row md:items-center justify-between gap-5 ${
-                  isPending
-                    ? 'border-amber-300/80 dark:border-amber-800/60 bg-amber-50/20 dark:bg-amber-950/10 shadow-sm'
-                    : 'border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/80 shadow-xs'
-                }`}
-              >
-                <div className="space-y-2 min-w-0 flex-1">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span
-                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${
-                        isPending
-                          ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60'
-                          : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60'
-                      }`}
-                    >
-                      {isPending ? <Clock className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
-                      {isPending ? 'Waiting for Evaluation' : 'Graded & Published'}
-                    </span>
-
-                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-300">
-                      Submitted {sub.submittedAt}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
-                      {sub.examTitle}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-300 mt-0.5 flex items-center gap-2">
-                      <span className="font-semibold text-slate-700 dark:text-slate-200">
-                        {sub.studentName ? `${sub.studentName} (${sub.studentEmail})` : sub.studentEmail}
-                      </span>
-                      <span>•</span>
-                      <span>{sub.course}</span>
-                      <span>•</span>
-                      <span>{sub.timeSpentMinutes} mins taken</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Score & Actions */}
-                <div className="flex items-center gap-4 shrink-0">
-                  <div className="text-right">
-                    <span className="text-xs text-slate-400 dark:text-slate-300 block font-medium">Score</span>
-                    <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
-                      {sub.scoreObtained !== undefined ? sub.scoreObtained : '—'}{' '}
-                      <span className="text-xs text-slate-400 dark:text-slate-300 font-medium">/ {sub.totalMarks}</span>
-                    </span>
-                    {sub.grade && (
-                      <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 block">
-                        {sub.grade}
-                      </span>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => handleOpenGradingStudio(sub)}
-                    className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs ${
-                      isPending
-                        ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                        : 'bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900'
-                    }`}
-                  >
-                    <span>{isPending ? 'Evaluate & Grade' : 'Review Feedback'}</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-
-          {filteredSubmissions.length === 0 && (
-            <div className="py-16 text-center border-2 border-dashed border-slate-200 dark:border-neutral-800 rounded-3xl p-6">
-              <Award className="w-12 h-12 text-slate-300 dark:text-neutral-700 mx-auto mb-3" />
-              <h4 className="text-base font-bold text-slate-700 dark:text-slate-200">No submissions found</h4>
-              <p className="text-xs text-slate-400 mt-1">When students complete exams, their papers will arrive here for evaluation.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* MODAL: EXAM AUTHORING & BUILDER */}
-      {showExamModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
-          <div className="rounded-3xl max-w-4xl w-full p-6 sm:p-8 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-2xl my-8 space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-neutral-800">
-              <div>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white">
-                  {editingExam ? 'Edit Examination' : 'Author New Examination'}
-                </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-300 mt-0.5">
-                  Configure assessment parameters, schedule windows, and questions.
-                </p>
-              </div>
-
-              <button
-                onClick={() => setShowExamModal(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Basic Info Form */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="sm:col-span-2">
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Exam Title</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Principles of Macroeconomics Mid-Term 2026"
-                  value={examFormData.title || ''}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, title: e.target.value }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Course Code & Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Macroeconomic Theory & Policy"
-                  value={examFormData.course || ''}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, course: e.target.value }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Instructor Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Rishika"
-                  value={examFormData.instructor || ''}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, instructor: e.target.value }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Scheduled Date</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Active Now or In 2 Days (Wednesday)"
-                  value={examFormData.scheduledDate || ''}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, scheduledDate: e.target.value }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Scheduled Time Window</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 10:00 AM - 11:00 AM IST"
-                  value={examFormData.scheduledTime || ''}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, scheduledTime: e.target.value }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Duration (Minutes)</label>
-                <input
-                  type="number"
-                  value={examFormData.durationMinutes || 45}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, durationMinutes: Number(e.target.value) }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Status</label>
-                <select
-                  value={examFormData.status || 'upcoming'}
-                  onChange={(e) => setExamFormData((p) => ({ ...p, status: e.target.value as any }))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800 text-slate-900 dark:text-white"
-                >
-                  <option value="live">Live (Active Now)</option>
-                  <option value="upcoming">Upcoming</option>
-                  <option value="expired">Expired</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Questions Authoring Section */}
-            <div className="pt-4 border-t border-slate-100 dark:border-neutral-800 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Questions ({examFormData.questions?.length || 0})
-                  </h3>
-                  <p className="text-xs text-slate-400 dark:text-slate-300">Total Marks computed: {examFormData.totalMarks || 0} Marks</p>
-                </div>
-              </div>
-
-              {/* Existing questions list */}
-              <div className="space-y-2.5 max-h-56 overflow-y-auto custom-scrollbar pr-1">
-                {examFormData.questions?.map((q, idx) => (
-                  <div
-                    key={q.id || idx}
-                    className="p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/60 dark:bg-neutral-800/40 flex items-start justify-between gap-3 text-xs"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-slate-900 dark:text-white">Q{q.number}.</span>
-                        <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-neutral-700 text-slate-700 dark:text-slate-200 font-semibold text-[10px]">
-                          {q.type.toUpperCase()} • {q.marks} Marks
-                        </span>
-                      </div>
-                      <p className="text-slate-700 dark:text-slate-200 line-clamp-2">{q.question}</p>
-                    </div>
-
-                    <button
-                      onClick={() => handleRemoveQuestionFromForm(q.id)}
-                      className="p-1 text-slate-400 hover:text-rose-500 transition"
-                      title="Remove question"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
-
-                {(!examFormData.questions || examFormData.questions.length === 0) && (
-                  <div className="text-center py-6 text-slate-400 dark:text-slate-300 text-xs border border-dashed border-slate-200 dark:border-neutral-800 rounded-xl">
-                    No questions authored yet. Add one below.
-                  </div>
-                )}
-              </div>
-
-              {/* Add New Question Box */}
-              <div className="p-4 rounded-2xl border border-indigo-200/80 dark:border-indigo-900/50 bg-indigo-50/30 dark:bg-indigo-950/20 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">
-                    Add New Question
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setNewQuestionType('mcq')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        newQuestionType === 'mcq'
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-slate-200'
-                      }`}
-                    >
-                      Multiple Choice (MCQ)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setNewQuestionType('descriptive')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        newQuestionType === 'descriptive'
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-slate-200'
-                      }`}
-                    >
-                      Descriptive Essay
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="sm:col-span-3">
-                    <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Question Prompt</label>
-                    <textarea
-                      rows={2}
-                      placeholder="Type the question statement..."
-                      value={newQuestionText}
-                      onChange={(e) => setNewQuestionText(e.target.value)}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Marks</label>
-                    <input
-                      type="number"
-                      value={newQuestionMarks}
-                      onChange={(e) => setNewQuestionMarks(Number(e.target.value))}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                    />
-                  </div>
-                </div>
-
-                {/* If MCQ: Options & Correct answer */}
-                {newQuestionType === 'mcq' && (
-                  <div className="space-y-2 pt-1 text-xs">
-                    <span className="font-bold text-slate-700 dark:text-slate-200 block">Options & Correct Answer:</span>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {newQuestionOptions.map((opt, i) => (
-                        <div key={opt.id} className="flex items-center gap-2">
+                      <td className="px-5 py-4 text-right">
+                        <div className="inline-flex items-center gap-1">
                           <button
-                            type="button"
-                            onClick={() => setNewCorrectOption(opt.id)}
-                            className={`w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center shrink-0 cursor-pointer ${
-                              newCorrectOption === opt.id
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-slate-200 dark:bg-neutral-700 text-slate-600 dark:text-slate-300'
-                            }`}
-                            title="Mark as correct answer"
+                            onClick={() => handleOpenEditExam(ex)}
+                            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+                            title="Edit Exam"
                           >
-                            {opt.id}
+                            <Edit2 size={16} />
                           </button>
-                          <input
-                            type="text"
-                            placeholder={`Option ${opt.id} text...`}
-                            value={opt.text}
-                            onChange={(e) => {
-                              const updated = [...newQuestionOptions]
-                              updated[i].text = e.target.value
-                              setNewQuestionOptions(updated)
-                            }}
-                            className="flex-1 p-2 rounded-lg border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                          />
+                          <button
+                            onClick={() => handleDeleteExam(ex.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                            title="Delete Exam"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
-                      ))}
-                    </div>
-
-                    <div className="pt-1">
-                      <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Explanation / Solution Notes</label>
-                      <input
-                        type="text"
-                        placeholder="Why is this answer correct? (Displayed to student after grading)"
-                        value={newExplanation}
-                        onChange={(e) => setNewExplanation(e.target.value)}
-                        className="w-full p-2 rounded-lg border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
+                      </td>
+                    </tr>
+                  ))
                 )}
-
-                {/* If Descriptive: Model Answer */}
-                {newQuestionType === 'descriptive' && (
-                  <div className="pt-1 text-xs">
-                    <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Model Answer / Grading Rubrics</label>
-                    <textarea
-                      rows={2}
-                      placeholder="Outline key economic concepts, formulas, or diagrams expected from the candidate..."
-                      value={newModelAnswer}
-                      onChange={(e) => setNewModelAnswer(e.target.value)}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                    />
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleAddQuestionToForm}
-                  className="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                  <span>Insert Question into Exam</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="pt-4 border-t border-slate-100 dark:border-neutral-800 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowExamModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-neutral-700 hover:bg-slate-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-slate-200 transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveExam}
-                className="px-6 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 shadow-md transition active:scale-95"
-              >
-                Save & Publish Examination
-              </button>
-            </div>
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      {/* MODAL: TEACHER GRADING STUDIO */}
-      {gradingSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150 overflow-y-auto">
-          <div className="rounded-3xl max-w-4xl w-full p-6 sm:p-8 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-2xl my-8 space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-neutral-800">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-900/60">
-                  Paper Assessment Studio
-                </span>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white mt-1">
-                  Evaluating {gradingSubmission.studentName || gradingSubmission.studentEmail}
-                </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-300">
-                  {gradingSubmission.examTitle} • Completed in {gradingSubmission.timeSpentMinutes} mins
-                </p>
-              </div>
+      {/* 5. VIEW: SUBMISSIONS TABLE */}
+      {activeTab === 'submissions' && (
+        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 overflow-hidden shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 dark:bg-neutral-800/60 border-b border-slate-200 dark:border-neutral-800 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <tr>
+                  <th className="px-5 py-3.5">Student</th>
+                  <th className="px-5 py-3.5">Exam</th>
+                  <th className="px-5 py-3.5">Submitted</th>
+                  <th className="px-5 py-3.5">Score / Grade</th>
+                  <th className="px-5 py-3.5">Status</th>
+                  <th className="px-5 py-3.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+                {filteredSubmissions.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500">
+                      No student submissions found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredSubmissions.map((sub) => (
+                    <tr key={sub.id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-800/40 transition-colors">
+                      <td className="px-5 py-4">
+                        <div className="font-semibold text-slate-900 dark:text-white">
+                          {sub.studentName || 'Student'}
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{sub.studentEmail}</div>
+                      </td>
 
+                      <td className="px-5 py-4">
+                        <div className="font-medium text-slate-900 dark:text-white text-xs">{sub.examTitle}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{sub.course}</div>
+                      </td>
+
+                      <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
+                        {sub.submittedAt}
+                      </td>
+
+                      <td className="px-5 py-4 text-xs">
+                        {sub.status === 'graded' ? (
+                          <div className="font-semibold text-emerald-600 dark:text-emerald-400">
+                            {sub.scoreObtained}/{sub.totalMarks} ({sub.percentage}%) • {sub.grade}
+                          </div>
+                        ) : (
+                          <span className="text-amber-600 dark:text-amber-400 font-medium">Pending Review</span>
+                        )}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                            sub.status === 'graded'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80'
+                              : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/80'
+                          }`}
+                        >
+                          {sub.status === 'graded' ? 'GRADED' : 'NEEDS REVIEW'}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4 text-right">
+                        <button
+                          onClick={() => handleOpenEvaluation(sub)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                            sub.status === 'graded'
+                              ? 'bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-slate-200'
+                              : 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 shadow-2xs'
+                          }`}
+                        >
+                          {sub.status === 'graded' ? 'View Review' : 'Grade Paper'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 6. MODAL: CREATE / EDIT EXAM */}
+      {showExamModal && (
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+                {editingExamId ? 'Edit Exam' : 'Create New Exam'}
+              </h2>
               <button
-                onClick={() => setGradingSubmission(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition"
+                onClick={() => setShowExamModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg transition-colors cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X size={20} />
               </button>
             </div>
 
-            {/* Questions Grading List */}
-            <div className="space-y-6">
-              {gradingSubmission.answers.map((ans, idx) => (
-                <div
-                  key={ans.questionId || idx}
-                  className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-800/30 p-5 space-y-3.5"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white">
-                        Question {ans.questionNumber} of {gradingSubmission.answers.length}
-                      </span>
-                      <span className="text-slate-300 dark:text-neutral-700 mx-2">•</span>
-                      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-300">
-                        {ans.type === 'mcq' ? 'Multiple Choice' : 'Descriptive Essay'} ({ans.marks} Marks max)
-                      </span>
-                    </div>
+            {/* Modal Form */}
+            <form onSubmit={handleSaveExam} className="p-6 space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Exam Title
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Macroeconomics Mid-Term"
+                    value={examForm.title}
+                    onChange={(e) => setExamForm({ ...examForm, title: e.target.value })}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-lg text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-slate-900 outline-none"
+                  />
+                </div>
 
-                    {ans.type === 'mcq' ? (
-                      <span
-                        className={`text-xs font-bold px-2 py-0.5 rounded-md ${
-                          ans.isCorrect
-                            ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                            : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300'
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Course Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Macroeconomic Theory & Policy"
+                    value={examForm.course}
+                    onChange={(e) => setExamForm({ ...examForm, course: e.target.value })}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-lg text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-slate-900 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Duration (mins)
+                  </label>
+                  <input
+                    type="number"
+                    min="5"
+                    required
+                    value={examForm.durationMinutes}
+                    onChange={(e) => setExamForm({ ...examForm, durationMinutes: Number(e.target.value) })}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-lg text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-slate-900 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Total Marks
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={examForm.totalMarks}
+                    onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-lg text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-slate-900 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Passing Marks
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={examForm.passingMarks}
+                    onChange={(e) => setExamForm({ ...examForm, passingMarks: Number(e.target.value) })}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-lg text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-slate-900 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Status
+                  </label>
+                  <select
+                    value={examForm.status}
+                    onChange={(e) => setExamForm({ ...examForm, status: e.target.value as any })}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-lg text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-slate-900 outline-none"
+                  >
+                    <option value="live">Live (Active)</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="expired">Expired</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* QUESTIONS BUILDER SECTION */}
+              <div className="pt-4 border-t border-slate-100 dark:border-neutral-800">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                    Questions ({examForm.questions.length})
+                  </h3>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    Sum: {examForm.questions.reduce((a, b) => a + b.marks, 0)} / {examForm.totalMarks} Marks
+                  </span>
+                </div>
+
+                {/* Existing Questions List */}
+                <div className="space-y-2 mb-4">
+                  {examForm.questions.map((q) => (
+                    <div
+                      key={q.id}
+                      className="flex items-start justify-between gap-3 p-3 rounded-lg bg-slate-50 dark:bg-neutral-800/60 border border-slate-200/80 dark:border-neutral-700/80 text-xs"
+                    >
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-900 dark:text-white mr-2">
+                          Q{q.number}. [{q.type.toUpperCase()}] ({q.marks} Marks)
+                        </span>
+                        <span className="text-slate-600 dark:text-slate-300 truncate">
+                          {q.question}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveQuestionFromForm(q.id)}
+                        className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1 cursor-pointer"
+                        title="Remove question"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add New Question Card */}
+                <div className="p-4 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-850/50 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Add New Question</span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setNewQType('mcq')}
+                        className={`px-2.5 py-1 rounded text-xs font-semibold cursor-pointer ${
+                          newQType === 'mcq'
+                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                            : 'bg-slate-200 dark:bg-neutral-700 text-slate-700 dark:text-slate-300'
                         }`}
                       >
-                        {ans.isCorrect ? `+${ans.marks} Marks (Auto-Correct)` : `0 Marks (Incorrect)`}
-                      </span>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Award Marks:</span>
-                        <input
-                          type="number"
-                          min={0}
-                          max={ans.marks}
-                          value={gradingMarks[ans.questionId] !== undefined ? gradingMarks[ans.questionId] : 0}
-                          onChange={(e) =>
-                            setGradingMarks((p) => ({
-                              ...p,
-                              [ans.questionId]: Math.min(ans.marks, Math.max(0, Number(e.target.value)))
-                            }))
-                          }
-                          className="w-16 p-1.5 rounded-lg text-center font-bold text-xs border border-indigo-300 dark:border-indigo-700 bg-white dark:bg-neutral-900 text-indigo-600 dark:text-indigo-400"
-                        />
-                        <span className="text-xs text-slate-400 dark:text-slate-300">/ {ans.marks}</span>
-                      </div>
-                    )}
+                        MCQ
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setNewQType('descriptive')}
+                        className={`px-2.5 py-1 rounded text-xs font-semibold cursor-pointer ${
+                          newQType === 'descriptive'
+                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                            : 'bg-slate-200 dark:bg-neutral-700 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        Descriptive Essay
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Question Prompt */}
-                  <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                    {ans.question}
-                  </div>
+                  <textarea
+                    rows={2}
+                    placeholder="Enter question text..."
+                    value={newQPrompt}
+                    onChange={(e) => setNewQPrompt(e.target.value)}
+                    className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2 rounded-lg text-xs text-slate-900 dark:text-slate-50 focus:ring-1 focus:ring-slate-900 outline-none"
+                  />
 
-                  {/* Student's Written Answer */}
-                  <div className="p-3.5 rounded-xl bg-white dark:bg-neutral-900 border border-slate-200/80 dark:border-neutral-800 space-y-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300 block">
-                      Candidate's Response:
-                    </span>
-                    <div
-                      className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 leading-relaxed font-normal whitespace-pre-wrap"
-                      dangerouslySetInnerHTML={{ __html: ans.studentAnswer || '<span class="italic text-slate-400">No response provided</span>' }}
+                  <div className="flex items-center gap-3">
+                    <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Marks:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={newQMarks}
+                      onChange={(e) => setNewQMarks(Number(e.target.value))}
+                      className="w-20 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-2 py-1 rounded text-xs text-slate-900 dark:text-slate-50"
                     />
                   </div>
 
-                  {/* For Descriptive: Teacher Comment on this Answer */}
-                  {ans.type === 'descriptive' && (
-                    <div className="text-xs space-y-1">
-                      <label className="font-bold text-slate-600 dark:text-slate-300 block">Instructor Annotation for this Question:</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Excellent explanation of shifting curves, remember to cite empirical instances."
-                        value={gradingComments[ans.questionId] || ''}
-                        onChange={(e) =>
-                          setGradingComments((p) => ({
-                            ...p,
-                            [ans.questionId]: e.target.value
-                          }))
-                        }
-                        className="w-full p-2 rounded-xl border border-slate-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
+                  {newQType === 'mcq' ? (
+                    <div className="space-y-2 pt-1">
+                      <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        Options & Correct Key:
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {newQOptions.map((opt, idx) => (
+                          <div key={opt.id} className="flex items-center gap-2">
+                            <span className="text-xs font-bold w-4 text-slate-600 dark:text-slate-400">{opt.id}.</span>
+                            <input
+                              type="text"
+                              placeholder={`Option ${opt.id}`}
+                              value={opt.text}
+                              onChange={(e) => {
+                                const copy = [...newQOptions]
+                                copy[idx].text = e.target.value
+                                setNewQOptions(copy)
+                              }}
+                              className="flex-1 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-2 py-1 rounded text-xs text-slate-900 dark:text-slate-50"
+                            />
+                            <input
+                              type="radio"
+                              name="correctOption"
+                              checked={newQCorrect === opt.id}
+                              onChange={() => setNewQCorrect(opt.id)}
+                              title={`Set ${opt.id} as correct`}
+                              className="w-4 h-4 cursor-pointer"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="pt-1">
+                      <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                        Model Answer / Rubric Guidelines:
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="Expected answer or grading rubric..."
+                        value={newQModelAnswer}
+                        onChange={(e) => setNewQModelAnswer(e.target.value)}
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2 rounded-lg text-xs text-slate-900 dark:text-slate-50 focus:ring-1 focus:ring-slate-900 outline-none"
                       />
                     </div>
                   )}
-                </div>
-              ))}
-            </div>
 
-            {/* Overall Feedback Section */}
-            <div className="p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 bg-slate-50/70 dark:bg-neutral-800/40 space-y-4">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-indigo-500" />
-                Comprehensive Assessment & Teacher Remarks
-              </h3>
-
-              <div className="space-y-1 text-xs">
-                <label className="font-bold text-slate-700 dark:text-slate-200 block">Overall Feedback Commentary</label>
-                <textarea
-                  rows={3}
-                  placeholder="Provide personalized commentary summarizing candidate strengths and exam performance..."
-                  value={overallFeedback}
-                  onChange={(e) => setOverallFeedback(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-slate-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              {/* Strengths & Improvements */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="font-bold text-emerald-700 dark:text-emerald-400 block mb-1.5">
-                    Demonstrated Strengths
-                  </label>
-                  <div className="space-y-1.5">
-                    {feedbackStrengths.map((str, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={str}
-                          onChange={(e) => {
-                            const updated = [...feedbackStrengths]
-                            updated[idx] = e.target.value
-                            setFeedbackStrengths(updated)
-                          }}
-                          className="flex-1 p-2 rounded-lg border border-slate-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setFeedbackStrengths((p) => p.filter((_, i) => i !== idx))}
-                          className="p-1 text-slate-400 hover:text-rose-500"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-
-                    <div className="flex gap-2 pt-1">
-                      <input
-                        type="text"
-                        placeholder="Add another strength..."
-                        value={newStrengthInput}
-                        onChange={(e) => setNewStrengthInput(e.target.value)}
-                        className="flex-1 p-2 rounded-lg border border-slate-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (newStrengthInput.trim()) {
-                            setFeedbackStrengths((p) => [...p, newStrengthInput.trim()])
-                            setNewStrengthInput('')
-                          }
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-amber-700 dark:text-amber-400 block mb-1.5">
-                    Target Areas for Improvement
-                  </label>
-                  <div className="space-y-1.5">
-                    {feedbackImprovements.map((imp, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={imp}
-                          onChange={(e) => {
-                            const updated = [...feedbackImprovements]
-                            updated[idx] = e.target.value
-                            setFeedbackImprovements(updated)
-                          }}
-                          className="flex-1 p-2 rounded-lg border border-slate-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setFeedbackImprovements((p) => p.filter((_, i) => i !== idx))}
-                          className="p-1 text-slate-400 hover:text-rose-500"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-
-                    <div className="flex gap-2 pt-1">
-                      <input
-                        type="text"
-                        placeholder="Add recommendation..."
-                        value={newImprovementInput}
-                        onChange={(e) => setNewImprovementInput(e.target.value)}
-                        className="flex-1 p-2 rounded-lg border border-slate-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-slate-900 dark:text-white"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (newImprovementInput.trim()) {
-                            setFeedbackImprovements((p) => [...p, newImprovementInput.trim()])
-                            setNewImprovementInput('')
-                          }
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-amber-600 text-white font-bold"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddQuestionToForm}
+                    className="w-full py-2 bg-slate-200 dark:bg-neutral-700 hover:bg-slate-300 dark:hover:bg-neutral-600 text-slate-800 dark:text-white rounded-lg text-xs font-semibold transition cursor-pointer"
+                  >
+                    + Add Question to Exam
+                  </button>
                 </div>
               </div>
-            </div>
 
-            {/* Modal Actions */}
-            <div className="pt-4 border-t border-slate-100 dark:border-neutral-800 flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">
-                Passing Requirement: 20 / {gradingSubmission.totalMarks} Marks
-              </span>
-
-              <div className="flex items-center gap-3">
+              {/* Modal Footer */}
+              <div className="pt-4 border-t border-slate-100 dark:border-neutral-800 flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => setGradingSubmission(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-neutral-700 hover:bg-slate-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-slate-200 transition"
+                  onClick={() => setShowExamModal(false)}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
-                  type="button"
-                  onClick={handleSaveGrading}
-                  className="px-6 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition active:scale-95 flex items-center gap-1.5"
+                  type="submit"
+                  className="px-6 py-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-lg text-sm font-bold transition cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Finalize & Publish Evaluation</span>
+                  {editingExamId ? 'Update Exam' : 'Save Exam'}
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. MODAL: GRADE / EVALUATE SUBMISSION */}
+      {evaluatingSub && (
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800">
+            {/* Header */}
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+                  Grade Student Submission
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {evaluatingSub.studentName || 'Student'} ({evaluatingSub.studentEmail}) • {evaluatingSub.examTitle}
+                </p>
+              </div>
+              <button
+                onClick={() => setEvaluatingSub(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Questions Grading Area */}
+            <div className="p-6 space-y-6">
+              {evaluatingSub.answers.map((ans, idx) => (
+                <div
+                  key={ans.questionId || idx}
+                  className="p-4 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-800/30 space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">
+                      Q{ans.questionNumber}. [{ans.type.toUpperCase()}] ({ans.marks} Marks)
+                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Awarded:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max={ans.marks}
+                        value={gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)}
+                        onChange={(e) =>
+                          setGradeMarks({
+                            ...gradeMarks,
+                            [ans.questionId]: Math.min(ans.marks, Math.max(0, Number(e.target.value)))
+                          })
+                        }
+                        className="w-16 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-2 py-1 rounded text-xs font-bold text-slate-900 dark:text-slate-50 text-center"
+                      />
+                      <span className="text-xs text-slate-400">/ {ans.marks}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">
+                    {ans.question}
+                  </p>
+
+                  <div className="p-3 rounded-lg bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 text-xs">
+                    <span className="font-semibold text-slate-500 dark:text-slate-400 block mb-1">
+                      Student's Answer:
+                    </span>
+                    <div className="text-slate-900 dark:text-slate-100 whitespace-pre-wrap">
+                      {ans.studentAnswer || '(No answer submitted)'}
+                    </div>
+                  </div>
+
+                  {ans.type === 'mcq' && (
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Correct Key: <span className="font-bold text-emerald-600 dark:text-emerald-400">{ans.correctAnswer}</span>
+                      {ans.isCorrect !== undefined && (
+                        <span className="ml-2 font-semibold">
+                          ({ans.isCorrect ? '✓ Correct' : '✗ Incorrect'})
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Feedback for this question (optional)..."
+                      value={gradeComments[ans.questionId] || ''}
+                      onChange={(e) =>
+                        setGradeComments({ ...gradeComments, [ans.questionId]: e.target.value })
+                      }
+                      className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-3 py-1.5 rounded-lg text-xs text-slate-900 dark:text-slate-50 placeholder:text-slate-400 outline-none"
+                    />
+                  </div>
+                </div>
+              ))}
+
+              {/* Overall Commentary */}
+              <div className="space-y-2 pt-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  Overall Instructor Commentary
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Provide comprehensive feedback for the student..."
+                  value={overallFeedback}
+                  onChange={(e) => setOverallFeedback(e.target.value)}
+                  className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-lg text-xs text-slate-900 dark:text-slate-50 placeholder:text-slate-400 outline-none"
+                />
+              </div>
+
+              {/* Footer Actions */}
+              <div className="pt-4 border-t border-slate-100 dark:border-neutral-800 flex items-center justify-between">
+                <div className="text-sm font-bold text-slate-900 dark:text-white">
+                  Total Calculated Score:{' '}
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    {Object.values(gradeMarks).reduce((a, b) => a + b, 0)} / {evaluatingSub.totalMarks} Marks
+                  </span>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEvaluatingSub(null)}
+                    className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePublishGrade}
+                    className="px-6 py-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-lg text-sm font-bold transition cursor-pointer"
+                  >
+                    Publish Grade & Feedback
+                  </button>
+                </div>
               </div>
             </div>
           </div>
