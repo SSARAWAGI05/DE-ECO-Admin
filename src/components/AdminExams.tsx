@@ -6,6 +6,7 @@ import {
   GroqParseResult
 } from '../lib/groqExamParser'
 import { supabase } from '../lib/supabaseClient'
+import PdfViewer from './PdfViewer'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import {
@@ -3532,26 +3533,13 @@ export default function AdminExams() {
                     ? 'h-10 sm:h-11 lg:h-full'
                     : mobilePdfHeight === 'expanded'
                     ? 'h-[62vh] sm:h-[65vh] lg:h-full'
-                    : 'h-[36vh] sm:h-[40vh] lg:h-full'
+                    : 'h-[38vh] sm:h-[42vh] lg:h-full'
                 }`}>
-                  {/* PDF Toolbar */}
-                  <div className="shrink-0 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-slate-100 dark:bg-neutral-900 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between text-xs gap-1">
-                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 pr-1">
-                      <div className="p-1 rounded bg-indigo-600 text-white shrink-0">
-                        <FileText size={13} />
-                      </div>
-                      <span className="font-bold text-slate-800 dark:text-neutral-200 truncate text-[11px] sm:text-xs">
-                        {evaluatingSub.submissionFileName || 'Handwritten Answer Sheet.pdf'}
-                      </span>
-                      {evaluatingSub.submissionFileSize && (
-                        <span className="text-[10px] text-slate-400 dark:text-neutral-500 hidden sm:inline">
-                          ({evaluatingSub.submissionFileSize})
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                      {/* Mobile Size Controls (Already open, optional quick toggle) */}
+                  <PdfViewer
+                    url={evaluatingSub.submissionFileUrl}
+                    fileName={evaluatingSub.submissionFileName}
+                    fileSize={evaluatingSub.submissionFileSize}
+                    headerExtra={
                       <div className="flex items-center lg:hidden bg-slate-200/90 dark:bg-neutral-800 rounded-lg p-0.5 text-[10px] font-bold">
                         <button
                           type="button"
@@ -3590,39 +3578,8 @@ export default function AdminExams() {
                           </button>
                         )}
                       </div>
-
-                      <a
-                        href={evaluatingSub.submissionFileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold shadow-xs transition"
-                        title="Open PDF in new tab"
-                      >
-                        <ExternalLink size={11} />
-                        <span className="hidden sm:inline">Open ↗</span>
-                      </a>
-                      <a
-                        href={evaluatingSub.submissionFileUrl}
-                        download={evaluatingSub.submissionFileName || 'Answer_Sheet.pdf'}
-                        className="p-1 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 hover:bg-slate-50 transition"
-                        title="Download PDF"
-                      >
-                        <Download size={12} />
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Embedded PDF Viewer Iframe with Absolute Containment */}
-                  {mobilePdfHeight !== 'collapsed' && (
-                    <div className="flex-1 w-full min-h-0 bg-slate-900 relative overflow-hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
-                      <iframe
-                        src={`${evaluatingSub.submissionFileUrl}#toolbar=1&navpanes=0`}
-                        title="Student Handwritten Answer Sheet"
-                        className="absolute inset-0 w-full h-full border-0 bg-white"
-                        style={{ width: '100%', height: '100%', border: 'none' }}
-                      />
-                    </div>
-                  )}
+                    }
+                  />
                 </div>
               )}
 
