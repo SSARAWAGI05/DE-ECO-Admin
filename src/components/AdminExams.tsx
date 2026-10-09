@@ -47,7 +47,9 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  Paperclip
+  Paperclip,
+  Maximize2,
+  Minimize2
 } from 'lucide-react'
 
 /* ================= TYPES ================= */
@@ -999,7 +1001,7 @@ export default function AdminExams() {
   const [editingExamId, setEditingExamId] = useState<string | null>(null)
   const [evaluatingSub, setEvaluatingSub] = useState<ExamSubmission | null>(null)
   const [showPdfPreview, setShowPdfPreview] = useState(true)
-  const [mobileGradeView, setMobileGradeView] = useState<'grading' | 'pdf'>('grading')
+  const [mobilePdfHeight, setMobilePdfHeight] = useState<'half' | 'expanded' | 'collapsed'>('half')
 
   // Courses & Students from Supabase
   const [coursesList, setCoursesList] = useState<CourseOption[]>([
@@ -1810,7 +1812,7 @@ export default function AdminExams() {
   const handleOpenEvaluation = (sub: ExamSubmission) => {
     setEvaluatingSub(sub)
     setShowPdfPreview(true)
-    setMobileGradeView('grading')
+    setMobilePdfHeight('half')
 
     const initialMarks: Record<string, number> = {}
     const initialComments: Record<string, string> = {}
@@ -3457,17 +3459,17 @@ export default function AdminExams() {
       {/* ========================================================================= */}
       {evaluatingSub && (
         <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs flex items-center justify-center z-50 p-0 sm:p-2 md:p-3 animate-in fade-in duration-150">
-          <div className={`bg-white dark:bg-neutral-900 sm:rounded-2xl w-full h-full sm:h-[95vh] flex flex-col shadow-2xl border-0 sm:border border-slate-200 dark:border-neutral-800 overflow-hidden transition-all duration-200 ${
+          <div className={`bg-white dark:bg-neutral-900 sm:rounded-2xl w-full h-[100dvh] sm:h-[95vh] max-h-[100dvh] flex flex-col shadow-2xl border-0 sm:border border-slate-200 dark:border-neutral-800 overflow-hidden transition-all duration-200 ${
             evaluatingSub.submissionFileUrl && showPdfPreview
               ? 'max-w-[98vw] xl:max-w-7xl'
               : 'max-w-3xl'
           }`}>
             
             {/* STICKY TOP HEADER */}
-            <div className="shrink-0 p-3.5 sm:p-4 md:px-5 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-neutral-900 z-10 gap-2">
+            <div className="shrink-0 p-3 sm:p-4 md:px-5 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-neutral-900 z-10 gap-2">
               <div className="min-w-0 pr-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-50 truncate">
+                  <h2 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-slate-50 truncate">
                     {evaluatingSub.status === 'graded' ? 'Review Submission' : 'Grade Submission'}
                   </h2>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
@@ -3478,7 +3480,7 @@ export default function AdminExams() {
                     {evaluatingSub.status === 'graded' ? 'GRADED' : 'NEEDS GRADING'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-xs sm:max-w-md md:max-w-xl">
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-xs sm:max-w-md md:max-w-xl">
                   <span className="font-semibold text-slate-800 dark:text-neutral-200">{evaluatingSub.studentName || 'Student'}</span> ({evaluatingSub.studentEmail}) • {evaluatingSub.examTitle}
                 </p>
               </div>
@@ -3520,51 +3522,23 @@ export default function AdminExams() {
               </div>
             </div>
 
-            {/* MOBILE SEGMENTED VIEW SWITCHER (When PDF is attached, for mobile screens < lg) */}
-            {evaluatingSub.submissionFileUrl && showPdfPreview && (
-              <div className="lg:hidden shrink-0 px-3 py-2 bg-slate-50 dark:bg-neutral-850 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between gap-2">
-                <div className="flex p-0.5 rounded-xl bg-slate-200/80 dark:bg-neutral-800 w-full text-xs">
-                  <button
-                    type="button"
-                    onClick={() => setMobileGradeView('pdf')}
-                    className={`flex-1 py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                      mobileGradeView === 'pdf'
-                        ? 'bg-white dark:bg-neutral-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                        : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900'
-                    }`}
-                  >
-                    <FileText size={14} />
-                    <span>View Student PDF</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMobileGradeView('grading')}
-                    className={`flex-1 py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                      mobileGradeView === 'grading'
-                        ? 'bg-white dark:bg-neutral-900 text-slate-900 dark:text-white shadow-xs'
-                        : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900'
-                    }`}
-                  >
-                    <Award size={14} />
-                    <span>Grade Questions ({evaluatingSub.answers.length})</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* MAIN WORKSTATION BODY: SPLIT VIEW ON DESKTOP */}
-            <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+            {/* MAIN WORKSTATION BODY: SPLIT VIEW ON DESKTOP, TOP-BOTTOM ON MOBILE */}
+            <div className="flex-1 flex flex-col lg:flex-row min-h-0 min-w-0 overflow-hidden">
               
-              {/* LEFT COLUMN: BIG PDF VIEWER */}
+              {/* TOP (MOBILE) / LEFT (DESKTOP) PDF VIEWER - OPENED ALREADY */}
               {evaluatingSub.submissionFileUrl && showPdfPreview && (
-                <div className={`lg:w-1/2 xl:w-[52%] flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-neutral-800 bg-slate-100 dark:bg-neutral-950 shrink-0 ${
-                  mobileGradeView === 'grading' ? 'hidden lg:flex' : 'flex'
+                <div className={`w-full lg:w-1/2 xl:w-[52%] flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-neutral-800 bg-slate-100 dark:bg-neutral-950 shrink-0 transition-all duration-200 ${
+                  mobilePdfHeight === 'collapsed'
+                    ? 'h-10 sm:h-11 lg:h-full'
+                    : mobilePdfHeight === 'expanded'
+                    ? 'h-[62vh] sm:h-[65vh] lg:h-full'
+                    : 'h-[36vh] sm:h-[40vh] lg:h-full'
                 }`}>
                   {/* PDF Toolbar */}
-                  <div className="shrink-0 px-3.5 py-2 bg-slate-100 dark:bg-neutral-900 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                  <div className="shrink-0 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-slate-100 dark:bg-neutral-900 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between text-xs gap-1">
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 pr-1">
                       <div className="p-1 rounded bg-indigo-600 text-white shrink-0">
-                        <FileText size={14} />
+                        <FileText size={13} />
                       </div>
                       <span className="font-bold text-slate-800 dark:text-neutral-200 truncate text-[11px] sm:text-xs">
                         {evaluatingSub.submissionFileName || 'Handwritten Answer Sheet.pdf'}
@@ -3576,16 +3550,56 @@ export default function AdminExams() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                      {/* Mobile Size Controls (Already open, optional quick toggle) */}
+                      <div className="flex items-center lg:hidden bg-slate-200/90 dark:bg-neutral-800 rounded-lg p-0.5 text-[10px] font-bold">
+                        <button
+                          type="button"
+                          onClick={() => setMobilePdfHeight(mobilePdfHeight === 'collapsed' ? 'half' : 'collapsed')}
+                          className={`px-1.5 py-0.5 rounded transition cursor-pointer ${
+                            mobilePdfHeight === 'collapsed'
+                              ? 'bg-white dark:bg-neutral-700 text-indigo-600 dark:text-indigo-400 shadow-2xs font-extrabold'
+                              : 'text-slate-600 dark:text-neutral-400'
+                          }`}
+                          title={mobilePdfHeight === 'collapsed' ? 'Restore PDF' : 'Minimize PDF'}
+                        >
+                          {mobilePdfHeight === 'collapsed' ? 'Show PDF' : 'Min'}
+                        </button>
+                        {mobilePdfHeight !== 'collapsed' && (
+                          <button
+                            type="button"
+                            onClick={() => setMobilePdfHeight(mobilePdfHeight === 'expanded' ? 'half' : 'expanded')}
+                            className={`px-1.5 py-0.5 rounded transition cursor-pointer flex items-center gap-0.5 ${
+                              mobilePdfHeight === 'expanded'
+                                ? 'bg-indigo-600 text-white shadow-2xs'
+                                : 'text-slate-600 dark:text-neutral-400'
+                            }`}
+                            title={mobilePdfHeight === 'expanded' ? 'Return to 50/50 split' : 'Expand PDF height to 65%'}
+                          >
+                            {mobilePdfHeight === 'expanded' ? (
+                              <>
+                                <Minimize2 size={10} />
+                                <span>Split</span>
+                              </>
+                            ) : (
+                              <>
+                                <Maximize2 size={10} />
+                                <span>Expand</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+
                       <a
                         href={evaluatingSub.submissionFileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold shadow-xs transition"
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold shadow-xs transition"
                         title="Open PDF in new tab"
                       >
                         <ExternalLink size={11} />
-                        <span>Open ↗</span>
+                        <span className="hidden sm:inline">Open ↗</span>
                       </a>
                       <a
                         href={evaluatingSub.submissionFileUrl}
@@ -3593,62 +3607,37 @@ export default function AdminExams() {
                         className="p-1 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 hover:bg-slate-50 transition"
                         title="Download PDF"
                       >
-                        <Download size={13} />
+                        <Download size={12} />
                       </a>
                     </div>
                   </div>
 
-                  {/* Embedded PDF Viewer Iframe */}
-                  <div className="flex-1 w-full h-full min-h-[400px] lg:min-h-0 bg-slate-900 relative">
-                    <iframe
-                      src={`${evaluatingSub.submissionFileUrl}#toolbar=1&navpanes=0`}
-                      title="Student Handwritten Answer Sheet"
-                      className="w-full h-full border-0 bg-white"
-                    />
-                  </div>
-
-                  {/* Mobile Quick Switch Button at bottom of PDF */}
-                  <div className="lg:hidden p-3 bg-white dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-800 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setMobileGradeView('grading')}
-                      className="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.98]"
-                    >
-                      <Award size={15} />
-                      <span>Switch to Scoring Questions ({evaluatingSub.answers.length}) →</span>
-                    </button>
-                  </div>
+                  {/* Embedded PDF Viewer Iframe with Absolute Containment */}
+                  {mobilePdfHeight !== 'collapsed' && (
+                    <div className="flex-1 w-full min-h-0 bg-slate-900 relative overflow-hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
+                      <iframe
+                        src={`${evaluatingSub.submissionFileUrl}#toolbar=1&navpanes=0`}
+                        title="Student Handwritten Answer Sheet"
+                        className="absolute inset-0 w-full h-full border-0 bg-white"
+                        style={{ width: '100%', height: '100%', border: 'none' }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* RIGHT COLUMN: QUESTIONS & SCORING DESK */}
-              <div className={`flex-1 flex flex-col min-w-0 ${
-                evaluatingSub.submissionFileUrl && showPdfPreview && mobileGradeView === 'pdf'
-                  ? 'hidden lg:flex'
-                  : 'flex'
-              }`}>
+              {/* BOTTOM (MOBILE) / RIGHT (DESKTOP) QUESTIONS & SCORING DESK */}
+              <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
                 
                 {/* Scrollable Questions Body */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 custom-scrollbar pb-28 sm:pb-6">
-                  {/* Mobile Quick Alert if PDF attached */}
-                  {evaluatingSub.submissionFileUrl && (
-                    <div className="lg:hidden p-3 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2 min-w-0 pr-2">
-                        <FileText size={15} className="text-indigo-600 dark:text-indigo-400 shrink-0" />
-                        <span className="font-bold text-indigo-950 dark:text-indigo-200 text-xs truncate">
-                          Handwritten PDF Attached
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setMobileGradeView('pdf')}
-                        className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-xs font-bold cursor-pointer shrink-0"
-                      >
-                        View PDF
-                      </button>
-                    </div>
-                  )}
-
+                <div 
+                  className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-6 space-y-4 sm:space-y-5 custom-scrollbar pb-6"
+                  style={{
+                    WebkitOverflowScrolling: 'touch',
+                    overscrollBehaviorY: 'contain',
+                    touchAction: 'pan-y'
+                  }}
+                >
                   {evaluatingSub.answers.map((ans, idx) => (
                     <div
                       key={ans.questionId || idx}
