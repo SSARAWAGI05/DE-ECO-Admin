@@ -259,27 +259,27 @@ export default function LiveClasses() {
           <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">Manage all your scheduled sessions.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-          <div className="flex gap-4">
-            <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 shadow-sm rounded-xl px-5 py-3 flex flex-col flex-1 sm:flex-none">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Classes on {displayDate}</span>
-              <span className="text-2xl font-black text-indigo-600">{classesOnDate}</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex">
+            <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-xs rounded-xl px-4 py-2 flex items-center gap-2.5">
+              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Classes on {displayDate}:</span>
+              <span className="text-base font-bold text-slate-900 dark:text-white">{classesOnDate}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSettingsOpen(true)}
-              className="flex items-center justify-center gap-2 bg-white/60 dark:bg-[#0B0F19]/50 backdrop-blur-md border-2 border-slate-200/50 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10 transition-colors text-slate-700 dark:text-slate-300 px-5 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm"
+              className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-lg font-semibold text-xs shadow-xs cursor-pointer"
               title="Edit Default Meeting Link"
             >
-              <LinkIcon className="w-5 h-5 text-slate-400" />
+              <LinkIcon className="w-3.5 h-3.5 text-slate-400" />
               Default Link
             </button>
             <button
               onClick={openCreate}
-              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white dark:text-slate-900 px-6 py-4 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-sm hover:shadow-md"
+              className="flex items-center justify-center gap-1.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors text-white dark:text-slate-900 px-3.5 py-2 rounded-lg font-semibold text-xs shadow-xs cursor-pointer"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" />
               New Class
             </button>
           </div>
@@ -350,77 +350,77 @@ export default function LiveClasses() {
             }
 
             return (
-              <div key={c.id} className="group flex flex-col bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-slate-200/50 dark:border-white/10 overflow-hidden hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_30px_rgba(0,0,0,0.4)] transition-all duration-300 transform hover:-translate-y-1">
+              <div key={c.id} className="group flex flex-col bg-white dark:bg-[#0f172a] rounded-xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
                 {/* Accent Bar */}
-                <div className={`h-1.5 w-full ${accentBar}`} />
+                <div className={`h-1 w-full ${accentBar}`} />
                 
                 <div className="p-5 flex-1 flex flex-col">
                   {/* Status Badge */}
-                  <div className="flex justify-between items-start mb-4">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusColor}`}>
+                  <div className="flex justify-between items-start mb-3">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${statusColor}`}>
                       {statusText}
                     </span>
                   </div>
 
                   {/* Class Info */}
-                  <h3 className="text-xl font-black text-slate-900 dark:text-slate-50 mb-1 line-clamp-1" title={c.title}>{c.title}</h3>
-                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-5 flex items-center gap-1.5">
-                    <Users size={16} className="text-slate-400" />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1 line-clamp-1" title={c.title}>{c.title}</h3>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1.5">
+                    <Users size={14} className="text-slate-400" />
                     {c.instructor_name}
                   </p>
 
                   {/* Student Info */}
-                  <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 rounded-xl mb-5">
-                    <div className="w-10 h-10 rounded-full bg-white/60 dark:bg-white/10 border border-slate-200/50 dark:border-white/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold shrink-0">
+                  <div className="flex items-center gap-3 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg mb-4">
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 font-bold text-xs shrink-0">
                       {getUserName(c.user_id).charAt(0).toUpperCase() || 'S'}
                     </div>
                     <div className="truncate">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Student</p>
-                      <p className="text-sm font-bold text-slate-900 dark:text-slate-50 truncate">{getUserName(c.user_id)}</p>
+                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Student</p>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{getUserName(c.user_id)}</p>
                     </div>
                   </div>
 
                   {/* Date/Time Chips */}
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
-                      <Calendar size={14} className="text-slate-500 dark:text-slate-400" />
+                  <div className="flex flex-wrap gap-1.5 mt-auto text-xs">
+                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded text-[11px] font-medium border border-slate-200 dark:border-slate-700">
+                      <Calendar size={12} className="text-slate-400" />
                       {start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                     </div>
-                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
-                      <Clock size={14} className="text-slate-500 dark:text-slate-400" />
+                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded text-[11px] font-medium border border-slate-200 dark:border-slate-700">
+                      <Clock size={12} className="text-slate-400" />
                       {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
-                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
+                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded text-[11px] font-medium border border-slate-200 dark:border-slate-700">
                       {c.duration_minutes}m
                     </div>
                   </div>
                 </div>
 
                 {/* Footer Actions */}
-                <div className="border-t border-slate-100 dark:border-white/10 p-3 bg-slate-50 dark:bg-transparent flex items-center justify-end gap-2 shrink-0">
+                <div className="border-t border-slate-100 dark:border-slate-800/80 p-3 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-end gap-2 shrink-0">
                   {c.meeting_link && (
                     <a
                       href={c.meeting_link}
                       target="_blank"
                       rel="noreferrer"
-                      className="mr-auto flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:bg-indigo-500/10"
+                      className="mr-auto flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors px-2.5 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
                     >
-                      <LinkIcon size={16} /> Join Class
+                      <LinkIcon size={13} /> Join Class
                     </a>
                   )}
                   <button
                     onClick={() => openEdit(c)}
-                    className="p-2.5 text-slate-400 hover:text-slate-900 dark:text-slate-50 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                     title="Edit Class"
                   >
-                    <Edit2 size={18} />
+                    <Edit2 size={15} />
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    className="p-2.5 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
                     title="Delete Class"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>
@@ -431,14 +431,14 @@ export default function LiveClasses() {
 
       {/* SIDE PANEL */}
       {panelOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm z-50 flex justify-end">
-          <div className="w-full max-w-lg bg-white dark:bg-neutral-900 h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-neutral-800 dark:border-neutral-700 animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0 bg-white dark:bg-neutral-900">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-slate-50">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs z-50 flex justify-end animate-in fade-in duration-150">
+          <div className="w-full max-w-lg bg-white dark:bg-[#0f172a] h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-800 animate-in slide-in-from-right duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800 shrink-0 bg-white dark:bg-[#0f172a]">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingId ? 'Edit Class' : 'Schedule Class'}
               </h2>
-              <button onClick={() => setPanelOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 rounded-full transition-colors">
-                <X size={24} />
+              <button onClick={() => setPanelOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer">
+                <X size={20} />
               </button>
             </div>
 
@@ -652,23 +652,23 @@ export default function LiveClasses() {
 
       {/* SETTINGS MODAL */}
       {settingsOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex items-center justify-between">
-              <h3 className="font-bold text-slate-900 dark:text-slate-50 text-xl">Default Meeting Link</h3>
-              <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-slate-900 dark:text-slate-50 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 p-1.5 rounded-full transition-colors">
-                <X size={20} />
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-sm bg-white dark:bg-[#0f172a] rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-modal">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Default Meeting Link</h3>
+              <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <X size={18} />
               </button>
             </div>
-            <div className="p-6">
-              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block mb-2">Meeting Link URL</label>
+            <div className="p-5">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider block mb-1.5">Meeting Link URL</label>
               <input
                 type="url"
-                className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3.5 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50 text-indigo-600"
+                className="w-full border border-slate-200 dark:border-slate-700 p-2.5 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-white outline-none transition-colors text-xs font-medium bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white"
                 value={defaultLink}
                 onChange={(e) => setDefaultLink(e.target.value)}
               />
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-3 font-medium">This link will automatically fill the Meeting Link field when scheduling a new class.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-normal">This link will automatically fill the Meeting Link field when scheduling a new class.</p>
               
               <button
                 onClick={() => {
@@ -678,7 +678,7 @@ export default function LiveClasses() {
                   }
                   setSettingsOpen(false)
                 }}
-                className="w-full mt-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
+                className="w-full mt-5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-2.5 rounded-lg transition-colors text-xs shadow-xs cursor-pointer"
               >
                 Save Default
               </button>

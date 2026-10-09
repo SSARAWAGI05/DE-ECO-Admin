@@ -1,147 +1,311 @@
-import { Zap, Sparkles, ChevronRight, LayoutDashboard, Users, Video, DollarSign, BarChart, Award } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import {
+  Users, Video, Award, DollarSign, Receipt,
+  BarChart, FileText, PlayCircle, Bell, ArrowRight,
+  TrendingUp, Calendar, CheckCircle2
+} from 'lucide-react'
+import { supabase } from '../lib/supabaseClient'
 
 interface DashboardProps {
   setActiveSection?: (section: any) => void
 }
 
 export default function Dashboard({ setActiveSection }: DashboardProps) {
+  const [stats, setStats] = useState({
+    studentsCount: 0,
+    classesCount: 0,
+    examsCount: 0,
+    invoicesCount: 0,
+    loading: true
+  })
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const [
+          { count: studentsCount },
+          { count: classesCount },
+          { count: examsCount },
+          { count: invoicesCount }
+        ] = await Promise.all([
+          supabase.from('profiles').select('*', { count: 'exact', head: true }),
+          supabase.from('live_classes').select('*', { count: 'exact', head: true }),
+          supabase.from('exams').select('*', { count: 'exact', head: true }),
+          supabase.from('invoices').select('*', { count: 'exact', head: true })
+        ])
+
+        setStats({
+          studentsCount: studentsCount || 0,
+          classesCount: classesCount || 0,
+          examsCount: examsCount || 0,
+          invoicesCount: invoicesCount || 0,
+          loading: false
+        })
+      } catch (err) {
+        console.error('Error loading dashboard stats:', err)
+        setStats(prev => ({ ...prev, loading: false }))
+      }
+    }
+
+    loadStats()
+  }, [])
+
+  const modules = [
+    {
+      id: 'exams',
+      title: 'Exams & Grading',
+      description: 'Create tests, assign to students, evaluate descriptive answers, and download report cards.',
+      icon: Award,
+      badge: 'Academic',
+      count: stats.examsCount > 0 ? `${stats.examsCount} Exams` : 'Manage Tests'
+    },
+    {
+      id: 'enrollments',
+      title: 'Student Enrollments',
+      description: 'Manage registered students, course allocations, hourly rates, and active statuses.',
+      icon: Users,
+      badge: 'Students',
+      count: stats.studentsCount > 0 ? `${stats.studentsCount} Students` : 'Directory'
+    },
+    {
+      id: 'classes',
+      title: 'Live Classes',
+      description: 'Schedule upcoming 1-on-1 and group live interactive economics sessions.',
+      icon: Video,
+      badge: 'Schedule',
+      count: stats.classesCount > 0 ? `${stats.classesCount} Classes` : 'Timetable'
+    },
+    {
+      id: 'billing',
+      title: 'Student Billing',
+      description: 'View student hourly rates, compute billable hours, and generate fee statements.',
+      icon: DollarSign,
+      badge: 'Finance',
+      count: 'Billing Console'
+    },
+    {
+      id: 'invoices',
+      title: 'Invoices',
+      description: 'Issue verified PDF invoices, track payment receipts, and monitor outstanding dues.',
+      icon: Receipt,
+      badge: 'Accounts',
+      count: stats.invoicesCount > 0 ? `${stats.invoicesCount} Invoices` : 'Records'
+    },
+    {
+      id: 'earnings_analytics',
+      title: 'Earnings & Analytics',
+      description: 'Inspect monthly revenue performance, class hour trends, and growth indicators.',
+      icon: BarChart,
+      badge: 'Analytics',
+      count: 'Performance'
+    },
+    {
+      id: 'notes',
+      title: 'Class Notes & Curriculum',
+      description: 'Upload study modules, reading lists, and PDF reference sheets for enrolled batches.',
+      icon: FileText,
+      badge: 'Materials',
+      count: 'Library'
+    },
+    {
+      id: 'recordings',
+      title: 'Class Recordings',
+      description: 'Archive lecture video recordings and provide playback access to students.',
+      icon: PlayCircle,
+      badge: 'Media',
+      count: 'Video Archive'
+    },
+    {
+      id: 'announcements',
+      title: 'Announcements',
+      description: 'Broadcast batch notices, schedule adjustments, and urgent student bulletins.',
+      icon: Bell,
+      badge: 'Updates',
+      count: 'Bulletin'
+    }
+  ]
+
   return (
-    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden perspective-1000">
-      
-      {/* Custom Animations & Styles */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(2deg); }
-        }
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-30px) scale(1.05); }
-        }
-        @keyframes blob {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        @keyframes gradient-x {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
-        .animate-blob { animation: blob 10s infinite alternate; }
-        .animate-gradient-x { background-size: 200% 200%; animation: gradient-x 15s ease infinite; }
-        
-        .stars {
-          background-image: 
-            radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
-          background-repeat: repeat;
-          background-size: 200px 200px;
-          opacity: 0.3;
-        }
-      `}</style>
+    <div className="max-w-7xl mx-auto space-y-8 pb-12">
+      {/* 1. CLEAN EXECUTIVE HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Console Operational
+            </span>
+            <span className="text-slate-400 dark:text-slate-600 text-xs">•</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">DE-ECO Administration</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Welcome, Rishika
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Monitor students, conduct live classes, author exams, and manage tuition billing.
+          </p>
+        </div>
 
-      {/* Deep Cosmic Background for Dark Mode */}
-      <div className="absolute inset-0 z-0 hidden dark:block stars animate-float-slow opacity-20"></div>
+        {/* Quick Action Buttons */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveSection && setActiveSection('exams')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition hover:opacity-90 shadow-2xs cursor-pointer"
+          >
+            <Award size={14} />
+            <span>Create Exam</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection && setActiveSection('classes')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white text-xs font-semibold transition cursor-pointer"
+          >
+            <Video size={14} />
+            <span>Schedule Class</span>
+          </button>
+        </div>
+      </div>
 
-      {/* Massive Glowing Orbs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/30 dark:bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-blob"></div>
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-sky-400/30 dark:bg-sky-500/20 rounded-full blur-[100px] pointer-events-none mix-blend-screen animate-blob" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[700px] h-[700px] bg-rose-500/20 dark:bg-rose-600/10 rounded-full blur-[150px] pointer-events-none animate-blob" style={{ animationDelay: '4s' }}></div>
-
-      {/* Main Glassmorphic Card Container */}
-      <div className="relative z-10 w-full max-w-4xl group">
-        
-        {/* Hover Border Glow */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-sky-400 to-rose-500 rounded-[3rem] blur-xl opacity-30 group-hover:opacity-70 transition duration-1000 group-hover:duration-200"></div>
-
-        <div className="relative flex flex-col items-center text-center bg-white/60 dark:bg-[#020617]/60 backdrop-blur-3xl px-8 py-16 sm:p-16 lg:p-24 rounded-[3rem] border border-white/80 dark:border-white/10 shadow-2xl">
-          
-          {/* Logo Section */}
-          <div className="relative mb-12">
-            {/* Pulsing Aura */}
-            <div className="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/30 blur-3xl rounded-full scale-150 animate-pulse duration-1000"></div>
-            
-            <div className="relative bg-white dark:bg-neutral-900 p-6 rounded-full border border-slate-200 dark:border-white/10 shadow-2xl shadow-indigo-500/20 dark:shadow-[#0ea5e9]/20 animate-float">
-              <img 
-                src="/logo.png" 
-                alt="DEECO Logo" 
-                className="w-40 h-40 lg:w-56 lg:h-56 object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.5)] dark:drop-shadow-[0_0_25px_rgba(255,255,255,0.2)]"
-              />
+      {/* 2. STATS OVERVIEW CARDS */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Metric 1 */}
+        <div 
+          onClick={() => setActiveSection && setActiveSection('enrollments')}
+          className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Enrolled Students</span>
+            <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition">
+              <Users size={16} />
             </div>
-            
-            {/* Sparkles Decoration */}
-            <Sparkles className="absolute -top-4 -right-4 w-10 h-10 text-amber-400 animate-pulse drop-shadow-lg" />
-            <Sparkles className="absolute -bottom-2 -left-6 w-8 h-8 text-sky-400 animate-pulse delay-300 drop-shadow-lg" />
           </div>
-
-          {/* Typography */}
-          <div className="space-y-6 max-w-3xl">
-            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 dark:from-indigo-400 dark:via-sky-400 dark:to-rose-400 animate-gradient-x drop-shadow-sm pb-2">
-              Welcome to DEECO
-            </h1>
+          <div className="mt-3">
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {stats.loading ? '...' : stats.studentsCount}
+            </p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1">
+              <span>View full directory</span>
+              <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+            </p>
           </div>
+        </div>
 
-          {/* Quick Action Navigation */}
-          <div className="mt-14 w-full flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 flex-wrap">
-            
-            {setActiveSection && (
-              <>
-                <button
-                  onClick={() => setActiveSection('enrollments')}
-                  className="group relative flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-white transition-all duration-300 ease-in-out bg-indigo-600 dark:bg-indigo-500 rounded-full hover:bg-indigo-700 dark:hover:bg-indigo-400 hover:scale-105 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] overflow-hidden"
-                >
-                  <div className="absolute inset-0 w-full h-full -ml-10 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-                  <Users className="w-6 h-6 text-indigo-200 dark:text-indigo-100 fill-current" />
-                  <span>Manage Enrollments</span>
-                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
-
-                <button
-                  onClick={() => setActiveSection('classes')}
-                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
-                >
-                  <Video className="w-6 h-6 text-slate-400 dark:text-slate-300" />
-                  <span>Live Classes</span>
-                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
-
-                <button
-                  onClick={() => setActiveSection('billing')}
-                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
-                >
-                  <DollarSign className="w-6 h-6 text-slate-400 dark:text-slate-300" />
-                  <span>Student Billing</span>
-                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
-
-                <button
-                  onClick={() => setActiveSection('earnings_analytics')}
-                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
-                >
-                  <BarChart className="w-6 h-6 text-slate-400 dark:text-slate-300" />
-                  <span>Earnings</span>
-                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
-
-                <button
-                  onClick={() => setActiveSection('exams')}
-                  className="group flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-5 w-full sm:w-auto font-bold text-lg text-slate-700 dark:text-white transition-all duration-300 ease-in-out bg-white dark:bg-neutral-900/5 border border-slate-200 dark:border-white/10 rounded-full hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 hover:shadow-xl overflow-hidden backdrop-blur-md"
-                >
-                  <Award className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />
-                  <span>Exams & Assessments</span>
-                  <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
-              </>
-            )}
-
+        {/* Metric 2 */}
+        <div 
+          onClick={() => setActiveSection && setActiveSection('classes')}
+          className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Live Classes</span>
+            <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition">
+              <Video size={16} />
+            </div>
           </div>
+          <div className="mt-3">
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {stats.loading ? '...' : stats.classesCount}
+            </p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1">
+              <span>Inspect timetable</span>
+              <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+            </p>
+          </div>
+        </div>
 
+        {/* Metric 3 */}
+        <div 
+          onClick={() => setActiveSection && setActiveSection('exams')}
+          className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Exams & Tests</span>
+            <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition">
+              <Award size={16} />
+            </div>
+          </div>
+          <div className="mt-3">
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {stats.loading ? '...' : stats.examsCount}
+            </p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1">
+              <span>Author & grade papers</span>
+              <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+            </p>
+          </div>
+        </div>
+
+        {/* Metric 4 */}
+        <div 
+          onClick={() => setActiveSection && setActiveSection('invoices')}
+          className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Invoices</span>
+            <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition">
+              <Receipt size={16} />
+            </div>
+          </div>
+          <div className="mt-3">
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {stats.loading ? '...' : stats.invoicesCount}
+            </p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1">
+              <span>Review accounts</span>
+              <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. CORE MODULES GRID */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Administrative Modules
+          </h2>
+          <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">9 Portals</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {modules.map((mod) => {
+            const ModIcon = mod.icon
+            return (
+              <div
+                key={mod.id}
+                onClick={() => setActiveSection && setActiveSection(mod.id)}
+                className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer group flex flex-col justify-between shadow-2xs hover:shadow-xs"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition">
+                      <ModIcon size={18} />
+                    </div>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50">
+                      {mod.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    {mod.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed line-clamp-2">
+                    {mod.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    {mod.count}
+                  </span>
+                  <span className="text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white flex items-center gap-1 font-semibold transition">
+                    <span>Open</span>
+                    <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

@@ -699,16 +699,16 @@ export default function StudentBilling() {
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       
       {/* HEADER & TIME PERIOD CONTROL */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 pb-4 border-b border-slate-200/50 dark:border-white/10">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Student Billing</h1>
-          <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Auto-calculate and settle invoice amounts for enrolled students.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Student Billing</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-normal text-sm mt-1">Auto-calculate and settle invoice amounts for enrolled students.</p>
         </div>
 
-        <div className="flex items-center bg-white/60 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-xl p-1.5 shadow-sm hover:shadow-md transition-all">
-          <CalendarIcon size={18} className="text-indigo-500 dark:text-indigo-400 ml-3 mr-2" />
+        <div className="flex items-center bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 shadow-xs">
+          <CalendarIcon size={16} className="text-slate-400 mr-2" />
           <select
-            className="p-2.5 border-none bg-transparent focus:ring-0 font-bold text-slate-700 dark:text-white cursor-pointer outline-none"
+            className="border-none bg-transparent focus:ring-0 font-medium text-xs text-slate-700 dark:text-slate-200 cursor-pointer outline-none"
             value={period}
             onChange={(e) => setPeriod(e.target.value as FilterPeriod)}
           >
@@ -722,42 +722,41 @@ export default function StudentBilling() {
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 shrink-0">
         {/* Active Students Card */}
-        <div className="bg-white/40 dark:bg-[#020617]/40 backdrop-blur-3xl p-6 rounded-[24px] border border-white/60 dark:border-[#0ea5e9]/30 flex items-center gap-5 shadow-xl shadow-blue-500/10 dark:shadow-[#0ea5e9]/10 hover:-translate-y-1 hover:dark:shadow-[#0ea5e9]/20 transition-all duration-300 group">
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-[#0ea5e9] dark:to-[#0284c7] p-4 rounded-[18px] text-white shadow-[0_0_15px_rgba(14,165,233,0.4)] group-hover:shadow-[0_0_25px_rgba(14,165,233,0.6)] transition-all">
-            <Users size={28} strokeWidth={2.5} />
+        <div className="bg-white dark:bg-[#0f172a] p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 shadow-xs">
+          <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-900/40 shrink-0">
+            <Users size={22} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Active Students</p>
-            <p className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">{summaryStats.activeStudents}</p>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Active Students</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
         {/* Scheduled Hours Card */}
-        <div className="bg-white/40 dark:bg-[#020617]/40 backdrop-blur-3xl p-6 rounded-[24px] border border-white/60 dark:border-[#a855f7]/30 flex items-center gap-5 shadow-xl shadow-purple-500/10 dark:shadow-[#a855f7]/10 hover:-translate-y-1 hover:dark:shadow-[#a855f7]/20 transition-all duration-300 group">
-          <div className="bg-gradient-to-br from-purple-500 to-fuchsia-600 dark:from-[#a855f7] dark:to-[#9333ea] p-4 rounded-[18px] text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] group-hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all">
-            <TrendingUp size={28} strokeWidth={2.5} />
+        <div className="bg-white dark:bg-[#0f172a] p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 shadow-xs">
+          <div className="w-12 h-12 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/40 shrink-0">
+            <TrendingUp size={22} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Scheduled Hours</p>
-            <p className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-lg lg:text-xl font-bold text-slate-400">hrs</span></p>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Scheduled Hours</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-sm font-normal text-slate-500">hrs</span></p>
           </div>
         </div>
 
         {/* Total Outstanding Card */}
-        <div className="bg-white/40 dark:bg-[#020617]/40 backdrop-blur-3xl p-6 rounded-[24px] border border-white/60 dark:border-[#f43f5e]/30 flex items-start gap-5 shadow-xl shadow-rose-500/10 dark:shadow-[#f43f5e]/10 hover:-translate-y-1 hover:dark:shadow-[#f43f5e]/20 transition-all duration-300 group relative overflow-hidden">
-          <div className="absolute right-0 top-0 w-32 h-32 bg-rose-500/20 dark:bg-[#f43f5e]/20 blur-[50px] rounded-full pointer-events-none"></div>
-          <div className="bg-gradient-to-br from-rose-500 to-pink-600 dark:from-[#f43f5e] dark:to-[#e11d48] p-4 rounded-[18px] text-white shadow-[0_0_15px_rgba(244,63,94,0.4)] group-hover:shadow-[0_0_25px_rgba(244,63,94,0.6)] shrink-0 z-10 transition-all">
-            <DollarSign size={28} strokeWidth={2.5} />
+        <div className="bg-white dark:bg-[#0f172a] p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 shadow-xs">
+          <div className="w-12 h-12 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-900/40 shrink-0">
+            <DollarSign size={22} />
           </div>
-          <div className="flex-1 relative z-10">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-1.5">Total Outstanding</p>
-            <div className="space-y-1">
+          <div>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Outstanding</p>
+            <div className="space-y-0.5">
               {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
-                <p className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">₹ 0.00</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">₹ 0.00</p>
               ) : (
                 Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
-                  <p key={currency} className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline whitespace-nowrap">
-                    <span className="text-slate-400 dark:text-slate-500 mr-2 text-lg font-bold">{currency}</span>
+                  <p key={currency} className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-baseline">
+                    <span className="text-slate-500 dark:text-slate-400 mr-1.5 text-xs font-medium">{currency}</span>
                     {getCurrencySymbol(currency)} {amount.toFixed(2)}
                   </p>
                 ))
@@ -768,17 +767,17 @@ export default function StudentBilling() {
       </div>
 
       {/* CONTROL PANEL: Search, Filter, Sort */}
-      <div className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-2xl p-5 rounded-t-2xl border border-b-0 border-slate-200/50 dark:border-white/10 flex flex-col md:flex-row gap-4 items-center justify-between shrink-0">
+      <div className="bg-white dark:bg-[#0f172a] rounded-t-xl border border-b-0 border-slate-200 dark:border-slate-800 p-4 flex flex-col md:flex-row gap-4 items-center justify-between shrink-0 shadow-xs">
         
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-            <Search size={18} className="text-slate-400" />
+            <Search size={16} className="text-slate-400" />
           </div>
           <input
             type="text"
             placeholder="Search by name or email..."
-            className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm font-bold outline-none transition-all shadow-inner text-slate-900 dark:text-white placeholder:text-slate-400"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-white text-xs font-medium outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -786,8 +785,7 @@ export default function StudentBilling() {
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           {/* Active Only Toggle */}
-          {/* Active Toggle */}
-          <label className="flex items-center gap-3 cursor-pointer group">
+          <label className="flex items-center gap-2.5 cursor-pointer">
             <div className="relative">
               <input 
                 type="checkbox" 
@@ -795,17 +793,17 @@ export default function StudentBilling() {
                 checked={showActiveOnly}
                 onChange={() => setShowActiveOnly(!showActiveOnly)}
               />
-              <div className={`block w-12 h-6 rounded-full transition-colors ${showActiveOnly ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-700'}`}></div>
-              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showActiveOnly ? 'translate-x-6' : 'translate-x-0'}`}></div>
+              <div className={`block w-9 h-5 rounded-full transition-colors ${showActiveOnly ? 'bg-slate-900 dark:bg-white' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+              <div className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full transition-transform ${showActiveOnly ? 'translate-x-4 bg-white dark:bg-slate-900' : 'bg-white'}`}></div>
             </div>
-            <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Active Only</span>
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Active Only</span>
           </label>
 
           {/* Sort Dropdown */}
-          <div className="flex items-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 transition-all shadow-sm hover:shadow-md">
-            <ArrowUpDown size={16} className="text-indigo-500 dark:text-indigo-400 mr-2" />
+          <div className="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white transition-all">
+            <ArrowUpDown size={14} className="text-slate-400 mr-2" />
             <select
-              className="bg-transparent border-none focus:ring-0 text-sm font-bold text-slate-700 dark:text-white cursor-pointer p-0 pr-6 outline-none"
+              className="bg-transparent border-none focus:ring-0 text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer p-0 pr-4 outline-none"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
             >
@@ -819,171 +817,165 @@ export default function StudentBilling() {
 
       {/* TABLE DATA */}
       <div className="flex-1 flex flex-col min-h-[400px]">
-        <div className="overflow-auto flex-1 relative custom-scrollbar px-1">
-          <table className="w-full text-left border-collapse md:border-separate md:border-spacing-y-4 block md:table">
-            <thead className="hidden md:table-header-group sticky top-0 z-10">
-              <tr>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Student</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Rates Applied</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Activity</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Period</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Outstanding</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="block md:table-row-group">
-              {processedProfiles.length === 0 ? (
+        <div className="overflow-auto flex-1 relative custom-scrollbar">
+          <div className="bg-white dark:bg-[#0f172a] rounded-b-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <td colSpan={6} className="p-16 text-center">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/50 dark:bg-slate-800/50 mb-6 border border-slate-200/50 dark:border-white/10 shadow-inner">
-                      <Search className="text-slate-400 w-10 h-10" />
-                    </div>
-                    <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">No students found</p>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">Try adjusting your search or filters.</p>
-                  </td>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Student</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Rates Applied</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Activity</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Period</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Outstanding</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider text-right">Action</th>
                 </tr>
-              ) : (
-                processedProfiles.map((profile) => {
-                  const stats = profile.stats
-                  const currencySymbol = getCurrencySymbol(profile.billing_currency || 'INR')
-                  
-                  // A student is only "Billing Active" if they have > 0 classes AND they are officially enrolled.
-                  const hasClasses = stats.classCount > 0
-                  const isOfficiallyEnrolled = stats.isEnrolled
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                {processedProfiles.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-16 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 mb-4 text-slate-400">
+                        <Search size={20} />
+                      </div>
+                      <p className="text-lg font-bold text-slate-900 dark:text-white">No students found</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Try adjusting your search or filters.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  processedProfiles.map((profile) => {
+                    const stats = profile.stats
+                    const currencySymbol = getCurrencySymbol(profile.billing_currency || 'INR')
+                    
+                    const hasClasses = stats.classCount > 0
+                    const isOfficiallyEnrolled = stats.isEnrolled
 
-                  return (
-                    <tr key={profile.id} className="block md:table-row bg-white/60 dark:bg-[#020617]/40 backdrop-blur-2xl hover:bg-white/80 dark:hover:bg-white/[0.08] transition-all duration-300 md:rounded-2xl shadow-sm hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] md:shadow-none border border-slate-200/50 dark:border-white/10 md:border-transparent mb-4 md:mb-0 relative group">
-                      {/* Name */}
-                      <td className="block md:table-cell px-6 py-5 md:first:rounded-l-2xl whitespace-normal md:whitespace-nowrap flex justify-between items-start md:items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-white/10 md:border-l">
-                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Student</span>
-                        <div className="text-right md:text-left flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg hidden sm:flex">
-                            {profile.first_name?.[0] || '?'}
-                          </div>
-                          <div>
-                            <div className="font-bold text-slate-900 dark:text-white text-base">
-                              {profile.first_name} {profile.last_name}
+                    return (
+                      <tr key={profile.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                        {/* Name */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold text-xs shrink-0">
+                              {profile.first_name?.[0] || '?'}
                             </div>
-                            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{profile.email}</div>
+                            <div>
+                              <div className="font-bold text-slate-900 dark:text-white text-sm">
+                                {profile.first_name} {profile.last_name}
+                              </div>
+                              <div className="text-xs font-normal text-slate-500 dark:text-slate-400">{profile.email}</div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Rates Applied */}
-                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
-                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Rates Applied</span>
-                        <div className="flex flex-wrap gap-1.5 justify-end md:justify-start">
-                          {stats.activeRates.length > 0 ? (
-                            stats.activeRates.map((rate, i) => (
-                              <span key={i} className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-200 dark:border-white/5 text-xs">
-                                {currencySymbol} {rate}/hr
+                        {/* Rates Applied */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-wrap gap-1">
+                            {stats.activeRates.length > 0 ? (
+                              stats.activeRates.map((rate, i) => (
+                                <span key={i} className="font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-xs">
+                                  {currencySymbol} {rate}/hr
+                                </span>
+                              ))
+                            ) : (
+                              <span className="font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-xs">
+                                {currencySymbol} {profile.hourly_rate || 0}/hr
                               </span>
-                            ))
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Activity Status */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {!isOfficiallyEnrolled ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40">
+                              Unenrolled
+                            </span>
+                          ) : hasClasses ? (
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                              {stats.classCount} Classes
+                            </span>
                           ) : (
-                            <span className="font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/5 text-xs">
-                              {currencySymbol} {profile.hourly_rate || 0}/hr (Base)
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                              No Classes
                             </span>
                           )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Activity Status */}
-                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
-                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Activity</span>
-                        {!isOfficiallyEnrolled ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-[11px] uppercase tracking-[0.15em] border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            Unenrolled
-                          </span>
-                        ) : hasClasses ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] uppercase tracking-wider border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-[pulse_1.5s_ease-in-out_infinite] shadow-[0_0_5px_rgba(16,185,129,0.8)]"></div>
-                            {stats.classCount} Classes
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-500/10 text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-wider border border-slate-500/20">
-                            No Classes
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Period Hours & Due */}
-                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-start border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
-                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase mt-1">Period</span>
-                        <div className="text-right md:text-left">
-                        <div className={`inline-flex items-center gap-1.5 font-bold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400'}`}>
-                          <Clock size={16} className={(hasClasses && isOfficiallyEnrolled) ? "text-slate-600 dark:text-slate-400" : "text-slate-300"} />
-                          {stats.totalHours.toFixed(1)} <span className="text-sm font-medium text-slate-500 dark:text-slate-400">hrs</span>
-                        </div>
+                        {/* Period Hours & Due */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className={`inline-flex items-center gap-1 text-sm font-semibold ${(hasClasses && isOfficiallyEnrolled) ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400'}`}>
+                            <Clock size={14} className="text-slate-400" />
+                            {stats.totalHours.toFixed(1)} <span className="text-xs text-slate-500 font-normal">hrs</span>
+                          </div>
                           {hasClasses && (
-                            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1.5">
-                              Billed This Period: <span className="text-slate-700 dark:text-slate-300">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                              Period: <span className="font-semibold text-slate-700 dark:text-slate-300">{currencySymbol}{stats.periodAmountDue.toFixed(2)}</span>
                             </div>
                           )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Total Amount Due */}
-                      <td className="block md:table-cell px-6 py-5 whitespace-normal md:whitespace-nowrap flex justify-between items-center border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-y md:group-hover:border-white/10">
-                        <span className="md:hidden font-bold text-xs text-slate-500 dark:text-slate-400 uppercase">Outstanding</span>
-                        <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center font-bold text-lg ${stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : stats.totalDue < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
-                            {currencySymbol} {stats.totalDue.toFixed(2)}
-                          </span>
-                          <button 
-                            onClick={() => setBreakdownProfile(profile)}
-                            className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-slate-50 hover:bg-indigo-50 dark:bg-slate-800/50 dark:hover:bg-indigo-500/10 p-1.5 rounded-full"
-                            title="View Calculation Breakdown"
-                          >
-                            <AlertCircle size={16} />
-                          </button>
-                        </div>
-                      </td>
-                      
-                      {/* Actions */}
-                      <td className="block md:table-cell px-6 py-5 md:last:rounded-r-2xl whitespace-normal md:whitespace-nowrap text-right border-y md:border-y border-slate-200/50 dark:border-white/5 md:border-transparent md:group-hover:border-white/10 md:border-r">
-                        <div className="flex justify-end gap-2">
-                           <button 
-                            onClick={() => handleViewHistory(profile)}
-                            className="bg-white/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2 px-4 rounded-lg transition-all duration-300 shadow-sm text-sm border border-slate-200/50 dark:border-white/5"
-                          >
-                            History
-                          </button>
-                           <button 
-                             onClick={() => setSettleProfile(profile)}
-                             disabled={stats.totalDue <= 0}
-                             className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 text-sm transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
-                           >
-                             Settle Due
-                           </button>
-                           <button 
-                             onClick={() => setChargeProfile(profile)}
-                             className="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-400 hover:bg-rose-100 px-4 py-2 rounded-lg font-bold text-xs transition-colors"
-                           >
-                             Add Due Amount
-                           </button>
-                         </div>
-                      </td>
-                    </tr>
-                  )
-                })
-              )}
-            </tbody>
-          </table>
+                        {/* Total Amount Due */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center font-bold text-sm ${stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : stats.totalDue < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                              {currencySymbol} {stats.totalDue.toFixed(2)}
+                            </span>
+                            <button 
+                              onClick={() => setBreakdownProfile(profile)}
+                              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                              title="View Calculation Breakdown"
+                            >
+                              <AlertCircle size={14} />
+                            </button>
+                          </div>
+                        </td>
+                        
+                        {/* Actions */}
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className="flex justify-end gap-1.5">
+                            <button 
+                              onClick={() => handleViewHistory(profile)}
+                              className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold py-1.5 px-3 rounded-lg transition-colors text-xs cursor-pointer"
+                            >
+                              History
+                            </button>
+                            <button 
+                              onClick={() => setSettleProfile(profile)}
+                              disabled={stats.totalDue <= 0}
+                              className="bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-1.5 px-3 rounded-lg transition-colors text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              Settle Due
+                            </button>
+                            <button 
+                              onClick={() => setChargeProfile(profile)}
+                              className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-semibold py-1.5 px-3 rounded-lg text-xs transition-colors cursor-pointer"
+                            >
+                              Add Due
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       {/* SETTLE MODAL */}
       {settleProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">Settle Balance</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
-              Record a payment from <span className="font-bold text-slate-800 dark:text-slate-200">{settleProfile.first_name}</span>.
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-sm shadow-xl border border-slate-200 dark:border-slate-800 p-6 animate-modal max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Settle Balance</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">
+              Record a payment from <span className="font-semibold text-slate-800 dark:text-slate-200">{settleProfile.first_name}</span>.
             </p>
 
             <form onSubmit={handleSettleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Amount Paid ({getCurrencySymbol(settleProfile.billing_currency)})</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Amount Paid ({getCurrencySymbol(settleProfile.billing_currency)})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -992,24 +984,24 @@ export default function StudentBilling() {
                   placeholder={`e.g. ${settleProfile.stats.totalDue.toFixed(2)}`}
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
-                  className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white font-medium shadow-inner transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-900 dark:focus:ring-white outline-none text-slate-900 dark:text-white text-sm font-semibold transition-all"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-2.5 pt-2">
                 <button
                   type="button"
                   onClick={() => {
                     setSettleProfile(null)
                     setSettleAmount('')
                   }}
-                  className="flex-1 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3 rounded-lg transition-colors"
+                  className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-2 rounded-lg text-xs transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSettling}
-                  className="flex-1 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold py-3 rounded-lg transition-colors disabled:opacity-70"
+                  className="flex-1 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-2 rounded-lg text-xs transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {isSettling ? 'Saving...' : 'Confirm'}
                 </button>
@@ -1021,16 +1013,16 @@ export default function StudentBilling() {
 
       {/* ADD DUE AMOUNT MODAL */}
       {chargeProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-sm shadow-2xl border border-white/20 dark:border-white/10 p-6 animate-modal max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2">Add Due Amount</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
-              Manually add to the outstanding balance for <span className="font-bold text-slate-800 dark:text-slate-200">{chargeProfile.first_name}</span>.
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-sm shadow-xl border border-slate-200 dark:border-slate-800 p-6 animate-modal max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Add Due Amount</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">
+              Manually add to the outstanding balance for <span className="font-semibold text-slate-800 dark:text-slate-200">{chargeProfile.first_name}</span>.
             </p>
 
             <form onSubmit={handleAddChargeSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Amount to Add ({getCurrencySymbol(chargeProfile.billing_currency)})</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Amount to Add ({getCurrencySymbol(chargeProfile.billing_currency)})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -1039,24 +1031,24 @@ export default function StudentBilling() {
                   placeholder="e.g. 1500.00"
                   value={chargeAmount}
                   onChange={(e) => setChargeAmount(e.target.value)}
-                  className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none text-slate-900 dark:text-white font-medium shadow-inner transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-900 dark:focus:ring-white outline-none text-slate-900 dark:text-white text-sm font-semibold transition-all"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-2.5 pt-2">
                 <button
                   type="button"
                   onClick={() => {
                     setChargeProfile(null)
                     setChargeAmount('')
                   }}
-                  className="flex-1 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3 rounded-lg transition-colors"
+                  className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-2 rounded-lg text-xs transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCharging}
-                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white dark:text-slate-900 font-bold py-3 rounded-lg transition-colors disabled:opacity-70"
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-lg text-xs transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {isCharging ? 'Adding...' : 'Add Amount'}
                 </button>
@@ -1068,56 +1060,56 @@ export default function StudentBilling() {
 
       {/* HISTORY MODAL */}
       {historyProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-lg shadow-2xl border border-white/20 dark:border-white/10 flex flex-col max-h-[80vh] animate-modal">
-            <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex justify-between items-center shrink-0">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-lg shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[80vh] animate-modal">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Billing History</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">{historyProfile.first_name} {historyProfile.last_name}</p>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Billing History</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{historyProfile.first_name} {historyProfile.last_name}</p>
               </div>
-              <button onClick={() => setHistoryProfile(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 rounded-full text-slate-500 dark:text-slate-400 transition-colors">
-                <X size={20} />
+              <button onClick={() => setHistoryProfile(null)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                <X size={18} />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className="p-5 overflow-y-auto flex-1">
               {isLoadingHistory ? (
                 <div className="flex justify-center py-8">
-                  <div className="w-8 h-8 border-4 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-t-slate-800 rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-slate-200 dark:border-slate-800 border-t-slate-800 rounded-full animate-spin"></div>
                 </div>
               ) : historyData.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                  <p className="font-medium text-lg text-slate-700 dark:text-slate-300">No history found</p>
-                  <p className="text-sm mt-1">Manual due additions and settlements will appear here.</p>
+                <div className="text-center py-8 text-slate-400">
+                  <p className="font-semibold text-sm text-slate-700 dark:text-slate-300">No history found</p>
+                  <p className="text-xs mt-1">Manual due additions and settlements will appear here.</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {historyData.map(record => (
-                    <div key={record.id} className={`p-4 rounded-xl border ${record.undone ? 'bg-white/30 dark:bg-slate-800/30 border-slate-200/50 dark:border-white/5 opacity-60' : 'bg-white/50 dark:bg-slate-800/50 border-slate-200/50 dark:border-white/10 shadow-sm hover:shadow-md transition-shadow'}`}>
+                    <div key={record.id} className={`p-3.5 rounded-xl border ${record.undone ? 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 opacity-60' : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'}`}>
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2">
-                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            record.type === 'SETTLEMENT' ? 'bg-emerald-100 text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:text-rose-400'
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                            record.type === 'SETTLEMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
                           }`}>
                             {record.type === 'CHARGE' ? 'DUE ADDED' : record.type}
                           </span>
                           {record.undone && (
-                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 dark:text-slate-400">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
                               UNDONE
                             </span>
                           )}
                         </div>
-                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        <span className="text-[11px] text-slate-400">
                           {new Date(record.created_at).toLocaleString()}
                         </span>
                       </div>
                       
-                      <div className="flex justify-between items-center mt-3">
-                        <div className="font-medium text-slate-800 dark:text-slate-200 text-sm">
+                      <div className="flex justify-between items-center mt-2">
+                        <div className="font-medium text-slate-700 dark:text-slate-300 text-xs">
                           {record.description}
                         </div>
                         <div className="text-right">
-                          <div className={`font-black text-lg ${record.type === 'SETTLEMENT' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                          <div className={`font-bold text-sm ${record.type === 'SETTLEMENT' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                             {getCurrencySymbol(historyProfile.billing_currency)} {record.amount.toFixed(2)}
                           </div>
                           {!record.undone && (
@@ -1125,18 +1117,18 @@ export default function StudentBilling() {
                               {record.type === 'SETTLEMENT' && (
                                 <button 
                                   onClick={() => {
-                                    setHistoryProfile(null) // close modal
+                                    setHistoryProfile(null)
                                     setReceiptProfile(historyProfile)
                                     setReceiptRecord(record)
                                   }}
-                                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 font-bold flex items-center gap-1 transition-colors"
+                                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-semibold flex items-center gap-1 transition-colors cursor-pointer"
                                 >
-                                  <Receipt size={14} /> Print Receipt
+                                  <Receipt size={13} /> Print Receipt
                                 </button>
                               )}
                               <button 
                                 onClick={() => handleUndo(record)}
-                                className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-800 font-bold underline decoration-rose-300 underline-offset-2 transition-colors"
+                                className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 font-semibold transition-colors cursor-pointer"
                               >
                                 Undo
                               </button>
@@ -1155,45 +1147,45 @@ export default function StudentBilling() {
 
       {/* BREAKDOWN MODAL */}
       {breakdownProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl w-full max-w-3xl shadow-2xl border border-white/20 dark:border-white/10 flex flex-col max-h-[90vh] animate-modal">
-            <div className="p-6 border-b border-slate-200/50 dark:border-white/5 flex justify-between items-center shrink-0">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-2xl shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] animate-modal">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Calculation Breakdown</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                  Understand how the outstanding amount for {breakdownProfile.first_name} {breakdownProfile.last_name} was calculated.
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Calculation Breakdown</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Outstanding amount breakdown for {breakdownProfile.first_name} {breakdownProfile.last_name}
                 </p>
               </div>
-              <button onClick={() => setBreakdownProfile(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 rounded-full text-slate-500 dark:text-slate-400 transition-colors">
-                <X size={20} />
+              <button onClick={() => setBreakdownProfile(null)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                <X size={18} />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-50 dark:bg-neutral-900/50">
+            <div className="p-5 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/30">
               {breakdownProfile.stats.classBreakdown.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                  <p className="font-medium text-lg text-slate-700 dark:text-slate-300">No classes taken yet.</p>
+                <div className="text-center py-8 text-slate-400">
+                  <p className="font-semibold text-sm text-slate-700 dark:text-slate-300">No classes taken yet.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <h3 className="font-bold text-slate-700 dark:text-slate-300 uppercase text-xs tracking-wider mb-2">Class History</h3>
+                <div className="space-y-2.5">
+                  <h3 className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider mb-2">Class History</h3>
                   {breakdownProfile.stats.classBreakdown.map((c: any) => (
-                    <div key={c.id} className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 rounded-xl p-4 flex justify-between items-center shadow-sm">
+                    <div key={c.id} className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex justify-between items-center shadow-xs">
                       <div>
-                        <div className="font-bold text-slate-800 dark:text-slate-200">{c.title}</div>
-                        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-3">
+                        <div className="font-semibold text-slate-900 dark:text-white text-xs">{c.title}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2.5">
                           <span className="flex items-center gap-1">
-                            <CalendarIcon size={12} /> {new Date(c.scheduled_datetime).toLocaleDateString()}
+                            <CalendarIcon size={11} /> {new Date(c.scheduled_datetime).toLocaleDateString()}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Clock size={12} /> {(c.duration_minutes / 60).toFixed(1)} hrs
+                            <Clock size={11} /> {(c.duration_minutes / 60).toFixed(1)} hrs
                           </span>
-                          <span className="flex items-center gap-1 bg-slate-100 dark:bg-neutral-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400">
+                          <span className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.2 rounded text-slate-600 dark:text-slate-400">
                             Rate: {getCurrencySymbol(breakdownProfile.billing_currency)}{c.rateApplied}/hr
                           </span>
                         </div>
                       </div>
-                      <div className="font-black text-rose-600 dark:text-rose-400 text-lg">
+                      <div className="font-bold text-rose-600 dark:text-rose-400 text-sm">
                         +{getCurrencySymbol(breakdownProfile.billing_currency)}{c.cost.toFixed(2)}
                       </div>
                     </div>
@@ -1202,28 +1194,28 @@ export default function StudentBilling() {
               )}
             </div>
 
-            <div className="p-6 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-white dark:bg-neutral-900 shrink-0">
-              <h3 className="font-bold text-slate-700 dark:text-slate-300 uppercase text-xs tracking-wider mb-4">Final Calculation Summary</h3>
+            <div className="p-5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shrink-0">
+              <h3 className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider mb-3">Final Calculation Summary</h3>
               
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-400">
                   <span>Total Charges for Classes</span>
-                  <span className="text-rose-600 dark:text-rose-400">+{getCurrencySymbol(breakdownProfile.billing_currency)}{breakdownProfile.stats.allTimeAmountDue.toFixed(2)}</span>
+                  <span className="font-semibold text-rose-600 dark:text-rose-400">+{getCurrencySymbol(breakdownProfile.billing_currency)}{breakdownProfile.stats.allTimeAmountDue.toFixed(2)}</span>
                 </div>
                 
-                <div className="flex justify-between items-center text-sm font-medium text-slate-600 dark:text-slate-400">
+                <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-400">
                   <span>Total Manual Due Additions</span>
-                  <span className="text-rose-600 dark:text-rose-400">+{getCurrencySymbol(breakdownProfile.billing_currency)}{(breakdownProfile.stats.manualOutstanding || 0).toFixed(2)}</span>
+                  <span className="font-semibold text-rose-600 dark:text-rose-400">+{getCurrencySymbol(breakdownProfile.billing_currency)}{(breakdownProfile.stats.manualOutstanding || 0).toFixed(2)}</span>
                 </div>
 
-                <div className="flex justify-between items-center text-sm font-medium text-slate-600 dark:text-slate-400 pb-3 border-b border-slate-200 dark:border-neutral-800">
+                <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-400 pb-2.5 border-b border-slate-100 dark:border-slate-800">
                   <span>Total Paid (Settlements)</span>
-                  <span className="text-emerald-600 dark:text-emerald-400">-{getCurrencySymbol(breakdownProfile.billing_currency)}{(breakdownProfile.stats.totalPaid || 0).toFixed(2)}</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">-{getCurrencySymbol(breakdownProfile.billing_currency)}{(breakdownProfile.stats.totalPaid || 0).toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between items-center pt-1">
-                  <span className="font-bold text-slate-900 dark:text-slate-50 text-lg">Outstanding Amount</span>
-                  <span className={`font-black text-2xl ${breakdownProfile.stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                  <span className="font-bold text-slate-900 dark:text-white text-sm">Outstanding Amount</span>
+                  <span className={`font-bold text-lg ${breakdownProfile.stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                     {getCurrencySymbol(breakdownProfile.billing_currency)}{breakdownProfile.stats.totalDue.toFixed(2)}
                   </span>
                 </div>

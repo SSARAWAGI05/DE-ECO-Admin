@@ -463,29 +463,29 @@ export default function Invoices() {
     <div className="p-4 sm:p-6 lg:p-10 w-full flex flex-col min-h-screen overflow-x-hidden">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-2">Invoices</h1>
-          <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">Generate itemized invoices for any date range instantly.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Invoices</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-normal text-sm mt-1">Generate itemized invoices for any date range instantly.</p>
         </div>
       </div>
 
       {/* Controls */}
-      <div className="bg-white/60 dark:bg-[#020617]/40 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 mb-8 shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+      <div className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-6 mb-8 shadow-xs">
         <div className="flex flex-col md:flex-row gap-6 items-end">
           <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Start Date</label>
+              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">Start Date</label>
               <input 
                 type="date"
-                className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50"
+                className="w-full border border-slate-200 dark:border-slate-700 p-2.5 rounded-lg focus:border-slate-900 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-900 text-sm text-slate-900 dark:text-white"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">End Date</label>
+              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">End Date</label>
               <input 
                 type="date"
-                className="w-full border-2 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-3 rounded-xl focus:border-indigo-600 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-neutral-800/50"
+                className="w-full border border-slate-200 dark:border-slate-700 p-2.5 rounded-lg focus:border-slate-900 focus:ring-0 outline-none transition-colors font-medium bg-slate-50 dark:bg-slate-900 text-sm text-slate-900 dark:text-white"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
               />
@@ -500,7 +500,7 @@ export default function Invoices() {
                 e.setDate(e.getDate() - 1)
                 setEndDate(`${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, '0')}-${String(e.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg transition-colors whitespace-nowrap text-xs cursor-pointer"
             >
               This Week
             </button>
@@ -512,7 +512,7 @@ export default function Invoices() {
                 e.setDate(e.getDate() - 1)
                 setEndDate(`${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, '0')}-${String(e.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg transition-colors whitespace-nowrap text-xs cursor-pointer"
             >
               Last Week
             </button>
@@ -523,19 +523,19 @@ export default function Invoices() {
                 d.setDate(1)
                 setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg transition-colors whitespace-nowrap text-xs cursor-pointer"
             >
               This Month
             </button>
             <button 
               onClick={() => {
                 const d = new Date()
-                d.setDate(0) // Last day of previous month
+                d.setDate(0)
                 setEndDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
-                d.setDate(1) // First day of previous month
+                d.setDate(1)
                 setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
               }}
-              className="flex-1 md:flex-none px-4 py-3 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="flex-1 md:flex-none px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg transition-colors whitespace-nowrap text-xs cursor-pointer"
             >
               Last Month
             </button>
@@ -543,13 +543,13 @@ export default function Invoices() {
         </div>
 
         {/* Formatted Date Range Display */}
-        <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 rounded-lg text-indigo-700 dark:text-indigo-400 text-sm font-bold flex items-center gap-2">
-          <Calendar size={16} />
+        <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-400 text-xs font-medium flex items-center gap-2">
+          <Calendar size={14} className="text-slate-400" />
           <span>
             Viewing classes scheduled from{' '}
-            <span className="text-indigo-900">{startDate ? new Date(startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '...'}</span>
+            <span className="font-semibold text-slate-900 dark:text-white">{startDate ? new Date(startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '...'}</span>
             {' '}to{' '}
-            <span className="text-indigo-900">{endDate ? new Date(endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '...'}</span>
+            <span className="font-semibold text-slate-900 dark:text-white">{endDate ? new Date(endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '...'}</span>
           </span>
         </div>
       </div>
@@ -560,43 +560,43 @@ export default function Invoices() {
           <div className="animate-spin w-8 h-8 border-4 border-slate-200 dark:border-neutral-800 dark:border-neutral-700 border-t-slate-900 rounded-full" />
         </div>
       ) : studentSummaries.length === 0 ? (
-        <div className="bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md rounded-3xl border border-slate-200/50 dark:border-white/10 p-16 flex flex-col items-center justify-center text-center shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.2)]">
-          <Receipt className="w-16 h-16 text-slate-300 mb-4" />
-          <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Classes Found</h3>
-          <p className="text-slate-500 dark:text-slate-400">There are no completed classes in the selected date range.</p>
+        <div className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-16 flex flex-col items-center justify-center text-center shadow-xs">
+          <Receipt className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" />
+          <h3 className="text-base font-bold text-slate-700 dark:text-slate-300 mb-1">No Classes Found</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">There are no completed classes in the selected date range.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {studentSummaries.map(summary => {
             const currencySym = CURRENCIES[summary.profile.billing_currency] || summary.profile.billing_currency || ''
             return (
-              <div key={summary.profile.id} className="bg-white/60 dark:bg-[#0B0F19]/60 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-slate-200/50 dark:border-white/10 overflow-hidden flex flex-col transition-transform hover:-translate-y-1">
-                <div className="p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
-                  <h3 className="text-lg font-black text-slate-900 dark:text-slate-50 truncate">
+              <div key={summary.profile.id} className="bg-white dark:bg-[#0f172a] rounded-xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col">
+                <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-50 truncate">
                     {summary.profile.first_name} {summary.profile.last_name}
                   </h3>
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{summary.profile.email}</p>
+                  <p className="text-xs font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">{summary.profile.email}</p>
                 </div>
-                <div className="p-6 bg-slate-50 dark:bg-neutral-800/50 flex-1 flex flex-col gap-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Classes</span>
+                <div className="p-5 bg-slate-50/50 dark:bg-slate-900/40 flex-1 flex flex-col gap-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px]">Classes</span>
                     <span className="font-bold text-slate-900 dark:text-slate-50">{summary.classes.length} completed</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Time</span>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px]">Total Time</span>
                     <span className="font-bold text-slate-900 dark:text-slate-50">{(summary.totalMins / 60).toFixed(2)} hrs</span>
                   </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-neutral-800 dark:border-neutral-700 mt-auto">
-                    <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Amount Due</span>
-                    <span className="text-xl font-black text-indigo-600">{currencySym}{summary.totalAmount.toFixed(2)}</span>
+                  <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-800 mt-auto">
+                    <span className="font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px]">Amount Due</span>
+                    <span className="text-lg font-bold text-slate-900 dark:text-white">{currencySym}{summary.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="p-4 bg-white/50 dark:bg-white/5 border-t border-slate-200/50 dark:border-white/10">
+                <div className="p-4 bg-white dark:bg-[#0f172a] border-t border-slate-200 dark:border-slate-800">
                   <button
                     onClick={() => setViewInvoiceFor(summary.profile.id)}
-                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 dark:bg-indigo-500 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-all shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]"
+                    className="w-full flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-2.5 rounded-lg transition-colors text-xs shadow-xs cursor-pointer"
                   >
-                    <Printer size={18} />
+                    <Printer size={15} />
                     View & Print Invoice
                   </button>
                 </div>

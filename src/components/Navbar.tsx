@@ -76,120 +76,129 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
 
   return (
     <>
+      {/* DOCKED FULL-WIDTH TOP NAVIGATION BAR */}
       <nav 
         ref={navRef}
-        className="hidden xl:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-max max-w-[98%] h-14 bg-white/40 dark:bg-[#020617]/30 backdrop-blur-3xl rounded-full border border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 dark:shadow-[#0ea5e9]/10 items-center gap-8 xl:gap-16 px-6 transition-all"
+        className="hidden xl:flex fixed top-0 left-0 right-0 z-40 h-16 bg-white dark:bg-[#0f172a] border-b border-slate-200 dark:border-slate-800/80 px-6 items-center justify-between transition-colors shadow-2xs"
       >
-      {/* BRANDING */}
-      <div className="flex items-center gap-2 shrink-0 pl-1">
-        <div className="bg-white dark:bg-neutral-900 rounded-full p-1 flex items-center justify-center shadow-sm">
-          <img src="/logo.png" alt="DEECO Logo" className="w-5 h-5 object-contain" />
+        {/* BRANDING */}
+        <div 
+          className="flex items-center gap-3 shrink-0 cursor-pointer select-none" 
+          onClick={() => handleNavClick('dashboard')}
+        >
+          <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-bold text-xs shadow-xs">
+            DE
+          </div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white leading-none">DE-ECO</h1>
+            <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60">
+              Admin
+            </span>
+          </div>
         </div>
-        <div>
-          <h1 className="text-base font-black tracking-tight text-slate-900 dark:text-white leading-none">DEECO</h1>
-        </div>
-      </div>
 
-      {/* NAVIGATION ITEMS */}
-      <div className="hidden md:flex items-center gap-1 xl:gap-2">
-        {/* Top Level Nav Items */}
-        {topLevelNav.map(item => {
-          const ItemIcon = item.icon
-          const isActive = activeSection === item.id
-          
-          return (
+        {/* NAVIGATION ITEMS */}
+        <div className="flex items-center gap-1">
+          {topLevelNav.map(item => {
+            const ItemIcon = item.icon
+            const isActive = activeSection === item.id
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                }`}
+              >
+                <ItemIcon className="w-3.5 h-3.5" />
+                <span>{item.label}</span>
+              </button>
+            )
+          })}
+
+          {/* More Tabs Dropdown */}
+          <div className="relative">
             <button
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
-              className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-full transition-all duration-300 text-[10px] lg:text-xs font-bold border border-transparent whitespace-nowrap ${
-                isActive
-                  ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
+              onClick={() => setActiveDropdown(activeDropdown === 'others' ? null : 'others')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold cursor-pointer ${
+                isOtherTabsActive || activeDropdown === 'others'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'
               }`}
             >
-              <ItemIcon className={`w-3 h-3 lg:w-3.5 lg:h-3.5 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-              <span className="inline">{item.label}</span>
+              <span>More</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'others' ? 'rotate-180' : ''}`} />
             </button>
-          )
-        })}
 
-        {/* Other Tabs Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setActiveDropdown(activeDropdown === 'others' ? null : 'others')}
-            className={`flex items-center justify-center p-1.5 lg:p-2 rounded-full transition-all duration-300 border border-transparent ${
-              isOtherTabsActive || activeDropdown === 'others'
-                ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:shadow-[0_0_15px_rgba(74,222,128,0.2)]'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
-            }`}
-            title="More Options"
-          >
-            <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === 'others' ? 'rotate-180' : ''}`} />
-          </button>
+            {/* Dropdown Menu */}
+            {activeDropdown === 'others' && (
+              <div className="absolute top-full right-0 mt-2 w-52 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 rounded-xl shadow-xl p-1.5 z-50 animate-in fade-in duration-150">
+                {otherTabs.map(item => {
+                  const ItemIcon = item.icon
+                  const isItemActive = activeSection === item.id
 
-          {/* Dropdown Menu */}
-          {activeDropdown === 'others' && (
-            <div className="absolute top-full right-0 mt-3 w-56 bg-white/80 dark:bg-[#0B0F19]/90 backdrop-blur-3xl border border-white/60 dark:border-white/10 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-4 duration-200 z-50">
-              {otherTabs.map(item => {
-                const ItemIcon = item.icon
-                const isItemActive = activeSection === item.id
-
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-semibold group ${
-                      isItemActive
-                        ? 'bg-indigo-50 dark:bg-[#4ade80]/10 text-indigo-700 dark:text-[#4ade80]'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/5'
-                    }`}
-                  >
-                    <ItemIcon className={`w-4 h-4 ${isItemActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 dark:group-hover:text-white'}`} />
-                    {item.label}
-                  </button>
-                )
-              })}
-            </div>
-          )}
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavClick(item.id)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors text-xs font-semibold text-left cursor-pointer ${
+                        isItemActive
+                          ? 'bg-slate-100 dark:bg-neutral-800 text-slate-900 dark:text-white font-bold'
+                          : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-neutral-800/60'
+                      }`}
+                    >
+                      <ItemIcon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* RIGHT ACTIONS */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={toggleDarkMode}
-          className="p-2.5 rounded-full text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm border border-transparent dark:border-white/5"
-          aria-label="Toggle Dark Mode"
-        >
-          {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
-        </button>
-        {/* Mobile menu button could go here, but omitted for simplicity assuming primarily desktop/tablet dash */}
-      </div>
-    </nav>
+        {/* RIGHT ACTIONS */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+            aria-label="Toggle Dark Mode"
+            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+          </button>
+        </div>
+      </nav>
 
       {/* MOBILE SIDEBAR */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-sm z-40 xl:hidden transition-opacity"
+          className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs z-40 xl:hidden transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <aside className={`fixed top-0 left-0 h-full w-72 bg-white/95 dark:bg-[#020617]/95 backdrop-blur-2xl z-50 transform transition-transform duration-300 ease-in-out border-r border-slate-200/50 dark:border-white/10 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} xl:hidden flex flex-col`}>
-        <div className="p-4 border-b border-slate-200/50 dark:border-white/10 flex items-center justify-between shrink-0 h-16">
+      <aside className={`fixed top-0 left-0 h-full w-72 bg-white dark:bg-[#0f172a] z-50 transform transition-transform duration-200 ease-in-out border-r border-slate-200 dark:border-slate-800 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} xl:hidden flex flex-col`}>
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 h-16">
           <div className="flex items-center gap-3">
-            <div className="bg-white dark:bg-neutral-900 rounded-full p-1.5 flex items-center justify-center shadow-sm">
-              <img src="/logo.png" alt="DEECO Logo" className="w-6 h-6 object-contain" />
+            <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-bold text-xs shadow-xs">
+              DE
             </div>
-            <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white leading-none">DEECO</h1>
+            <div>
+              <h1 className="text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none">DE-ECO</h1>
+              <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">Admin Console</p>
+            </div>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors">
+          <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-          <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-2">Main Menu</div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-1">
+          <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 py-1">Main Menu</div>
           {topLevelNav.map(item => {
             const ItemIcon = item.icon
             const isActive = activeSection === item.id
@@ -197,26 +206,26 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-bold border border-transparent ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-xs font-semibold cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold shadow-2xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <ItemIcon className={`w-5 h-5 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-                {item.label}
+                <ItemIcon className="w-4 h-4" />
+                <span>{item.label}</span>
               </button>
             )
           })}
 
           <button 
             onClick={() => setMobileOthersOpen(!mobileOthersOpen)}
-            className="w-full flex items-center justify-between px-2 mt-6 mb-2 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            className="w-full flex items-center justify-between px-3 mt-4 mb-1 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider hover:text-slate-600 dark:hover:text-slate-300 transition cursor-pointer"
           >
-            <span>Other Tools</span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${mobileOthersOpen ? 'rotate-180' : ''}`} />
+            <span>Other Sections</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${mobileOthersOpen ? 'rotate-180' : ''}`} />
           </button>
-          <div className={`space-y-2 overflow-hidden transition-all duration-300 ease-in-out ${mobileOthersOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className={`space-y-1 overflow-hidden transition-all duration-200 ease-in-out ${mobileOthersOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
             {otherTabs.map(item => {
               const ItemIcon = item.icon
               const isActive = activeSection === item.id
@@ -224,28 +233,28 @@ export default function Navbar({ activeSection, setActiveSection, sidebarOpen, s
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-bold border border-transparent ${
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition text-xs font-semibold cursor-pointer ${
                     isActive
-                      ? 'bg-indigo-500/10 dark:bg-[#4ade80]/10 border-indigo-500/30 dark:border-[#4ade80]/30 text-indigo-700 dark:text-[#4ade80] shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <ItemIcon className={`w-5 h-5 ${isActive ? 'text-indigo-600 dark:text-[#4ade80]' : 'text-slate-400 dark:text-slate-500'}`} />
-                  {item.label}
+                  <ItemIcon className="w-4 h-4" />
+                  <span>{item.label}</span>
                 </button>
               )
             })}
           </div>
         </div>
 
-        <div className="p-4 border-t border-slate-200/50 dark:border-white/10 shrink-0">
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800 shrink-0">
           <button
             onClick={toggleDarkMode}
-            className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-sm font-bold"
+            className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold cursor-pointer"
           >
-            <span className="flex items-center gap-3">
-              {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-500" />}
-              {isDark ? 'Light Mode' : 'Dark Mode'}
+            <span className="flex items-center gap-2.5">
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+              <span>{isDark ? 'Light Theme' : 'Dark Theme'}</span>
             </span>
           </button>
         </div>

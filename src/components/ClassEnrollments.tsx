@@ -214,134 +214,136 @@ export default function ClassEnrollments() {
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
           </div>
-            <input
-              placeholder="Search by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-[#020617]/50 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500/50 text-sm font-medium outline-none transition-shadow text-slate-900 dark:text-slate-50 placeholder:text-slate-400 shadow-sm"
-            />
+          <input
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white text-sm font-medium outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400 shadow-xs"
+          />
         </div>
       </div>
 
       {/* TABLE */}
       <div className="flex-1 flex flex-col min-h-[400px]">
-        <div className="overflow-auto flex-1 relative custom-scrollbar px-1">
-          <table className="hidden md:table w-full text-left border-collapse border-spacing-y-4 min-w-[900px] border-separate">
-            <thead className="sticky top-0 z-10">
-              <tr>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Student Details</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Account Status</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Hourly Rate & Currency</th>
-                <th className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-transparent">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProfiles.length === 0 ? (
+        <div className="overflow-auto flex-1 relative custom-scrollbar">
+          <div className="hidden md:block bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <td colSpan={4} className="p-12 text-center">
-                    <p className="text-lg font-bold text-slate-900 dark:text-slate-50">No students found</p>
-                  </td>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Student Details</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Account Status</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">Hourly Rate & Currency</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider text-right">Actions</th>
                 </tr>
-              ) : (
-                filteredProfiles.map((profile) => (
-                  <tr key={profile.id} className="bg-white/60 dark:bg-[#020617]/40 backdrop-blur-2xl hover:bg-white/80 dark:hover:bg-white/[0.08] transition-all duration-300 rounded-2xl shadow-sm hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] group mb-4 relative">
-                    
-                    <td className="px-6 py-5 whitespace-nowrap first:rounded-l-2xl border-y border-slate-200/50 dark:border-white/5 border-l group-hover:border-white/10 border-transparent transition-colors">
-                      <div className="font-bold text-slate-900 dark:text-slate-50 text-base">
-                        {profile.first_name} {profile.last_name}
-                      </div>
-                      <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 mb-2">{profile.email}</div>
-                      
-                      <div className="text-xs flex flex-col gap-1 max-w-[200px]">
-                        <label className="font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-[0.1em]">Guardian Email</label>
-                        <input
-                          type="email"
-                          placeholder="guardian@example.com"
-                          className="bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-white/10 px-3 py-2 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-shadow disabled:opacity-50 font-medium"
-                          defaultValue={profile.guardian_email || ''}
-                          onBlur={(e) => {
-                            if (e.target.value !== (profile.guardian_email || '')) {
-                              handleUpdateProfile(profile.id, { guardian_email: e.target.value })
-                            }
-                          }}
-                          disabled={isSaving === profile.id}
-                        />
-                      </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                {filteredProfiles.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="p-12 text-center">
+                      <p className="text-base font-bold text-slate-900 dark:text-slate-100">No students found</p>
                     </td>
-
-                    <td className="px-6 py-5 whitespace-nowrap border-y border-slate-200/50 dark:border-white/5 group-hover:border-white/10 border-transparent transition-colors">
-                      <button
-                        onClick={() => handleUpdateProfile(profile.id, { is_active: !profile.is_active })}
-                        disabled={isSaving === profile.id}
-                        className={`
-                          relative inline-flex items-center w-32 h-10 rounded-full transition-colors focus:outline-none shadow-sm
-                          ${profile.is_active ? 'bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-900/10 dark:bg-white/5 border border-slate-200/50 dark:border-white/10'}
-                          ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
-                        `}
-                      >
-                        <div
-                          className={`
-                            absolute left-1 flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-[#0f172a] shadow-sm transition-transform duration-300 border border-slate-100 dark:border-white/10
-                            ${profile.is_active ? 'translate-x-22 text-emerald-600 dark:text-emerald-400' : 'translate-x-0 text-slate-400'}
-                          `}
-                        >
-                          {profile.is_active ? <UserCheck size={16} /> : <UserX size={16} />}
-                        </div>
-                        <span 
-                          className={`
-                            w-full text-center text-xs font-bold transition-colors tracking-wide
-                            ${profile.is_active ? 'pr-8 pl-2 text-emerald-700 dark:text-emerald-400' : 'pl-8 pr-2 text-slate-500 dark:text-slate-400'}
-                          `}
-                        >
-                          {profile.is_active ? 'ACTIVE' : 'INACTIVE'}
-                        </span>
-                      </button>
-                    </td>
-
-                    <td className="px-6 py-5 whitespace-nowrap border-y border-slate-200/50 dark:border-white/5 group-hover:border-white/10 border-transparent transition-colors">
-                      <div className="flex items-center gap-2 bg-white/50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-200/50 dark:border-white/10 max-w-[200px] focus-within:ring-2 focus-within:ring-indigo-500/50 transition-shadow">
-                        <select 
-                          className="bg-transparent border-r border-slate-200/50 dark:border-white/10 pr-2 py-1 text-sm font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
-                          value={profile.billing_currency || 'INR'}
-                          onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
-                          disabled={isSaving === profile.id}
-                        >
-                          {CURRENCIES.map(c => (
-                            <option key={c.code} value={c.code} className="dark:bg-slate-900">{c.code} ({c.symbol})</option>
-                          ))}
-                        </select>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="0.00"
-                          className="w-full bg-transparent border-none p-1 text-sm font-bold text-slate-900 dark:text-slate-50 outline-none focus:ring-0 disabled:opacity-50"
-                          value={profile.hourly_rate ?? 0}
-                          onChange={(e) => {
-                            const val = parseFloat(e.target.value)
-                            if (!isNaN(val)) {
-                              handleUpdateProfile(profile.id, { hourly_rate: val })
-                            }
-                          }}
-                          disabled={isSaving === profile.id}
-                        />
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-5 whitespace-nowrap last:rounded-r-2xl border-y border-slate-200/50 dark:border-white/5 border-r group-hover:border-white/10 border-transparent transition-colors">
-                      <button
-                        onClick={() => setSelectedProfile(profile)}
-                        className="flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-[#4ade80] dark:bg-[#4ade80]/10 dark:hover:bg-[#4ade80]/20 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm border border-indigo-500/30 dark:border-[#4ade80]/30 shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:shadow-[0_0_15px_rgba(74,222,128,0.15)]"
-                      >
-                        <Settings size={16} /> Manage
-                      </button>
-                    </td>
-
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredProfiles.map((profile) => (
+                    <tr key={profile.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                      
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+                          {profile.first_name} {profile.last_name}
+                        </div>
+                        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 mb-2">{profile.email}</div>
+                        
+                        <div className="text-xs flex flex-col gap-1 max-w-[200px]">
+                          <label className="font-semibold text-slate-400 text-[10px] uppercase tracking-wider">Guardian Email</label>
+                          <input
+                            type="email"
+                            placeholder="guardian@example.com"
+                            className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-2.5 py-1.5 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all disabled:opacity-50 font-medium text-xs"
+                            defaultValue={profile.guardian_email || ''}
+                            onBlur={(e) => {
+                              if (e.target.value !== (profile.guardian_email || '')) {
+                                handleUpdateProfile(profile.id, { guardian_email: e.target.value })
+                              }
+                            }}
+                            disabled={isSaving === profile.id}
+                          />
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleUpdateProfile(profile.id, { is_active: !profile.is_active })}
+                          disabled={isSaving === profile.id}
+                          className={`
+                            relative inline-flex items-center w-28 h-8 rounded-full transition-colors focus:outline-none border
+                            ${profile.is_active ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/60' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}
+                            ${isSaving === profile.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                          `}
+                        >
+                          <div
+                            className={`
+                              absolute left-1 flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-slate-900 shadow-xs transition-transform duration-200 border border-slate-200 dark:border-slate-700
+                              ${profile.is_active ? 'translate-x-20 text-emerald-600 dark:text-emerald-400' : 'translate-x-0 text-slate-400'}
+                            `}
+                          >
+                            {profile.is_active ? <UserCheck size={13} /> : <UserX size={13} />}
+                          </div>
+                          <span 
+                            className={`
+                              w-full text-center text-[10px] font-bold transition-colors tracking-wide
+                              ${profile.is_active ? 'pr-6 pl-2 text-emerald-700 dark:text-emerald-400' : 'pl-6 pr-2 text-slate-500 dark:text-slate-400'}
+                            `}
+                          >
+                            {profile.is_active ? 'ACTIVE' : 'INACTIVE'}
+                          </span>
+                        </button>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 max-w-[200px] focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white transition-all">
+                          <select 
+                            className="bg-transparent border-r border-slate-200 dark:border-slate-700 pr-2 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer outline-none"
+                            value={profile.billing_currency || 'INR'}
+                            onChange={(e) => handleUpdateProfile(profile.id, { billing_currency: e.target.value })}
+                            disabled={isSaving === profile.id}
+                          >
+                            {CURRENCIES.map(c => (
+                              <option key={c.code} value={c.code} className="dark:bg-slate-900">{c.code} ({c.symbol})</option>
+                            ))}
+                          </select>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            className="w-full bg-transparent border-none p-0.5 text-xs font-semibold text-slate-900 dark:text-slate-100 outline-none focus:ring-0 disabled:opacity-50"
+                            value={profile.hourly_rate ?? 0}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value)
+                              if (!isNaN(val)) {
+                                handleUpdateProfile(profile.id, { hourly_rate: val })
+                              }
+                            }}
+                            disabled={isSaving === profile.id}
+                          />
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <button
+                          onClick={() => setSelectedProfile(profile)}
+                          className="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 px-3.5 py-1.5 rounded-lg font-semibold transition-colors text-xs cursor-pointer shadow-xs"
+                        >
+                          <Settings size={14} /> Manage
+                        </button>
+                      </td>
+
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
           {/* MOBILE VIEW */}
           <div className="md:hidden flex flex-col gap-4 p-4">
@@ -439,12 +441,12 @@ export default function ClassEnrollments() {
 
       {/* MANAGE ENROLLMENTS MODAL */}
       {selectedProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-3xl max-h-[90vh] rounded-xl shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 flex flex-col">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#0f172a] w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col animate-modal">
             
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 shrink-0">
+            <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-800 shrink-0">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                   Manage Enrollments
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">

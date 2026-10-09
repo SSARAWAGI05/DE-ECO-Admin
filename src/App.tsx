@@ -62,33 +62,33 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-transparent flex flex-col items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-900/40 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 max-w-sm w-full">
-          <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
-            <svg className="w-8 h-8 text-white dark:text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f17] flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-[#0f172a] p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 max-w-sm w-full">
+          <div className="w-14 h-14 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <svg className="w-7 h-7 text-white dark:text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-black text-center text-slate-900 dark:text-slate-50 mb-2">Admin Portal</h2>
-          <p className="text-center text-slate-500 dark:text-slate-400 text-sm mb-6">Enter your secure passcode to access the dashboard.</p>
+          <h2 className="text-xl font-bold text-center text-slate-900 dark:text-white mb-1.5">Admin Portal</h2>
+          <p className="text-center text-slate-500 dark:text-slate-400 text-xs mb-6">Enter your secure passcode to access the dashboard.</p>
           
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <input
                 type="password"
-                placeholder="Passcode"
+                placeholder="••••"
                 value={passcode}
                 onChange={(e) => {
                   setPasscode(e.target.value)
                   setErrorMsg('')
                 }}
-                className="w-full text-center text-2xl tracking-[0.25em] font-mono p-3 border border-slate-300 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none"
+                className="w-full text-center text-2xl tracking-[0.3em] font-mono p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white outline-none"
                 autoFocus
               />
-              {errorMsg && <p className="text-rose-500 dark:text-rose-400 text-sm font-semibold text-center mt-2">{errorMsg}</p>}
+              {errorMsg && <p className="text-rose-500 dark:text-rose-400 text-xs font-semibold text-center mt-2">{errorMsg}</p>}
             </div>
-            <button type="submit" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-sm">
-              Unlock
+            <button type="submit" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:opacity-90 transition-opacity shadow-sm cursor-pointer text-sm">
+              Unlock Console
             </button>
           </form>
         </div>
@@ -137,7 +137,7 @@ function App() {
   }
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-transparent overflow-hidden font-sans flex flex-col relative pt-0 lg:pt-24">
+    <div className="h-screen bg-slate-50 dark:bg-[#0b0f17] text-slate-900 dark:text-slate-100 overflow-hidden font-sans flex flex-col relative pt-0 xl:pt-16">
       <Navbar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
@@ -147,7 +147,7 @@ function App() {
 
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-auto w-full px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 overflow-auto w-full px-4 sm:px-6 lg:px-8 py-6">
           {renderSection()}
         </main>
       </div>
