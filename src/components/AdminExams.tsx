@@ -9,6 +9,8 @@ import { supabase } from '../lib/supabaseClient'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import {
+  Calendar,
+  ArrowLeft,
   Plus,
   Edit2,
   Trash2,
@@ -965,19 +967,17 @@ export default function AdminExams() {
   ])
   const [studentsList, setStudentsList] = useState<StudentProfileOption[]>([])
   const [audienceFilter, setAudienceFilter] = useState<'all' | 'course' | 'student'>('all')
+  const [studentSearch, setStudentSearch] = useState('')
 
-  // Streamlined Exam Form State (Title, Course/Student Assignment, Date, Time, Duration, Total Marks)
+  // Streamlined Exam Form State (Title, Student-level Assignment, Date, Time, Duration, Total Marks)
   const [examForm, setExamForm] = useState({
     title: '',
-    assignedType: 'course' as 'course' | 'student',
-    course: 'All Students (Open / General Exam)',
-    courseId: 'all',
-    assignedStudentEmail: '',
-    assignedStudentName: '',
+    assignedType: 'all' as 'all' | 'student',
+    assignedStudentEmails: [] as string[],
     scheduledDate: 'Anytime / Self-Paced',
     scheduledTime: 'Flexible',
     durationMinutes: 45,
-    totalMarks: 100,
+    totalMarks: 50,
     questions: [] as ExamQuestion[]
   })
 
@@ -1222,7 +1222,7 @@ export default function AdminExams() {
   const liveExamsCount = useMemo(() => exams.filter((e) => e.status === 'live').length, [exams])
   const pendingCount = useMemo(() => submissions.filter((s) => s.status === 'under_evaluation').length, [submissions])
   const gradedCount = useMemo(() => submissions.filter((s) => s.status === 'graded').length, [submissions])
-  const courseExamsCount = useMemo(() => exams.filter((e) => e.assignedType !== 'student').length, [exams])
+  const allStudentsExamsCount = useMemo(() => exams.filter((e) => e.assignedType !== 'student').length, [exams])
   const studentExamsCount = useMemo(() => exams.filter((e) => e.assignedType === 'student').length, [exams])
 
   const calculatedQuestionMarks = useMemo(() => {
@@ -1387,17 +1387,15 @@ export default function AdminExams() {
   const handleOpenAddExam = () => {
     setEditingExamId(null)
     setExamModalTab('settings')
+    setStudentSearch('')
     setExamForm({
       title: '',
-      assignedType: 'course',
-      course: coursesList.length > 0 ? coursesList[0].title : 'All Students (Open / General Exam)',
-      courseId: coursesList.length > 0 ? coursesList[0].id : 'all',
-      assignedStudentEmail: '',
-      assignedStudentName: '',
+      assignedType: 'all',
+      assignedStudentEmails: [],
       scheduledDate: 'Anytime / Self-Paced',
       scheduledTime: 'Flexible',
       durationMinutes: 45,
-      totalMarks: 100,
+      totalMarks: 50,
       questions: []
     })
     closeQuestionForm()
@@ -1407,16 +1405,17 @@ export default function AdminExams() {
   const handleOpenEditExam = (exam: Exam) => {
     setEditingExamId(exam.id)
     setExamModalTab('settings')
+    setStudentSearch('')
     const isStudent = exam.assignedType === 'student' || Boolean(exam.assignedStudentEmail)
+    const emails = exam.assignedStudentEmail
+      ? exam.assignedStudentEmail.split(',').map((s: string) => s.trim().toLowerCase()).filter(Boolean)
+      : []
     setExamForm({
       title: exam.title,
-      assignedType: isStudent ? 'student' : 'course',
-      course: exam.course || (coursesList.length > 0 ? coursesList[0].title : 'All Students (Open / General Exam)'),
-      courseId: exam.courseId || '',
-      assignedStudentEmail: exam.assignedStudentEmail || '',
-      assignedStudentName: exam.assignedStudentName || '',
-      scheduledDate: exam.scheduledDate || 'Active Now',
-      scheduledTime: exam.scheduledTime || '',
+      assignedType: isStudent ? 'student' : 'all',
+      assignedStudentEmails: emails,
+      scheduledDate: exam.scheduledDate || 'Anytime / Self-Paced',
+      scheduledTime: exam.scheduledTime || 'Flexible',
       durationMinutes: exam.durationMinutes || 45,
       totalMarks: exam.totalMarks || 50,
       questions: exam.questions || []
@@ -1589,46 +1588,46 @@ export default function AdminExams() {
     }))
   }
 
-  const handleSaveExam = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSaveExam = async (e?: React.FormEvent) => {
+    if (e && e.preventDefault) e.preventDefault()
     if (!examForm.title.trim()) {
       alert('Please enter an exam title.')
       setExamModalTab('settings')
       return
     }
 
-    if (examForm.assignedType === 'student' && !examForm.assignedStudentEmail.trim()) {
-      alert('Please select or enter the student email address.')
+    const isStudent = examForm.assignedType === 'student'
+    if (isStudent && examForm.assignedStudentEmails.length === 0) {
+      alert('Please select at least one student to assign this exam.')
       setExamModalTab('settings')
       return
     }
 
     const mcqCount = examForm.questions.filter((q) => q.type === 'mcq').length
     const descriptiveCount = examForm.questions.filter((q) => q.type === 'descriptive').length
-    const totalMarks = Number(examForm.totalMarks) || (calculatedQuestionMarks || 50)
-    const passingMarks = Math.round(totalMarks * 0.4) // Auto-calculate 40% benchmark
+    const totalMarks = calculatedQuestionMarks > 0 ? calculatedQuestionMarks : (Number(examForm.totalMarks) || 50)
 
-    const isStudent = examForm.assignedType === 'student'
-    const studentEmail = isStudent ? examForm.assignedStudentEmail.trim().toLowerCase() : undefined
-    const studentName = isStudent ? examForm.assignedStudentName.trim() : undefined
-    const selectedCourseObj = coursesList.find((c) => c.title === examForm.course || c.id === examForm.courseId)
-    const courseId = isStudent ? undefined : (selectedCourseObj?.id || examForm.courseId || undefined)
+    // Resolve assigned student names
+    const selectedNames = isStudent
+      ? examForm.assignedStudentEmails.map((email) => {
+          const st = studentsList.find((s) => s.email && s.email.toLowerCase().trim() === email.toLowerCase().trim())
+          return st ? `${st.first_name || ''} ${st.last_name || ''}`.trim() || email : email
+        })
+      : []
 
-    let resolvedCourse = examForm.course.trim() || 'General Examination'
+    // Format display title
+    let resolvedCourse = 'General Assessment'
     if (isStudent) {
-      const studentExamsCount = exams.filter(
-        (e) => (e.assignedStudentEmail && e.assignedStudentEmail.toLowerCase() === studentEmail) ||
-               (e.assignedType === 'student' && e.assignedStudentName === studentName)
-      ).length
-      const num = editingExamId ? (exams.findIndex(e => e.id === editingExamId) + 1 || 1) : studentExamsCount + 1
-      if (/^1-on-1/i.test(resolvedCourse) || resolvedCourse.includes('All Students') || !resolvedCourse) {
-        resolvedCourse = `Assessment #${num}: ${studentName || 'Student'}`
+      if (selectedNames.length === 1) {
+        const studentExamsCount = exams.filter((e) =>
+          e.assignedStudentEmail && e.assignedStudentEmail.toLowerCase().includes(examForm.assignedStudentEmails[0].toLowerCase())
+        ).length
+        const num = editingExamId ? (exams.findIndex((e) => e.id === editingExamId) + 1 || 1) : studentExamsCount + 1
+        resolvedCourse = `Assessment #${num}: ${selectedNames[0]}`
+      } else {
+        resolvedCourse = `${examForm.title.trim()} (${selectedNames.length} Students)`
       }
     }
-
-    const assignedStudentProfile = isStudent && studentEmail
-      ? studentsList.find((s) => s.email && s.email.toLowerCase() === studentEmail)
-      : undefined
 
     const examId = editingExamId && isValidUUID(editingExamId) ? editingExamId : generateUUID()
 
@@ -1636,18 +1635,18 @@ export default function AdminExams() {
       id: examId,
       title: examForm.title.trim(),
       course_title: resolvedCourse,
-      course_id: courseId && isValidUUID(courseId) ? courseId : null,
+      course_id: null,
       assigned_type: examForm.assignedType,
-      assigned_student_id: assignedStudentProfile?.id && isValidUUID(assignedStudentProfile.id) ? assignedStudentProfile.id : null,
-      assigned_student_email: studentEmail || null,
-      assigned_student_name: studentName || null,
+      assigned_student_id: null,
+      assigned_student_email: isStudent ? examForm.assignedStudentEmails.join(', ') : null,
+      assigned_student_name: isStudent ? selectedNames.join(', ') : 'All Students',
       instructor_name: 'Rishika',
       status: 'live',
       scheduled_date: examForm.scheduledDate.trim() || 'Anytime / Self-Paced',
       scheduled_time: examForm.scheduledTime.trim() || 'Flexible',
       duration_minutes: Number(examForm.durationMinutes) || 45,
       total_marks: totalMarks,
-      passing_marks: passingMarks,
+      passing_marks: 0,
       mcq_count: mcqCount,
       descriptive_count: descriptiveCount,
       syllabus: [],
@@ -1678,17 +1677,17 @@ export default function AdminExams() {
       id: examId,
       title: examForm.title.trim(),
       course: resolvedCourse,
-      courseId,
+      courseId: undefined,
       assignedType: examForm.assignedType,
-      assignedStudentEmail: studentEmail,
-      assignedStudentName: studentName,
+      assignedStudentEmail: isStudent ? examForm.assignedStudentEmails.join(', ') : undefined,
+      assignedStudentName: isStudent ? selectedNames.join(', ') : 'All Students',
       instructor: 'Rishika',
       status: 'live',
       scheduledDate: examForm.scheduledDate.trim() || 'Anytime / Self-Paced',
       scheduledTime: examForm.scheduledTime.trim() || 'Flexible',
       durationMinutes: Number(examForm.durationMinutes) || 45,
       totalMarks,
-      passingMarks,
+      passingMarks: 0,
       mcqCount,
       descriptiveCount,
       syllabus: [],
@@ -1945,7 +1944,7 @@ export default function AdminExams() {
               }`}
             >
               <BookOpen size={13} />
-              <span>Course Exams ({courseExamsCount})</span>
+              <span>All Students ({allStudentsExamsCount})</span>
             </button>
 
             <button
@@ -1958,7 +1957,7 @@ export default function AdminExams() {
               }`}
             >
               <User size={13} />
-              <span>1-on-1 Student Exams ({studentExamsCount})</span>
+              <span>Specific Students ({studentExamsCount})</span>
             </button>
           </div>
 
@@ -1991,33 +1990,24 @@ export default function AdminExams() {
                             {ex.assignedType === 'student' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                                 <User size={10} />
-                                1-on-1 Student
+                                {ex.assignedStudentEmail && ex.assignedStudentEmail.includes(',')
+                                  ? `${ex.assignedStudentEmail.split(',').length} Students`
+                                  : 'Specific Student'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                 <BookOpen size={10} />
-                                Course
+                                All Students
                               </span>
                             )}
                           </div>
                           {ex.assignedType === 'student' ? (
-                            <div className="text-xs text-purple-700 dark:text-purple-300 font-medium mt-1 flex items-center gap-1 flex-wrap">
+                            <div className="text-xs text-purple-700 dark:text-purple-300 font-medium mt-1 flex items-center gap-1 flex-wrap" title={ex.assignedStudentEmail}>
                               <span className="text-slate-400 dark:text-neutral-500">Assigned:</span>
                               <span className="font-semibold">{ex.assignedStudentName || ex.assignedStudentEmail}</span>
-                              {ex.assignedStudentName && ex.assignedStudentEmail && (
-                                <span className="text-slate-400 dark:text-neutral-500 text-[11px]">({ex.assignedStudentEmail})</span>
-                              )}
                             </div>
                           ) : (
-                            ex.course && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{(() => {
-    const raw = ex.course.trim();
-    if (/^1-on-1/i.test(raw)) {
-      const m = raw.match(/^1-on-1\s*[:\-–]?\s*(.*)$/i);
-      const p = (m && m[1] ? m[1].trim() : '') || ex.assignedStudentName || '';
-      return p ? `Assessment #1: ${p}` : 'Assessment #1';
-    }
-    return raw;
-  })()}</div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Open for all enrolled students</div>
                           )}
                         </td>
 
@@ -2248,246 +2238,186 @@ export default function AdminExams() {
             {/* MODAL BODY */}
             <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
 
-              {/* TAB 1: EXAM DETAILS (ONLY: Title, Date, Time, Duration, Total Marks) */}
-              {examModalTab === 'settings' && (
-                <div className="space-y-4 max-w-2xl">
-                  {/* Exam Title */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
-                      Exam Title <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Macroeconomics Mid-Term Examination 2026"
-                      value={examForm.title}
-                      onChange={(e) => setExamForm({ ...examForm, title: e.target.value })}
-                      className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
-                    />
-                  </div>
+              {/* TAB 1: EXAM DETAILS - CLEAN, STUDENT-LEVEL, INTUITIVE */}
+              {examModalTab === 'settings' && (() => {
+                const isSelfPaced = examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint';
+                const filteredStudentOptions = studentsList.filter((s) => {
+                  if (!studentSearch.trim()) return true;
+                  const q = studentSearch.toLowerCase();
+                  const name = `${s.first_name || ''} ${s.last_name || ''}`.toLowerCase();
+                  return name.includes(q) || (s.email && s.email.toLowerCase().includes(q));
+                });
 
-                  {/* Assignment Target: Course vs Particular Student */}
-                  <div className="space-y-2.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
-                      Assign Exam To <span className="text-rose-500">*</span>
-                    </label>
-
-                    {/* Segmented Control */}
-                    <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border border-slate-200 dark:border-neutral-700">
-                      <button
-                        type="button"
-                        onClick={() => setExamForm({ ...examForm, assignedType: 'course' })}
-                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
-                          examForm.assignedType === 'course'
-                            ? 'bg-white dark:bg-neutral-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
-                            : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                        }`}
-                      >
-                        <BookOpen size={15} />
-                        <span>Entire Course</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setExamForm({ ...examForm, assignedType: 'student' })}
-                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
-                          examForm.assignedType === 'student'
-                            ? 'bg-white dark:bg-neutral-700 text-purple-600 dark:text-purple-300 shadow-2xs'
-                            : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                        }`}
-                      >
-                        <User size={15} />
-                        <span>Particular Student</span>
-                      </button>
+                return (
+                  <div className="space-y-6 max-w-2xl">
+                    {/* Exam Title */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                        Exam Title <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Macroeconomics Mid-Term Examination"
+                        value={examForm.title}
+                        onChange={(e) => setExamForm({ ...examForm, title: e.target.value })}
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
                     </div>
 
-                    {/* When Assigned to Entire Course */}
-                    {examForm.assignedType === 'course' && (
-                      <div className="p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-950/60 bg-indigo-50/40 dark:bg-indigo-950/20 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300 flex items-center gap-1.5">
-                            <BookOpen size={14} className="text-indigo-600 dark:text-indigo-400" />
-                            <span>Select Target Course</span>
-                          </label>
-                          <span className="text-[11px] font-medium text-indigo-700 dark:text-indigo-300">
-                            {examForm.course.includes('All Students') || examForm.courseId === 'all'
-                              ? '🌐 Open to all'
-                              : '🔒 Enrolled only'}
-                          </span>
-                        </div>
-
-                        <select
-                          value={examForm.course}
-                          onChange={(e) => {
-                            const cObj = coursesList.find((c) => c.title === e.target.value)
-                            setExamForm({
-                              ...examForm,
-                              course: e.target.value,
-                              courseId: cObj ? cObj.id : ''
-                            })
-                          }}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-                        >
-                          {coursesList.map((c) => (
-                            <option key={c.id || c.title} value={c.title}>
-                              {c.id === 'all' ? `🌐 ${c.title}` : `📚 ${c.title}`}
-                            </option>
-                          ))}
-                        </select>
-
-                        <p className="text-[11px] text-indigo-700 dark:text-indigo-400">
-                          {examForm.course.includes('All Students') || examForm.courseId === 'all'
-                            ? '🌐 Open Exam: Visible to every student in the portal for general practice.'
-                            : '🔒 Course-Restricted: Only students actively enrolled in this specific course will see and be able to take it.'}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* When Assigned to Particular Student */}
-                    {examForm.assignedType === 'student' && (
-                      <div className="p-4 rounded-xl border border-purple-200 dark:border-purple-900/50 bg-purple-50/50 dark:bg-purple-950/20 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <UserCheck size={16} className="text-purple-600 dark:text-purple-400" />
-                            <span className="text-xs font-bold text-purple-900 dark:text-purple-300">
-                              Personalized 1-on-1 Student Exam
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                            Private Assignment
-                          </span>
-                        </div>
-
-                        {/* Select from registered profiles */}
-                        {studentsList.length > 0 && (
-                          <div>
-                            <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">
-                              Quick Select from Enrolled Students
-                            </label>
-                            <select
-                              value={examForm.assignedStudentEmail}
-                              onChange={(e) => {
-                                const st = studentsList.find(
-                                  (s) => s.email.toLowerCase() === e.target.value.toLowerCase()
-                                )
-                                if (st) {
-                                  const fullName = `${st.first_name || ''} ${st.last_name || ''}`.trim()
-                                  setExamForm({
-                                    ...examForm,
-                                    assignedStudentEmail: st.email,
-                                    assignedStudentName: fullName || st.email
-                                  })
-                                } else {
-                                  setExamForm({
-                                    ...examForm,
-                                    assignedStudentEmail: e.target.value
-                                  })
-                                }
-                              }}
-                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
-                            >
-                              <option value="">-- Choose registered student or enter below --</option>
-                              {studentsList.map((st) => (
-                                <option key={st.id || st.email} value={st.email}>
-                                  {st.first_name || st.last_name
-                                    ? `${st.first_name || ''} ${st.last_name || ''} (${st.email})`
-                                    : st.email}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-
-                        {/* Student Email and Name input fields */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1">
-                              Student Email <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                              type="email"
-                              required
-                              placeholder="student@example.com"
-                              value={examForm.assignedStudentEmail}
-                              onChange={(e) =>
-                                setExamForm({ ...examForm, assignedStudentEmail: e.target.value })
-                              }
-                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-purple-500 outline-none"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1">
-                              Student Name (Display)
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="e.g. John Doe"
-                              value={examForm.assignedStudentName}
-                              onChange={(e) =>
-                                setExamForm({ ...examForm, assignedStudentName: e.target.value })
-                              }
-                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-purple-500 outline-none"
-                            />
-                          </div>
-                        </div>
-
-                        <p className="text-[11px] text-purple-700 dark:text-purple-300">
-                          🔒 This exam is privately assigned. Only this student will see and be able to take it.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Scheduling Mode (Specific Date/Time vs Anytime / Self-Paced) */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/80 dark:bg-neutral-800/90">
-                      <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={(examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint')}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setExamForm({
-                                ...examForm,
-                                scheduledDate: 'Anytime / Self-Paced',
-                                scheduledTime: 'Flexible'
-                              })
-                            } else {
-                              setExamForm({
-                                ...examForm,
-                                scheduledDate: getTodayDateString(),
-                                scheduledTime: '10:00'
-                              })
-                            }
-                          }}
-                          className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                        />
-                        <span className="text-xs font-semibold text-slate-800 dark:text-neutral-200">
-                          No date or time constraint (Anytime / Self-paced)
+                    {/* Assign To Students: All vs Specific */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
+                          Assign Exam To <span className="text-rose-500">*</span>
+                        </label>
+                        <span className="text-[11px] font-semibold text-slate-500 dark:text-neutral-400">
+                          {examForm.assignedType === 'all'
+                            ? '🌐 Open to all students'
+                            : `👤 ${examForm.assignedStudentEmails.length} student${examForm.assignedStudentEmails.length === 1 ? '' : 's'} selected`}
                         </span>
+                      </div>
+
+                      {/* Segmented Control */}
+                      <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border border-slate-200 dark:border-neutral-700">
+                        <button
+                          type="button"
+                          onClick={() => setExamForm({ ...examForm, assignedType: 'all', assignedStudentEmails: [] })}
+                          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            examForm.assignedType === 'all'
+                              ? 'bg-white dark:bg-neutral-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
+                              : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          <BookOpen size={15} />
+                          <span>All Students</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setExamForm({ ...examForm, assignedType: 'student' })}
+                          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            examForm.assignedType === 'student'
+                              ? 'bg-white dark:bg-neutral-700 text-purple-600 dark:text-purple-300 shadow-2xs'
+                              : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          <User size={15} />
+                          <span>Specific Students ({examForm.assignedStudentEmails.length})</span>
+                        </button>
+                      </div>
+
+                      {/* Multi-Student Selection Checklist */}
+                      {examForm.assignedType === 'student' && (
+                        <div className="p-4 rounded-xl border border-slate-200 dark:border-neutral-700 bg-slate-50/70 dark:bg-neutral-800/60 space-y-3">
+                          {/* Search bar & Quick actions */}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="relative flex-1">
+                              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                              <input
+                                type="text"
+                                placeholder="Search by name or email..."
+                                value={studentSearch}
+                                onChange={(e) => setStudentSearch(e.target.value)}
+                                className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 pl-8 pr-3 py-1.5 rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-purple-500"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 text-xs">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const allEmails = studentsList.map((s) => s.email.toLowerCase().trim());
+                                  setExamForm({ ...examForm, assignedStudentEmails: allEmails });
+                                }}
+                                className="font-semibold text-purple-600 dark:text-purple-400 hover:underline cursor-pointer"
+                              >
+                                Select All
+                              </button>
+                              <span className="text-slate-300 dark:text-neutral-600">|</span>
+                              <button
+                                type="button"
+                                onClick={() => setExamForm({ ...examForm, assignedStudentEmails: [] })}
+                                className="font-semibold text-slate-500 hover:text-rose-500 cursor-pointer"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Student List */}
+                          <div className="max-h-52 overflow-y-auto space-y-1 pr-1 divide-y divide-slate-100 dark:divide-neutral-800/80">
+                            {filteredStudentOptions.length === 0 ? (
+                              <p className="text-xs text-slate-400 text-center py-6">No students found</p>
+                            ) : (
+                              filteredStudentOptions.map((st) => {
+                                const email = st.email.toLowerCase().trim();
+                                const isChecked = examForm.assignedStudentEmails.includes(email);
+                                const fullName = `${st.first_name || ''} ${st.last_name || ''}`.trim() || email;
+                                return (
+                                  <label
+                                    key={st.id || email}
+                                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition select-none ${
+                                      isChecked
+                                        ? 'bg-purple-100/70 dark:bg-purple-950/40 text-purple-950 dark:text-purple-200'
+                                        : 'hover:bg-white dark:hover:bg-neutral-800/80 text-slate-700 dark:text-neutral-300'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                      <input
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        onChange={() => {
+                                          const next = isChecked
+                                            ? examForm.assignedStudentEmails.filter((e) => e !== email)
+                                            : [...examForm.assignedStudentEmails, email];
+                                          setExamForm({ ...examForm, assignedStudentEmails: next });
+                                        }}
+                                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer"
+                                      />
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-semibold truncate">{fullName}</p>
+                                        <p className="text-[11px] text-slate-400 dark:text-neutral-500 truncate">{email}</p>
+                                      </div>
+                                    </div>
+                                    {isChecked && (
+                                      <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded bg-purple-200/60 dark:bg-purple-900/50 shrink-0">
+                                        Selected ✓
+                                      </span>
+                                    )}
+                                  </label>
+                                );
+                              })
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Schedule Mode: Single Clean 2-Pill Selector */}
+                    <div className="space-y-3">
+                      <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
+                        Schedule Mode <span className="text-rose-500">*</span>
                       </label>
 
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-neutral-400">
-                        {(examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint') ? '✓ Self-paced exam' : 'Scheduled window'}
-                      </span>
-                    </div>
-
-                    {(examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint') ? (
-                      <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/60 dark:bg-emerald-950/20 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-base">
-                            ∞
-                          </div>
-                          <div>
-                            <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300">
-                              No Date/Time Constraint
-                            </p>
-                            <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
-                              Students can take this exam whenever they want without any schedule restriction.
-                            </p>
-                          </div>
-                        </div>
+                      <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border border-slate-200 dark:border-neutral-700">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExamForm({
+                              ...examForm,
+                              scheduledDate: 'Anytime / Self-Paced',
+                              scheduledTime: 'Flexible'
+                            })
+                          }
+                          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            isSelfPaced
+                              ? 'bg-white dark:bg-neutral-700 text-emerald-600 dark:text-emerald-300 shadow-2xs'
+                              : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          <Clock size={15} />
+                          <span>Anytime / Self-Paced</span>
+                        </button>
 
                         <button
                           type="button"
@@ -2498,188 +2428,128 @@ export default function AdminExams() {
                               scheduledTime: '10:00'
                             })
                           }
-                          className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:underline cursor-pointer"
+                          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            !isSelfPaced
+                              ? 'bg-white dark:bg-neutral-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
+                              : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
                         >
-                          Set specific slot
+                          <Calendar size={15} />
+                          <span>Scheduled Window</span>
                         </button>
                       </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <div className="flex items-center justify-between mb-1.5">
-                            <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+
+                      {/* If Self-Paced: 1 clean subtle note */}
+                      {isSelfPaced ? (
+                        <p className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-2 rounded-xl border border-emerald-200/80 dark:border-emerald-900/40 font-medium">
+                          ⚡ Students can take this exam whenever they want without any schedule restriction.
+                        </p>
+                      ) : (
+                        /* If Scheduled: Clean Date & Time Pickers */
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1">
                               Date
                             </label>
-                            {examForm.scheduledDate && (
-                              <span className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
-                                {examForm.scheduledDate}
-                              </span>
-                            )}
+                            <input
+                              type="date"
+                              value={examForm.scheduledDate === 'Active Now' ? '' : examForm.scheduledDate}
+                              onChange={(e) => setExamForm({ ...examForm, scheduledDate: e.target.value })}
+                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                            />
+                            <div className="flex gap-1.5 mt-2">
+                              <button
+                                type="button"
+                                onClick={() => setExamForm({ ...examForm, scheduledDate: getTodayDateString() })}
+                                className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                              >
+                                Today
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setExamForm({ ...examForm, scheduledDate: getTomorrowDateString() })}
+                                className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                              >
+                                Tomorrow
+                              </button>
+                            </div>
                           </div>
-                          <input
-                            type="date"
-                            value={examForm.scheduledDate === 'Active Now' ? '' : examForm.scheduledDate}
-                            onChange={(e) => setExamForm({ ...examForm, scheduledDate: e.target.value })}
-                            className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-                          />
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            <button
-                              type="button"
-                              onClick={() => setExamForm({ ...examForm, scheduledDate: getTodayDateString() })}
-                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                                examForm.scheduledDate === getTodayDateString()
-                                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                              }`}
-                            >
-                              Today
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setExamForm({ ...examForm, scheduledDate: getTomorrowDateString() })}
-                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                                examForm.scheduledDate === getTomorrowDateString()
-                                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                              }`}
-                            >
-                              Tomorrow
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setExamForm({ ...examForm, scheduledDate: 'Active Now' })}
-                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                                examForm.scheduledDate === 'Active Now'
-                                  ? 'bg-emerald-600 text-white'
-                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                              }`}
-                            >
-                              Active Now
-                            </button>
-                          </div>
-                        </div>
 
-                        <div>
-                          <div className="flex items-center justify-between mb-1.5">
-                            <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1">
                               Time
                             </label>
-                            {examForm.scheduledTime && (
-                              <span className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
-                                {examForm.scheduledTime}
-                              </span>
-                            )}
-                          </div>
-                          <input
-                            type="time"
-                            value={examForm.scheduledTime}
-                            onChange={(e) => setExamForm({ ...examForm, scheduledTime: e.target.value })}
-                            className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-                          />
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {['09:00', '10:00', '14:00', '18:00'].map((timePreset) => (
-                              <button
-                                key={timePreset}
-                                type="button"
-                                onClick={() => setExamForm({ ...examForm, scheduledTime: timePreset })}
-                                className={`px-2 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                                  examForm.scheduledTime === timePreset
-                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                                    : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                                }`}
-                              >
-                                {timePreset}
-                              </button>
-                            ))}
+                            <input
+                              type="time"
+                              value={examForm.scheduledTime}
+                              onChange={(e) => setExamForm({ ...examForm, scheduledTime: e.target.value })}
+                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                            />
+                            <div className="flex gap-1.5 mt-2">
+                              {['09:00', '10:00', '14:00', '18:00'].map((t) => (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  onClick={() => setExamForm({ ...examForm, scheduledTime: t })}
+                                  className="px-2 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                                >
+                                  {t}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Duration & Total Marks */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                        Duration (Minutes)
-                      </label>
-                      <input
-                        type="number"
-                        min="5"
-                        value={examForm.durationMinutes}
-                        onChange={(e) => setExamForm({ ...examForm, durationMinutes: Number(e.target.value) })}
-                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                      />
-                      <div className="flex gap-1.5 mt-2">
-                        {[30, 45, 60, 90].map((mins) => (
-                          <button
-                            key={mins}
-                            type="button"
-                            onClick={() => setExamForm({ ...examForm, durationMinutes: mins })}
-                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
-                          >
-                            {mins}m
-                          </button>
-                        ))}
-                      </div>
+                      )}
                     </div>
 
-                    <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                    {/* Duration & Total Marks */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                          Duration (Minutes)
+                        </label>
+                        <input
+                          type="number"
+                          min="5"
+                          value={examForm.durationMinutes}
+                          onChange={(e) => setExamForm({ ...examForm, durationMinutes: Number(e.target.value) })}
+                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                        <div className="flex gap-1.5 mt-2">
+                          {[30, 45, 60, 90].map((mins) => (
+                            <button
+                              key={mins}
+                              type="button"
+                              onClick={() => setExamForm({ ...examForm, durationMinutes: mins })}
+                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                            >
+                              {mins}m
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
                           Total Marks
                         </label>
-                        {calculatedQuestionMarks > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => setExamForm({ ...examForm, totalMarks: calculatedQuestionMarks })}
-                            className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline cursor-pointer"
-                          >
-                            Sync ({calculatedQuestionMarks} Marks)
-                          </button>
-                        )}
+                        <input
+                          type="number"
+                          min="1"
+                          value={calculatedQuestionMarks > 0 ? calculatedQuestionMarks : examForm.totalMarks}
+                          onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
+                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white font-bold outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                        <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1.5 block">
+                          {calculatedQuestionMarks > 0
+                            ? `⚡ Auto-calculated from ${examForm.questions.length} questions`
+                            : 'Will auto-calculate as you add questions in Step 2'}
+                        </span>
                       </div>
-                      <input
-                        type="number"
-                        min="1"
-                        value={examForm.totalMarks}
-                        onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
-                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-indigo-500 outline-none"
-                      />
-                      <div className="flex gap-1.5 mt-2">
-                        {[25, 50, 80, 100].map((presetMarks) => (
-                          <button
-                            key={presetMarks}
-                            type="button"
-                            onClick={() => setExamForm({ ...examForm, totalMarks: presetMarks })}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                              examForm.totalMarks === presetMarks
-                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                                : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                            }`}
-                          >
-                            {presetMarks}M
-                          </button>
-                        ))}
-                      </div>
-                      <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1 block">
-                        Sum of questions: {calculatedQuestionMarks} Marks
-                      </span>
                     </div>
                   </div>
-
-                  <div className="pt-3 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setExamModalTab('questions')}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition hover:opacity-90 cursor-pointer"
-                    >
-                      <span>Proceed to Questions</span>
-                      <ArrowRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* TAB 2: QUESTIONS BUILDER */}
               {examModalTab === 'questions' && (
@@ -2985,32 +2855,75 @@ export default function AdminExams() {
 
             </div>
 
-            {/* STICKY BOTTOM MODAL FOOTER */}
+            {/* STICKY BOTTOM MODAL FOOTER - CLEAR LINEAR NAVIGATION */}
             <div className="p-4 border-t border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-between shrink-0">
-              <div className="text-xs text-slate-500 dark:text-neutral-400">
-                <span className="font-bold text-slate-900 dark:text-white">Total: {examForm.totalMarks} Marks</span>
-                <span className="mx-1.5">•</span>
-                <span>{examForm.questions.length} Questions</span>
-              </div>
+              {examModalTab === 'settings' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowExamModal(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white cursor-pointer"
+                  >
+                    Cancel
+                  </button>
 
-              <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setShowExamModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white cursor-pointer"
-                >
-                  Cancel
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!examForm.title.trim()) {
+                        alert('Please enter an exam title first.');
+                        return;
+                      }
+                      if (examForm.assignedType === 'student' && examForm.assignedStudentEmails.length === 0) {
+                        alert('Please select at least one student.');
+                        return;
+                      }
+                      setExamModalTab('questions');
+                    }}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                  >
+                    <span>Next: Add Questions</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setExamModalTab('settings')}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white cursor-pointer"
+                  >
+                    <ArrowLeft size={14} />
+                    <span>Back to Details</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleSaveExam}
-                  className="flex items-center gap-1.5 px-6 py-2 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs font-bold transition cursor-pointer shadow-sm"
-                >
-                  <Check size={14} />
-                  <span>{editingExamId ? 'Update Exam' : 'Save Exam'}</span>
-                </button>
-              </div>
+                  <div className="text-xs text-slate-500 dark:text-neutral-400">
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      Total: {calculatedQuestionMarks > 0 ? calculatedQuestionMarks : examForm.totalMarks} Marks
+                    </span>
+                    <span className="mx-1.5">•</span>
+                    <span>{examForm.questions.length} Questions</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowExamModal(false)}
+                      className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-neutral-400 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveExam}
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition hover:opacity-90 shadow-sm cursor-pointer"
+                    >
+                      <Check size={14} />
+                      <span>{editingExamId ? 'Update Exam' : 'Publish / Save Exam'}</span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
           </div>
