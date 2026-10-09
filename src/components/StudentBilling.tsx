@@ -696,66 +696,68 @@ export default function StudentBilling() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
+    <div className="p-3.5 sm:p-6 lg:p-10 overflow-x-hidden w-full max-w-full">
       
       {/* HEADER & TIME PERIOD CONTROL */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 shrink-0 pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3.5 sm:gap-4 mb-6 sm:mb-8 shrink-0 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Student Billing</h1>
-          <p className="text-slate-500 dark:text-slate-400 font-normal text-sm mt-1">Auto-calculate and settle invoice amounts for enrolled students.</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Student Billing</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-normal text-xs sm:text-sm mt-0.5 sm:mt-1">Auto-calculate and settle invoice amounts for enrolled students.</p>
         </div>
 
-        <div className="flex items-center bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 shadow-xs">
-          <CalendarIcon size={16} className="text-slate-400 mr-2" />
-          <select
-            className="border-none bg-transparent focus:ring-0 font-medium text-xs text-slate-700 dark:text-slate-200 cursor-pointer outline-none"
-            value={period}
-            onChange={(e) => setPeriod(e.target.value as FilterPeriod)}
-          >
-            <option value="current_month" className="dark:bg-slate-900">Current Month</option>
-            <option value="last_month" className="dark:bg-slate-900">Last Month</option>
-            <option value="all_time" className="dark:bg-slate-900">All Time</option>
-          </select>
+        <div className="flex items-center justify-between sm:justify-start bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 shadow-xs w-full sm:w-auto">
+          <div className="flex items-center">
+            <CalendarIcon size={16} className="text-slate-400 mr-2 shrink-0" />
+            <select
+              className="border-none bg-transparent focus:ring-0 font-semibold text-xs text-slate-700 dark:text-slate-200 cursor-pointer outline-none"
+              value={period}
+              onChange={(e) => setPeriod(e.target.value as FilterPeriod)}
+            >
+              <option value="current_month" className="dark:bg-slate-900">Current Month</option>
+              <option value="last_month" className="dark:bg-slate-900">Last Month</option>
+              <option value="all_time" className="dark:bg-slate-900">All Time</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5 mb-6 sm:mb-8 shrink-0">
         {/* Active Students Card */}
-        <div className="bg-white dark:bg-[#0f172a] p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 shadow-xs">
-          <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-900/40 shrink-0">
-            <Users size={22} />
+        <div className="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-3.5 sm:gap-4 shadow-xs">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-900/40 shrink-0">
+            <Users size={20} className="sm:w-[22px] sm:h-[22px]" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Active Students</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5 sm:mb-1">Active Students</p>
+            <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{summaryStats.activeStudents}</p>
           </div>
         </div>
 
         {/* Scheduled Hours Card */}
-        <div className="bg-white dark:bg-[#0f172a] p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 shadow-xs">
-          <div className="w-12 h-12 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/40 shrink-0">
-            <TrendingUp size={22} />
+        <div className="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-3.5 sm:gap-4 shadow-xs">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/40 shrink-0">
+            <TrendingUp size={20} className="sm:w-[22px] sm:h-[22px]" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Scheduled Hours</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-sm font-normal text-slate-500">hrs</span></p>
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5 sm:mb-1">Scheduled Hours</p>
+            <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{summaryStats.totalScheduledHours.toFixed(1)} <span className="text-xs sm:text-sm font-normal text-slate-500">hrs</span></p>
           </div>
         </div>
 
         {/* Total Outstanding Card */}
-        <div className="bg-white dark:bg-[#0f172a] p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 shadow-xs">
-          <div className="w-12 h-12 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-900/40 shrink-0">
-            <DollarSign size={22} />
+        <div className="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-3.5 sm:gap-4 shadow-xs sm:col-span-2 lg:col-span-1">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-900/40 shrink-0">
+            <DollarSign size={20} className="sm:w-[22px] sm:h-[22px]" />
           </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Outstanding</p>
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5 sm:mb-1">Total Outstanding</p>
             <div className="space-y-0.5">
               {Object.keys(summaryStats.totalOutstandingDue).length === 0 ? (
-                <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">₹ 0.00</p>
+                <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">₹ 0.00</p>
               ) : (
                 Object.entries(summaryStats.totalOutstandingDue).map(([currency, amount]) => (
-                  <p key={currency} className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-baseline">
+                  <p key={currency} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-baseline truncate">
                     <span className="text-slate-500 dark:text-slate-400 mr-1.5 text-xs font-medium">{currency}</span>
                     {getCurrencySymbol(currency)} {amount.toFixed(2)}
                   </p>
@@ -767,7 +769,7 @@ export default function StudentBilling() {
       </div>
 
       {/* CONTROL PANEL: Search, Filter, Sort */}
-      <div className="bg-white dark:bg-[#0f172a] rounded-t-xl border border-b-0 border-slate-200 dark:border-slate-800 p-4 flex flex-col md:flex-row gap-4 items-center justify-between shrink-0 shadow-xs">
+      <div className="bg-white dark:bg-[#0f172a] rounded-t-2xl border border-b-0 border-slate-200 dark:border-slate-800 p-3 sm:p-4 flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch md:items-center justify-between shrink-0 shadow-xs">
         
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
@@ -777,15 +779,15 @@ export default function StudentBilling() {
           <input
             type="text"
             placeholder="Search by name or email..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-white text-xs font-medium outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white text-xs font-medium outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
           {/* Active Only Toggle */}
-          <label className="flex items-center gap-2.5 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
             <div className="relative">
               <input 
                 type="checkbox" 
@@ -800,10 +802,10 @@ export default function StudentBilling() {
           </label>
 
           {/* Sort Dropdown */}
-          <div className="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white transition-all">
-            <ArrowUpDown size={14} className="text-slate-400 mr-2" />
+          <div className="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white transition-all">
+            <ArrowUpDown size={13} className="text-slate-400 mr-1.5 shrink-0" />
             <select
-              className="bg-transparent border-none focus:ring-0 text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer p-0 pr-4 outline-none"
+              className="bg-transparent border-none focus:ring-0 text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer p-0 pr-2 outline-none"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
             >
@@ -815,10 +817,12 @@ export default function StudentBilling() {
         </div>
       </div>
 
-      {/* TABLE DATA */}
+      {/* DATA DISPLAY: DESKTOP TABLE (hidden on mobile) & MOBILE CARDS (hidden on desktop) */}
       <div className="flex-1 flex flex-col min-h-[400px]">
-        <div className="overflow-auto flex-1 relative custom-scrollbar">
-          <div className="bg-white dark:bg-[#0f172a] rounded-b-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
+        
+        {/* DESKTOP TABLE VIEW (md: and up) */}
+        <div className="hidden md:block overflow-auto flex-1 relative custom-scrollbar">
+          <div className="bg-white dark:bg-[#0f172a] rounded-b-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
             <table className="w-full text-left border-collapse">
               <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
                 <tr>
@@ -935,7 +939,7 @@ export default function StudentBilling() {
                           <div className="flex justify-end gap-1.5">
                             <button 
                               onClick={() => handleViewHistory(profile)}
-                              className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold py-1.5 px-3 rounded-lg transition-colors text-xs cursor-pointer"
+                              className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-semibold py-1.5 px-3 rounded-lg transition-colors text-xs cursor-pointer"
                             >
                               History
                             </button>
@@ -961,6 +965,162 @@ export default function StudentBilling() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* MOBILE CARDS VIEW (below md: 100% responsive, no horizontal scrolling) */}
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800/80 bg-white dark:bg-[#0f172a] rounded-b-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+          {processedProfiles.length === 0 ? (
+            <div className="p-10 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 mb-3 text-slate-400">
+                <Search size={20} />
+              </div>
+              <p className="text-base font-bold text-slate-900 dark:text-white">No students found</p>
+              <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Try adjusting your search or filters.</p>
+            </div>
+          ) : (
+            processedProfiles.map((profile) => {
+              const stats = profile.stats
+              const currencySymbol = getCurrencySymbol(profile.billing_currency || 'INR')
+              const hasClasses = stats.classCount > 0
+              const isOfficiallyEnrolled = stats.isEnrolled
+
+              return (
+                <div key={profile.id} className="p-4 space-y-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                  {/* Top row: Avatar + Name/Email + Activity Badge */}
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm shrink-0 border border-indigo-100 dark:border-indigo-900/40">
+                        {profile.first_name?.[0] || '?'}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-slate-900 dark:text-white text-sm truncate">
+                          {profile.first_name} {profile.last_name}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          {profile.email}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="shrink-0">
+                      {!isOfficiallyEnrolled ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40">
+                          Unenrolled
+                        </span>
+                      ) : hasClasses ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          {stats.classCount} Classes
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                          No Classes
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Middle row: Rates Applied & Activity Stats */}
+                  <div className="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 text-xs">
+                    <div>
+                      <span className="text-[10px] font-semibold text-slate-400 dark:text-neutral-500 uppercase block mb-0.5">
+                        Rate Applied
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {stats.activeRates.length > 0 ? (
+                          stats.activeRates.map((rate, i) => (
+                            <span key={i} className="font-bold text-slate-700 dark:text-slate-300">
+                              {currencySymbol}{rate}/hr
+                            </span>
+                          ))
+                        ) : (
+                          <span className="font-bold text-slate-700 dark:text-slate-300">
+                            {currencySymbol}{profile.hourly_rate || 0}/hr
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-semibold text-slate-400 dark:text-neutral-500 uppercase block mb-0.5">
+                        Period Activity
+                      </span>
+                      <div className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Clock size={12} className="text-slate-400" />
+                        <span>{stats.totalHours.toFixed(1)} hrs</span>
+                        {hasClasses && (
+                          <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">
+                            ({currencySymbol}{stats.periodAmountDue.toFixed(2)})
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Outstanding Amount Row */}
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60">
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                        Total Outstanding
+                      </span>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className={`text-base font-extrabold ${stats.totalDue > 0 ? 'text-rose-600 dark:text-rose-400' : stats.totalDue < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                          {currencySymbol} {stats.totalDue.toFixed(2)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setBreakdownProfile(profile)}
+                          className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition cursor-pointer"
+                          title="View Calculation Breakdown"
+                        >
+                          <AlertCircle size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {stats.totalDue > 0 ? (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-900/40">
+                        Due
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/40">
+                        Settled
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions Row: 3 touch-friendly buttons */}
+                  <div className="grid grid-cols-3 gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => handleViewHistory(profile)}
+                      className="py-2 px-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-bold text-xs transition text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1"
+                    >
+                      <History size={13} />
+                      <span>History</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSettleProfile(profile)}
+                      disabled={stats.totalDue <= 0}
+                      className="py-2 px-1.5 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs transition text-center cursor-pointer active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs flex items-center justify-center gap-1"
+                    >
+                      <Check size={13} />
+                      <span>Settle</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setChargeProfile(profile)}
+                      className="py-2 px-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-bold text-xs transition text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1"
+                    >
+                      <DollarSign size={13} />
+                      <span>Add Due</span>
+                    </button>
+                  </div>
+                </div>
+              )
+            })
+          )}
         </div>
       </div>
 
@@ -1060,11 +1220,11 @@ export default function StudentBilling() {
 
       {/* HISTORY MODAL */}
       {historyProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-lg shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[80vh] animate-modal">
-            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-lg shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[85vh] animate-modal">
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
               <div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Billing History</h2>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Billing History</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{historyProfile.first_name} {historyProfile.last_name}</p>
               </div>
               <button onClick={() => setHistoryProfile(null)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">
@@ -1072,7 +1232,7 @@ export default function StudentBilling() {
               </button>
             </div>
             
-            <div className="p-5 overflow-y-auto flex-1">
+            <div className="p-3.5 sm:p-5 overflow-y-auto flex-1">
               {isLoadingHistory ? (
                 <div className="flex justify-center py-8">
                   <div className="w-6 h-6 border-2 border-slate-200 dark:border-slate-800 border-t-slate-800 rounded-full animate-spin"></div>
@@ -1086,8 +1246,8 @@ export default function StudentBilling() {
                 <div className="space-y-3">
                   {historyData.map(record => (
                     <div key={record.id} className={`p-3.5 rounded-xl border ${record.undone ? 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 opacity-60' : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'}`}>
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex items-center gap-2">
+                      <div className="flex justify-between items-start mb-2 gap-2">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
                             record.type === 'SETTLEMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
                           }`}>
@@ -1099,21 +1259,21 @@ export default function StudentBilling() {
                             </span>
                           )}
                         </div>
-                        <span className="text-[11px] text-slate-400">
+                        <span className="text-[11px] text-slate-400 shrink-0">
                           {new Date(record.created_at).toLocaleString()}
                         </span>
                       </div>
                       
-                      <div className="flex justify-between items-center mt-2">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mt-2">
                         <div className="font-medium text-slate-700 dark:text-slate-300 text-xs">
                           {record.description}
                         </div>
-                        <div className="text-right">
+                        <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
                           <div className={`font-bold text-sm ${record.type === 'SETTLEMENT' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                             {getCurrencySymbol(historyProfile.billing_currency)} {record.amount.toFixed(2)}
                           </div>
                           {!record.undone && (
-                            <div className="flex items-center gap-3 mt-1 justify-end">
+                            <div className="flex items-center gap-2">
                               {record.type === 'SETTLEMENT' && (
                                 <button 
                                   onClick={() => {
@@ -1147,11 +1307,11 @@ export default function StudentBilling() {
 
       {/* BREAKDOWN MODAL */}
       {breakdownProfile && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 animate-in fade-in duration-150">
           <div className="bg-white dark:bg-[#0f172a] rounded-2xl w-full max-w-2xl shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] animate-modal">
-            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
               <div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Calculation Breakdown</h2>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Calculation Breakdown</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Outstanding amount breakdown for {breakdownProfile.first_name} {breakdownProfile.last_name}
                 </p>
@@ -1161,7 +1321,7 @@ export default function StudentBilling() {
               </button>
             </div>
             
-            <div className="p-5 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/30">
+            <div className="p-3.5 sm:p-5 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/30">
               {breakdownProfile.stats.classBreakdown.length === 0 ? (
                 <div className="text-center py-8 text-slate-400">
                   <p className="font-semibold text-sm text-slate-700 dark:text-slate-300">No classes taken yet.</p>
@@ -1170,22 +1330,22 @@ export default function StudentBilling() {
                 <div className="space-y-2.5">
                   <h3 className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider mb-2">Class History</h3>
                   {breakdownProfile.stats.classBreakdown.map((c: any) => (
-                    <div key={c.id} className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex justify-between items-center shadow-xs">
+                    <div key={c.id} className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col sm:flex-row justify-between sm:items-center gap-2 shadow-xs">
                       <div>
                         <div className="font-semibold text-slate-900 dark:text-white text-xs">{c.title}</div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2.5">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex flex-wrap items-center gap-2">
                           <span className="flex items-center gap-1">
                             <CalendarIcon size={11} /> {new Date(c.scheduled_datetime).toLocaleDateString()}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock size={11} /> {(c.duration_minutes / 60).toFixed(1)} hrs
                           </span>
-                          <span className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.2 rounded text-slate-600 dark:text-slate-400">
+                          <span className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">
                             Rate: {getCurrencySymbol(breakdownProfile.billing_currency)}{c.rateApplied}/hr
                           </span>
                         </div>
                       </div>
-                      <div className="font-bold text-rose-600 dark:text-rose-400 text-sm">
+                      <div className="font-bold text-rose-600 dark:text-rose-400 text-sm self-end sm:self-center">
                         +{getCurrencySymbol(breakdownProfile.billing_currency)}{c.cost.toFixed(2)}
                       </div>
                     </div>
@@ -1194,7 +1354,7 @@ export default function StudentBilling() {
               )}
             </div>
 
-            <div className="p-5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shrink-0">
+            <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shrink-0">
               <h3 className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider mb-3">Final Calculation Summary</h3>
               
               <div className="space-y-2">
