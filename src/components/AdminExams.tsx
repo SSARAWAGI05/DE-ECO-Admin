@@ -1161,7 +1161,8 @@ export default function AdminExams() {
           .order('submitted_at', { ascending: false })
 
         if (!error && data) {
-          const mapped: ExamSubmission[] = data.map((d: any) => ({
+          const completedSubmissions = data.filter((d: any) => d.status !== 'in_progress');
+          const mapped: ExamSubmission[] = completedSubmissions.map((d: any) => ({
             id: d.id,
             examId: d.exam_id,
             examTitle: d.exam_title,
