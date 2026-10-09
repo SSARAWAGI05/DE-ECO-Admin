@@ -14,9 +14,6 @@ import {
   Settings,
   HelpCircle,
   Copy,
-  ChevronRight,
-  Sparkles,
-  Calendar,
   Layers,
   ArrowRight
 } from 'lucide-react'
@@ -116,14 +113,10 @@ const INITIAL_EXAMS: Exam[] = [
     syllabus: [
       'National Income Accounting & GDP Deflator',
       'Keynesian Autonomous Investment Multiplier',
-      'Open Market Operations & Reserve Requirements',
-      'Short-run vs Long-run Phillips Curve',
-      'Liquidity Trap & Monetary Policy Effectiveness'
+      'Open Market Operations & Reserve Requirements'
     ],
     instructions: [
       'Total duration is 45 minutes.',
-      'Section A: 4 Multiple Choice Questions (5 marks each = 20 marks).',
-      'Section B: 2 Descriptive Essay Questions (15 marks each = 30 marks).',
       'Student answers are auto-saved in real time.'
     ],
     questions: [
@@ -139,8 +132,7 @@ const INITIAL_EXAMS: Exam[] = [
           { id: 'C', text: 'Government consumption expenditures and gross public investment' },
           { id: 'D', text: 'Net Exports of goods and services (Exports minus Imports)' }
         ],
-        correctAnswer: 'B',
-        explanation: 'Government transfer payments are excluded from GDP because they do not reflect compensation for current productive activities or new output.'
+        correctAnswer: 'B'
       },
       {
         id: 'q2',
@@ -154,8 +146,7 @@ const INITIAL_EXAMS: Exam[] = [
           { id: 'C', text: '5.0' },
           { id: 'D', text: '8.0' }
         ],
-        correctAnswer: 'C',
-        explanation: 'The autonomous multiplier formula is k = 1 / (1 - MPC). Substituting 0.8: k = 1 / (1 - 0.8) = 1 / 0.2 = 5.0.'
+        correctAnswer: 'C'
       },
       {
         id: 'q3',
@@ -166,11 +157,9 @@ const INITIAL_EXAMS: Exam[] = [
         options: [
           { id: 'A', text: 'Commercial bank reserves decrease, constraining credit and elevating bond yields' },
           { id: 'B', text: 'Commercial bank excess reserves rise, credit availability expands, and short-term interest rates fall' },
-          { id: 'C', text: 'The statutory reserve requirement ratio automatically quadruples' },
-          { id: 'D', text: 'Inflation is instantaneously pegged to zero with no shift in bank balance sheets' }
+          { id: 'C', text: 'The statutory reserve requirement ratio automatically quadruples' }
         ],
-        correctAnswer: 'B',
-        explanation: 'Purchasing government securities injects fresh liquidity directly into commercial bank reserves, lowering interbank borrowing rates and loan interest rates.'
+        correctAnswer: 'B'
       },
       {
         id: 'q4',
@@ -181,27 +170,23 @@ const INITIAL_EXAMS: Exam[] = [
         options: [
           { id: 'A', text: 'Fiscal deficit and the foreign currency exchange rate' },
           { id: 'B', text: 'The inflation rate and the unemployment rate' },
-          { id: 'C', text: 'Nominal interest rates and capital account surplus' },
-          { id: 'D', text: 'The current account deficit and velocity of money' }
+          { id: 'C', text: 'Nominal interest rates and capital account surplus' }
         ],
-        correctAnswer: 'B',
-        explanation: 'A.W. Phillips showed that lower unemployment in the short-run puts upward pressure on nominal wages, generating higher price inflation.'
+        correctAnswer: 'B'
       },
       {
         id: 'q5',
         number: 5,
         type: 'descriptive',
-        question: "Define the Keynesian concept of a 'Liquidity Trap'. Explain the precise economic conditions under which it develops, why conventional expansionary monetary policy becomes powerless, and what alternative policy measures Keynesian economists advocate to re-ignite aggregate demand.",
-        marks: 15,
-        modelAnswer: 'A liquidity trap is a situation where nominal interest rates approach the zero lower bound, causing money demand to become infinitely elastic. People expect asset prices to fall, so any increase in the money supply is hoarded rather than invested. Conventional open market operations fail. Keynesians argue that direct expansionary fiscal policy (state infrastructure spending) is required to restore aggregate demand.'
+        question: "Define the Keynesian concept of a 'Liquidity Trap'. Explain the precise economic conditions under which it develops and why conventional expansionary monetary policy becomes powerless.",
+        marks: 15
       },
       {
         id: 'q6',
         number: 6,
         type: 'descriptive',
-        question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation. In your response, illustrate the shifting mechanisms in the Aggregate Demand (AD) and Short-Run Aggregate Supply (SRAS) framework, and evaluate the policy dilemma central banks face when confronting stagflation.',
-        marks: 15,
-        modelAnswer: 'Demand-pull inflation occurs when aggregate spending outpaces aggregate productive capacity, shifting AD to the right. Cost-push inflation is caused by supply-side shocks (e.g. oil price surges) shifting SRAS to the left, causing prices to rise while GDP falls (stagflation). The central bank dilemma: hiking interest rates cools inflation but worsens unemployment; easing policy alleviates recession but fuels hyperinflation.'
+        question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation.',
+        marks: 15
       }
     ]
   },
@@ -210,7 +195,7 @@ const INITIAL_EXAMS: Exam[] = [
     title: 'Microeconomics & Market Structures Unit Test',
     course: 'Foundations of Microeconomics',
     instructor: 'Rishika',
-    status: 'upcoming',
+    status: 'live',
     scheduledDate: 'Oct 15, 2026',
     scheduledTime: '10:00 AM - 11:00 AM IST',
     durationMinutes: 60,
@@ -218,15 +203,8 @@ const INITIAL_EXAMS: Exam[] = [
     passingMarks: 24,
     mcqCount: 6,
     descriptiveCount: 2,
-    syllabus: [
-      'Consumer Equilibrium & Indifference Curves',
-      'Price Elasticity of Demand & Supply',
-      'Perfect Competition vs Pure Monopoly'
-    ],
-    instructions: [
-      'Scheduled live exam window opens precisely at 10:00 AM IST.',
-      'Covers Chapters 3, 4 and 5 of Microeconomic Foundations.'
-    ],
+    syllabus: [],
+    instructions: ['Scheduled live exam.'],
     questions: []
   }
 ]
@@ -255,8 +233,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         studentAnswer: 'B',
         correctAnswer: 'B',
         isCorrect: true,
-        marksAwarded: 5,
-        explanation: 'Government transfer payments are excluded.'
+        marksAwarded: 5
       },
       {
         questionId: 'q2',
@@ -267,8 +244,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         studentAnswer: 'C',
         correctAnswer: 'C',
         isCorrect: true,
-        marksAwarded: 5,
-        explanation: 'k = 1 / (1 - 0.8) = 5.0'
+        marksAwarded: 5
       },
       {
         questionId: 'q3',
@@ -279,8 +255,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         studentAnswer: 'B',
         correctAnswer: 'B',
         isCorrect: true,
-        marksAwarded: 5,
-        explanation: 'Injects liquidity, rates fall.'
+        marksAwarded: 5
       },
       {
         questionId: 'q4',
@@ -291,8 +266,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         studentAnswer: 'B',
         correctAnswer: 'B',
         isCorrect: true,
-        marksAwarded: 5,
-        explanation: 'Inflation vs unemployment.'
+        marksAwarded: 5
       },
       {
         questionId: 'q5',
@@ -300,7 +274,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         type: 'descriptive',
         question: "Define the Keynesian concept of a 'Liquidity Trap' and why conventional monetary policy fails.",
         marks: 15,
-        studentAnswer: 'A liquidity trap happens when interest rates are practically zero. Even if the central bank floods money, nobody invests because they prefer holding cash. Monetary expansion fails because the IS curve does not move from interest rate cuts.',
+        studentAnswer: 'A liquidity trap happens when interest rates are practically zero. Even if the central bank floods money, nobody invests because they prefer holding cash.',
         marksAwarded: undefined,
         teacherComment: ''
       },
@@ -310,7 +284,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
         type: 'descriptive',
         question: 'Critically distinguish between Cost-Push Inflation and Demand-Pull Inflation.',
         marks: 15,
-        studentAnswer: 'Demand-pull inflation is caused by too much money chasing too few goods, shifting AD right. Cost-push is caused by supply shocks like oil price spikes shifting SRAS left, creating stagflation.',
+        studentAnswer: 'Demand-pull inflation is caused by aggregate demand exceeding productive capacity. Cost-push is caused by supply shocks like oil price spikes.',
         marksAwarded: undefined,
         teacherComment: ''
       }
@@ -333,9 +307,9 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
     isPassed: true,
     timeSpentMinutes: 38,
     teacherFeedback: {
-      overall: 'Exceptional answers. Clear understanding of both macroeconomic models and policy trade-offs.',
-      strengths: ['Analytical rigor in Phillips curve trade-off', 'Clear explanation of Keynesian multiplier'],
-      improvements: ['Include graphical AD-AS shifts in stagflation'],
+      overall: 'Exceptional answers. Clear understanding of macroeconomic models.',
+      strengths: ['Analytical rigor in Phillips curve trade-off'],
+      improvements: ['Include graphical AD-AS shifts'],
       evaluatedAt: 'Yesterday • 6:00 PM'
     },
     answers: []
@@ -345,6 +319,7 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
 /* ================= STORAGE KEYS ================= */
 const EXAMS_STORAGE_KEY = 'deeco_admin_exams'
 const SUBMISSIONS_STORAGE_KEY = 'deeco_exam_results'
+const OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
 /* ================= MAIN COMPONENT ================= */
 
@@ -360,26 +335,22 @@ export default function AdminExams() {
   const [editingExamId, setEditingExamId] = useState<string | null>(null)
   const [evaluatingSub, setEvaluatingSub] = useState<ExamSubmission | null>(null)
 
-  // Exam Form State
+  // Streamlined Exam Form State (Title, Date, Time, Duration, Total Marks)
   const [examForm, setExamForm] = useState({
     title: '',
-    course: '',
-    instructor: 'Rishika',
-    status: 'live' as 'live' | 'upcoming' | 'expired',
     scheduledDate: 'Active Now',
     scheduledTime: '',
     durationMinutes: 45,
     totalMarks: 50,
-    passingMarks: 20,
     questions: [] as ExamQuestion[]
   })
 
-  // Question Builder State (inside Exam Modal)
+  // Streamlined Question Builder State
   const [isQuestionFormOpen, setIsQuestionFormOpen] = useState(false)
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null)
   const [newQType, setNewQType] = useState<QuestionType>('mcq')
   const [newQPrompt, setNewQPrompt] = useState('')
-  const [newQMarks, setNewQMarks] = useState(5)
+  const [newQMarks, setNewQMarks] = useState<number | ''>(5)
   const [newQOptions, setNewQOptions] = useState<MCQOption[]>([
     { id: 'A', text: '' },
     { id: 'B', text: '' },
@@ -387,8 +358,6 @@ export default function AdminExams() {
     { id: 'D', text: '' }
   ])
   const [newQCorrect, setNewQCorrect] = useState('A')
-  const [newQModelAnswer, setNewQModelAnswer] = useState('')
-  const [newQExplanation, setNewQExplanation] = useState('')
 
   // Grading Form State (inside Evaluation Modal)
   const [gradeMarks, setGradeMarks] = useState<Record<string, number>>({})
@@ -448,7 +417,7 @@ export default function AdminExams() {
   const filteredExams = useMemo(() => {
     if (!searchTerm.trim()) return exams
     const q = searchTerm.toLowerCase()
-    return exams.filter((e) => e.title.toLowerCase().includes(q) || e.course.toLowerCase().includes(q))
+    return exams.filter((e) => e.title.toLowerCase().includes(q) || (e.course && e.course.toLowerCase().includes(q)))
   }, [exams, searchTerm])
 
   const filteredSubmissions = useMemo(() => {
@@ -469,14 +438,10 @@ export default function AdminExams() {
     setExamModalTab('settings')
     setExamForm({
       title: '',
-      course: '',
-      instructor: 'Rishika',
-      status: 'live',
       scheduledDate: 'Active Now',
       scheduledTime: '',
       durationMinutes: 45,
       totalMarks: 50,
-      passingMarks: 20,
       questions: []
     })
     closeQuestionForm()
@@ -488,14 +453,10 @@ export default function AdminExams() {
     setExamModalTab('settings')
     setExamForm({
       title: exam.title,
-      course: exam.course,
-      instructor: exam.instructor,
-      status: exam.status,
-      scheduledDate: exam.scheduledDate,
+      scheduledDate: exam.scheduledDate || 'Active Now',
       scheduledTime: exam.scheduledTime || '',
-      durationMinutes: exam.durationMinutes,
-      totalMarks: exam.totalMarks,
-      passingMarks: exam.passingMarks,
+      durationMinutes: exam.durationMinutes || 45,
+      totalMarks: exam.totalMarks || 50,
       questions: exam.questions || []
     })
     closeQuestionForm()
@@ -506,7 +467,7 @@ export default function AdminExams() {
     setEditingQuestionId(null)
     setNewQType(type)
     setNewQPrompt('')
-    setNewQMarks(type === 'mcq' ? 5 : 15)
+    setNewQMarks(type === 'mcq' ? 5 : '')
     setNewQOptions([
       { id: 'A', text: '' },
       { id: 'B', text: '' },
@@ -514,8 +475,6 @@ export default function AdminExams() {
       { id: 'D', text: '' }
     ])
     setNewQCorrect('A')
-    setNewQModelAnswer('')
-    setNewQExplanation('')
     setIsQuestionFormOpen(true)
   }
 
@@ -523,9 +482,9 @@ export default function AdminExams() {
     setEditingQuestionId(q.id)
     setNewQType(q.type)
     setNewQPrompt(q.question)
-    setNewQMarks(q.marks)
+    setNewQMarks(q.marks || '')
     setNewQOptions(
-      q.options && q.options.length === 4
+      q.options && q.options.length >= 2
         ? q.options.map((o) => ({ ...o }))
         : [
             { id: 'A', text: '' },
@@ -535,14 +494,41 @@ export default function AdminExams() {
           ]
     )
     setNewQCorrect(q.correctAnswer || 'A')
-    setNewQModelAnswer(q.modelAnswer || '')
-    setNewQExplanation(q.explanation || '')
     setIsQuestionFormOpen(true)
   }
 
   const closeQuestionForm = () => {
     setIsQuestionFormOpen(false)
     setEditingQuestionId(null)
+  }
+
+  /* Dynamic MCQ Options Handling (X options) */
+  const handleAddOption = () => {
+    if (newQOptions.length >= 10) return
+    const nextLetter = OPTION_LETTERS[newQOptions.length] || `Option ${newQOptions.length + 1}`
+    setNewQOptions([...newQOptions, { id: nextLetter, text: '' }])
+  }
+
+  const handleRemoveOption = (indexToRemove: number) => {
+    if (newQOptions.length <= 2) {
+      alert('An MCQ question must have at least 2 options.')
+      return
+    }
+    const filtered = newQOptions.filter((_, idx) => idx !== indexToRemove)
+    const reIndexed = filtered.map((opt, idx) => ({
+      ...opt,
+      id: OPTION_LETTERS[idx] || `${idx + 1}`
+    }))
+    setNewQOptions(reIndexed)
+    if (!reIndexed.some((o) => o.id === newQCorrect)) {
+      setNewQCorrect(reIndexed[0].id)
+    }
+  }
+
+  const handleOptionTextChange = (idx: number, text: string) => {
+    const copy = [...newQOptions]
+    copy[idx].text = text
+    setNewQOptions(copy)
   }
 
   const handleSaveQuestion = () => {
@@ -559,6 +545,7 @@ export default function AdminExams() {
       }
     }
 
+    const assignedMarks = Number(newQMarks) > 0 ? Number(newQMarks) : 0
     let updatedQuestions: ExamQuestion[]
 
     if (editingQuestionId) {
@@ -568,19 +555,15 @@ export default function AdminExams() {
             ...q,
             type: newQType,
             question: newQPrompt.trim(),
-            marks: Number(newQMarks) || 5,
+            marks: assignedMarks,
             ...(newQType === 'mcq'
               ? {
                   options: newQOptions.map((o) => ({ ...o })),
-                  correctAnswer: newQCorrect,
-                  explanation: newQExplanation.trim() || undefined,
-                  modelAnswer: undefined
+                  correctAnswer: newQCorrect
                 }
               : {
-                  modelAnswer: newQModelAnswer.trim() || undefined,
                   options: undefined,
-                  correctAnswer: undefined,
-                  explanation: undefined
+                  correctAnswer: undefined
                 })
           }
         }
@@ -593,21 +576,18 @@ export default function AdminExams() {
         number: qNum,
         type: newQType,
         question: newQPrompt.trim(),
-        marks: Number(newQMarks) || 5,
+        marks: assignedMarks,
         ...(newQType === 'mcq'
           ? {
               options: newQOptions.map((o) => ({ ...o })),
-              correctAnswer: newQCorrect,
-              explanation: newQExplanation.trim() || undefined
+              correctAnswer: newQCorrect
             }
-          : {
-              modelAnswer: newQModelAnswer.trim() || undefined
-            })
+          : {})
       }
       updatedQuestions = [...examForm.questions, newQuestion]
     }
 
-    // Auto-sync total marks
+    // Auto-sync total marks if set to 0 or if sum is higher
     const calcTotal = updatedQuestions.reduce((acc, q) => acc + q.marks, 0)
     setExamForm((prev) => ({
       ...prev,
@@ -649,23 +629,31 @@ export default function AdminExams() {
 
   const handleSaveExam = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!examForm.title.trim() || !examForm.course.trim()) {
-      alert('Please fill in title and course name.')
+    if (!examForm.title.trim()) {
+      alert('Please enter an exam title.')
       setExamModalTab('settings')
       return
     }
 
     const mcqCount = examForm.questions.filter((q) => q.type === 'mcq').length
     const descriptiveCount = examForm.questions.filter((q) => q.type === 'descriptive').length
+    const totalMarks = Number(examForm.totalMarks) || (calculatedQuestionMarks || 50)
+    const passingMarks = Math.round(totalMarks * 0.4) // Auto-calculate 40% benchmark
 
     if (editingExamId) {
       const updated = exams.map((ex) =>
         ex.id === editingExamId
           ? {
               ...ex,
-              ...examForm,
+              title: examForm.title.trim(),
+              scheduledDate: examForm.scheduledDate.trim() || 'Active Now',
+              scheduledTime: examForm.scheduledTime.trim() || '',
+              durationMinutes: Number(examForm.durationMinutes) || 45,
+              totalMarks,
+              passingMarks,
               mcqCount,
-              descriptiveCount
+              descriptiveCount,
+              questions: examForm.questions
             }
           : ex
       )
@@ -673,11 +661,20 @@ export default function AdminExams() {
     } else {
       const newExam: Exam = {
         id: 'exam_' + Date.now(),
-        ...examForm,
+        title: examForm.title.trim(),
+        course: 'General Examination',
+        instructor: 'Rishika',
+        status: 'live',
+        scheduledDate: examForm.scheduledDate.trim() || 'Active Now',
+        scheduledTime: examForm.scheduledTime.trim() || '',
+        durationMinutes: Number(examForm.durationMinutes) || 45,
+        totalMarks,
+        passingMarks,
         mcqCount,
         descriptiveCount,
         syllabus: [],
-        instructions: ['Auto-saved in real time. Please submit before timer expires.']
+        instructions: ['Auto-saved in real time. Please submit before timer expires.'],
+        questions: examForm.questions
       }
       saveExamsToStorage([newExam, ...exams])
     }
@@ -852,7 +849,7 @@ export default function AdminExams() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 dark:bg-neutral-800/60 border-b border-slate-200 dark:border-neutral-800 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 <tr>
-                  <th className="px-5 py-3.5">Exam Title & Course</th>
+                  <th className="px-5 py-3.5">Exam Title</th>
                   <th className="px-5 py-3.5">Schedule</th>
                   <th className="px-5 py-3.5">Duration & Marks</th>
                   <th className="px-5 py-3.5">Questions</th>
@@ -872,7 +869,7 @@ export default function AdminExams() {
                     <tr key={ex.id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-800/40 transition-colors">
                       <td className="px-5 py-4">
                         <div className="font-semibold text-slate-900 dark:text-white">{ex.title}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{ex.course}</div>
+                        {ex.course && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{ex.course}</div>}
                       </td>
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
@@ -884,7 +881,7 @@ export default function AdminExams() {
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
                         <div>{ex.durationMinutes} mins</div>
-                        <div className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{ex.totalMarks} Marks (Pass: {ex.passingMarks})</div>
+                        <div className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{ex.totalMarks} Marks</div>
                       </td>
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
@@ -1021,39 +1018,34 @@ export default function AdminExams() {
       )}
 
       {/* ========================================================================= */}
-      {/* 6. REDESIGNED USER-FRIENDLY EXAM CREATOR MODAL                            */}
+      {/* 6. STREAMLINED EXAM CREATOR MODAL                                         */}
       {/* ========================================================================= */}
       {showExamModal && (
         <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-6 animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-neutral-800 overflow-hidden">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-neutral-800 overflow-hidden">
             
-            {/* STICKY TOP HEADER */}
-            <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-neutral-800 flex items-start justify-between bg-white dark:bg-neutral-900 shrink-0">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
-                    <FileText size={18} />
-                  </span>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                    {editingExamId ? 'Edit Examination' : 'Create New Examination'}
-                  </h2>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-1">
-                  Configure scheduling settings, duration benchmarks, and author question papers.
-                </p>
+            {/* TOP HEADER */}
+            <div className="p-5 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-neutral-900 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+                  <FileText size={18} />
+                </span>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  {editingExamId ? 'Edit Examination' : 'Create New Exam'}
+                </h2>
               </div>
 
               <button
                 type="button"
                 onClick={() => setShowExamModal(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
                 title="Close dialog"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
-            {/* TAB SELECTOR BAR */}
+            {/* TAB SELECTOR */}
             <div className="px-6 border-b border-slate-100 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-900/40 flex items-center gap-2 shrink-0">
               <button
                 type="button"
@@ -1064,8 +1056,8 @@ export default function AdminExams() {
                     : 'border-transparent text-slate-500 dark:text-neutral-400 hover:text-slate-800 dark:hover:text-neutral-200'
                 }`}
               >
-                <Settings size={15} />
-                <span>1. Exam Settings & Scheduling</span>
+                <Settings size={14} />
+                <span>1. Exam Details</span>
               </button>
 
               <button
@@ -1077,369 +1069,235 @@ export default function AdminExams() {
                     : 'border-transparent text-slate-500 dark:text-neutral-400 hover:text-slate-800 dark:hover:text-neutral-200'
                 }`}
               >
-                <Layers size={15} />
-                <span>2. Questions Paper Builder</span>
-                <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300">
-                  {examForm.questions.length}
-                </span>
+                <Layers size={14} />
+                <span>2. Questions ({examForm.questions.length})</span>
               </button>
             </div>
 
-            {/* MODAL BODY (SCROLLABLE) */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6">
+            {/* MODAL BODY */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
 
-              {/* ==================== TAB 1: EXAM SETTINGS ==================== */}
+              {/* TAB 1: EXAM DETAILS (ONLY: Title, Date, Time, Duration, Total Marks) */}
               {examModalTab === 'settings' && (
-                <div className="space-y-6 max-w-3xl">
-                  {/* General Identification */}
+                <div className="space-y-4 max-w-2xl">
+                  {/* Exam Title */}
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-3">
-                      Course & Subject Identification
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Examination Title <span className="text-rose-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. Macroeconomics Mid-Term Examination 2026"
-                          value={examForm.title}
-                          onChange={(e) => setExamForm({ ...examForm, title: e.target.value })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                      </div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                      Exam Title <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Macroeconomics Mid-Term Examination 2026"
+                      value={examForm.title}
+                      onChange={(e) => setExamForm({ ...examForm, title: e.target.value })}
+                      className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
+                    />
+                  </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Course or Subject Name <span className="text-rose-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. Macroeconomic Theory & Policy"
-                          value={examForm.course}
-                          onChange={(e) => setExamForm({ ...examForm, course: e.target.value })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                      </div>
+                  {/* Date & Time */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
+                        Date
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Active Now or Oct 15, 2026"
+                        value={examForm.scheduledDate}
+                        onChange={(e) => setExamForm({ ...examForm, scheduledDate: e.target.value })}
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
+                        Time
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 10:00 AM - 11:30 AM IST"
+                        value={examForm.scheduledTime}
+                        onChange={(e) => setExamForm({ ...examForm, scheduledTime: e.target.value })}
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
                     </div>
                   </div>
 
-                  {/* Status & Availability Selection */}
-                  <div className="pt-2 border-t border-slate-100 dark:border-neutral-800">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-3">
-                      Availability & Status
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                      {[
-                        {
-                          id: 'live',
-                          label: 'Live (Active)',
-                          desc: 'Available for immediate taking',
-                          color: 'emerald'
-                        },
-                        {
-                          id: 'upcoming',
-                          label: 'Upcoming',
-                          desc: 'Scheduled for future test window',
-                          color: 'sky'
-                        },
-                        {
-                          id: 'expired',
-                          label: 'Concluded',
-                          desc: 'Closed for new student submissions',
-                          color: 'slate'
-                        }
-                      ].map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => setExamForm({ ...examForm, status: item.id as any })}
-                          className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
-                            examForm.status === item.id
-                              ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/30'
-                              : 'border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-800/40 hover:border-slate-300 dark:hover:border-neutral-700'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-900 dark:text-white">
-                              {item.label}
-                            </span>
-                            {examForm.status === item.id && (
-                              <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                            )}
-                          </div>
-                          <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-1 leading-snug">
-                            {item.desc}
-                          </p>
-                        </button>
-                      ))}
+                  {/* Duration & Total Marks */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
+                        Duration (Minutes)
+                      </label>
+                      <input
+                        type="number"
+                        min="5"
+                        value={examForm.durationMinutes}
+                        onChange={(e) => setExamForm({ ...examForm, durationMinutes: Number(e.target.value) })}
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
+                      <div className="flex gap-1.5 mt-2">
+                        {[30, 45, 60, 90].map((mins) => (
+                          <button
+                            key={mins}
+                            type="button"
+                            onClick={() => setExamForm({ ...examForm, durationMinutes: mins })}
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                          >
+                            {mins}m
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Schedule Window Text
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                          Total Marks
                         </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Active Now or Wednesday, Oct 15"
-                          value={examForm.scheduledDate}
-                          onChange={(e) => setExamForm({ ...examForm, scheduledDate: e.target.value })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
+                        {calculatedQuestionMarks > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setExamForm({ ...examForm, totalMarks: calculatedQuestionMarks })}
+                            className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline cursor-pointer"
+                          >
+                            Sync ({calculatedQuestionMarks} Marks)
+                          </button>
+                        )}
                       </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Timing Window (Optional)
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Closes today at 6:00 PM IST"
-                          value={examForm.scheduledTime}
-                          onChange={(e) => setExamForm({ ...examForm, scheduledTime: e.target.value })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                      </div>
+                      <input
+                        type="number"
+                        min="1"
+                        value={examForm.totalMarks}
+                        onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
+                      <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1 block">
+                        Sum of questions: {calculatedQuestionMarks} Marks
+                      </span>
                     </div>
                   </div>
 
-                  {/* Benchmark & Duration Parameters */}
-                  <div className="pt-2 border-t border-slate-100 dark:border-neutral-800">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-3">
-                      Timing & Marking Benchmarks
-                    </h3>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {/* Duration */}
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Duration (Minutes)
-                        </label>
-                        <input
-                          type="number"
-                          min="5"
-                          value={examForm.durationMinutes}
-                          onChange={(e) => setExamForm({ ...examForm, durationMinutes: Number(e.target.value) })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                        <div className="flex gap-1.5 mt-2">
-                          {[30, 45, 60, 90].map((mins) => (
-                            <button
-                              key={mins}
-                              type="button"
-                              onClick={() => setExamForm({ ...examForm, durationMinutes: mins })}
-                              className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
-                            >
-                              {mins}m
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Total Marks */}
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
-                            Total Marks
-                          </label>
-                          {calculatedQuestionMarks > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => setExamForm({ ...examForm, totalMarks: calculatedQuestionMarks })}
-                              className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline cursor-pointer"
-                              title="Sync to sum of question marks"
-                            >
-                              Sync ({calculatedQuestionMarks})
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="number"
-                          min="1"
-                          value={examForm.totalMarks}
-                          onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                        <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1 block">
-                          Current sum: {calculatedQuestionMarks} Marks
-                        </span>
-                      </div>
-
-                      {/* Passing Marks */}
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Passing Marks
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          value={examForm.passingMarks}
-                          onChange={(e) => setExamForm({ ...examForm, passingMarks: Number(e.target.value) })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                        <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1 block">
-                          {examForm.totalMarks > 0
-                            ? `${Math.round((examForm.passingMarks / examForm.totalMarks) * 100)}% benchmark`
-                            : ''}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Move to Step 2 Button */}
-                  <div className="pt-4 flex justify-end">
+                  <div className="pt-3 flex justify-end">
                     <button
                       type="button"
                       onClick={() => setExamModalTab('questions')}
                       className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition hover:opacity-90 cursor-pointer"
                     >
-                      <span>Proceed to Question Paper</span>
+                      <span>Proceed to Questions</span>
                       <ArrowRight size={14} />
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* ==================== TAB 2: QUESTIONS BUILDER ==================== */}
+              {/* TAB 2: QUESTIONS BUILDER */}
               {examModalTab === 'questions' && (
-                <div className="space-y-6">
-                  {/* Overview Stats Strip */}
-                  <div className="p-4 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/60 dark:bg-neutral-800/40 flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-white">
-                        <span>Total Questions:</span>
-                        <span className="px-2 py-0.5 rounded-md bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700">
-                          {examForm.questions.length}
-                        </span>
-                      </div>
-                      <div className="text-slate-500 dark:text-neutral-400">
-                        MCQ: <span className="font-semibold text-slate-800 dark:text-white">{examForm.questions.filter(q => q.type === 'mcq').length}</span>
-                      </div>
-                      <div className="text-slate-500 dark:text-neutral-400">
-                        Essay: <span className="font-semibold text-slate-800 dark:text-white">{examForm.questions.filter(q => q.type === 'descriptive').length}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-white">
-                      <span>Questions Marks:</span>
-                      <span className={`px-2 py-0.5 rounded-md border ${
-                        calculatedQuestionMarks === examForm.totalMarks
-                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400'
-                          : 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400'
-                      }`}>
-                        {calculatedQuestionMarks} / {examForm.totalMarks} Marks
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons to Add Question (When form is closed) */}
+                <div className="space-y-5">
+                  {/* Action buttons */}
                   {!isQuestionFormOpen && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         type="button"
                         onClick={() => openNewQuestionForm('mcq')}
-                        className="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border-2 border-dashed border-slate-200 hover:border-indigo-500 dark:border-neutral-800 dark:hover:border-indigo-400 bg-white dark:bg-neutral-900/40 text-slate-700 dark:text-neutral-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer group"
+                        className="flex items-center justify-center gap-2.5 p-3 rounded-xl border border-indigo-200 dark:border-neutral-700 bg-indigo-50/50 dark:bg-neutral-800 text-indigo-700 dark:text-neutral-200 hover:bg-indigo-100 dark:hover:bg-neutral-750 transition cursor-pointer"
                       >
-                        <Plus size={16} className="text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform" />
+                        <Plus size={16} className="text-indigo-600 dark:text-indigo-400" />
                         <span className="text-xs font-bold">+ Add Multiple Choice (MCQ)</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => openNewQuestionForm('descriptive')}
-                        className="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border-2 border-dashed border-slate-200 hover:border-emerald-500 dark:border-neutral-800 dark:hover:border-emerald-400 bg-white dark:bg-neutral-900/40 text-slate-700 dark:text-neutral-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition cursor-pointer group"
+                        className="flex items-center justify-center gap-2.5 p-3 rounded-xl border border-emerald-200 dark:border-neutral-700 bg-emerald-50/50 dark:bg-neutral-800 text-emerald-700 dark:text-neutral-200 hover:bg-emerald-100 dark:hover:bg-neutral-750 transition cursor-pointer"
                       >
-                        <Plus size={16} className="text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
-                        <span className="text-xs font-bold">+ Add Descriptive Essay Question</span>
+                        <Plus size={16} className="text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-xs font-bold">+ Add Descriptive Question</span>
                       </button>
                     </div>
                   )}
 
                   {/* ACTIVE QUESTION EDITOR CARD */}
                   {isQuestionFormOpen && (
-                    <div className="p-5 sm:p-6 rounded-2xl border-2 border-indigo-500/80 dark:border-indigo-500/60 bg-white dark:bg-neutral-900 shadow-xl space-y-4 animate-in fade-in duration-150">
+                    <div className="p-5 rounded-2xl border border-indigo-500/80 dark:border-neutral-700 bg-slate-50/50 dark:bg-neutral-850/60 dark:bg-neutral-900 space-y-4 animate-in fade-in duration-150">
                       
-                      {/* Editor Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-neutral-800">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                            {editingQuestionId ? 'Editing Question' : `Question #${examForm.questions.length + 1}`}
-                          </span>
-                          <span className="text-xs font-bold text-slate-900 dark:text-white">
-                            {newQType === 'mcq' ? 'Multiple Choice' : 'Descriptive Essay'}
-                          </span>
-                        </div>
+                      {/* Editor Title & Type */}
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-neutral-800">
+                        <span className="text-xs font-bold text-slate-800 dark:text-neutral-200">
+                          {editingQuestionId ? 'Edit Question' : 'New Question'}: {newQType === 'mcq' ? 'Multiple Choice' : 'Descriptive'}
+                        </span>
 
-                        {/* Format & Marks controls */}
-                        <div className="flex items-center gap-3">
-                          <div className="flex gap-1 bg-slate-100 dark:bg-neutral-800 p-1 rounded-lg">
-                            <button
-                              type="button"
-                              onClick={() => setNewQType('mcq')}
-                              className={`px-2.5 py-1 rounded text-xs font-semibold transition cursor-pointer ${
-                                newQType === 'mcq'
-                                  ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
-                                  : 'text-slate-600 dark:text-neutral-400'
-                              }`}
-                            >
-                              MCQ
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setNewQType('descriptive')}
-                              className={`px-2.5 py-1 rounded text-xs font-semibold transition cursor-pointer ${
-                                newQType === 'descriptive'
-                                  ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
-                                  : 'text-slate-600 dark:text-neutral-400'
-                              }`}
-                            >
-                              Essay
-                            </button>
-                          </div>
-
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-semibold text-slate-500 dark:text-neutral-400">Marks:</span>
-                            <input
-                              type="number"
-                              min="1"
-                              value={newQMarks}
-                              onChange={(e) => setNewQMarks(Number(e.target.value))}
-                              className="w-16 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-2 py-1 rounded-md text-xs font-bold text-slate-900 dark:text-white text-center outline-none"
-                            />
-                          </div>
+                        <div className="flex gap-1.5 bg-slate-200 dark:bg-neutral-800 p-1 rounded-lg">
+                          <button
+                            type="button"
+                            onClick={() => setNewQType('mcq')}
+                            className={`px-3 py-1 rounded-md text-xs font-semibold cursor-pointer ${
+                              newQType === 'mcq'
+                                ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
+                                : 'text-slate-600 dark:text-neutral-400'
+                            }`}
+                          >
+                            MCQ
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setNewQType('descriptive')}
+                            className={`px-3 py-1 rounded-md text-xs font-semibold cursor-pointer ${
+                              newQType === 'descriptive'
+                                ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
+                                : 'text-slate-600 dark:text-neutral-400'
+                            }`}
+                          >
+                            Descriptive
+                          </button>
                         </div>
                       </div>
 
                       {/* Question Prompt */}
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Question Prompt / Problem Statement <span className="text-rose-500">*</span>
+                          Question <span className="text-rose-500">*</span>
                         </label>
                         <textarea
                           rows={3}
-                          placeholder="e.g. In a closed Keynesian macroeconomic model, what is the value of the autonomous investment multiplier if the MPC is 0.8?"
+                          placeholder={newQType === 'mcq' ? "Enter the multiple choice question..." : "Enter the descriptive question..."}
                           value={newQPrompt}
                           onChange={(e) => setNewQPrompt(e.target.value)}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none leading-relaxed"
+                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-1 focus:ring-indigo-500 outline-none leading-relaxed"
                           autoFocus
                         />
                       </div>
 
-                      {/* MCQ Options Builder */}
+                      {/* Marks Field */}
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                          {newQType === 'descriptive' ? 'Marks (Optional):' : 'Marks:'}
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder={newQType === 'descriptive' ? 'Optional' : '5'}
+                          value={newQMarks}
+                          onChange={(e) => setNewQMarks(e.target.value === '' ? '' : Number(e.target.value))}
+                          className="w-24 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-900 dark:text-white outline-none"
+                        />
+                      </div>
+
+                      {/* MCQ: Dynamic X Options */}
                       {newQType === 'mcq' && (
-                        <div className="space-y-2.5 pt-1">
+                        <div className="space-y-2 pt-1">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-700 dark:text-neutral-300">
-                              Options & Correct Answer Key:
+                              Options ({newQOptions.length}) & Correct Key:
                             </span>
-                            <span className="text-[11px] text-slate-400 dark:text-neutral-500">
-                              Select the circle for the correct answer
-                            </span>
+                            <button
+                              type="button"
+                              onClick={handleAddOption}
+                              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus size={14} /> Add Option
+                            </button>
                           </div>
 
                           <div className="space-y-2">
@@ -1448,215 +1306,156 @@ export default function AdminExams() {
                               return (
                                 <div
                                   key={opt.id}
-                                  onClick={() => setNewQCorrect(opt.id)}
-                                  className={`flex items-center gap-3 p-2.5 rounded-xl border transition cursor-pointer ${
+                                  className={`flex items-center gap-2.5 p-2 rounded-xl border transition ${
                                     isCorrect
-                                      ? 'border-emerald-500 dark:border-emerald-500/80 bg-emerald-50/40 dark:bg-emerald-950/20'
-                                      : 'border-slate-200 dark:border-neutral-700/80 bg-white dark:bg-neutral-800/80 hover:border-slate-300 dark:hover:border-neutral-600'
+                                      ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20'
+                                      : 'border-slate-200 dark:border-neutral-700/80 bg-white dark:bg-neutral-800'
                                   }`}
                                 >
-                                  {/* Radio indicator */}
-                                  <div className="flex items-center justify-center shrink-0">
-                                    <input
-                                      type="radio"
-                                      name="activeCorrectKey"
-                                      checked={isCorrect}
-                                      onChange={() => setNewQCorrect(opt.id)}
-                                      className="w-4 h-4 accent-emerald-600 dark:accent-emerald-400 cursor-pointer"
-                                    />
-                                  </div>
+                                  <input
+                                    type="radio"
+                                    name="mcqCorrectOption"
+                                    checked={isCorrect}
+                                    onChange={() => setNewQCorrect(opt.id)}
+                                    title={`Set Option ${opt.id} as correct`}
+                                    className="w-4 h-4 accent-emerald-600 dark:accent-emerald-400 cursor-pointer ml-1"
+                                  />
 
-                                  {/* Letter Badge */}
-                                  <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                                    isCorrect
-                                      ? 'bg-emerald-600 dark:bg-emerald-500 text-white'
-                                      : 'bg-slate-100 dark:bg-neutral-700 text-slate-700 dark:text-neutral-300'
-                                  }`}>
+                                  <span
+                                    className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                                      isCorrect
+                                        ? 'bg-emerald-600 dark:bg-emerald-500 text-white'
+                                        : 'bg-slate-100 dark:bg-neutral-700 text-slate-700 dark:text-neutral-300'
+                                    }`}
+                                  >
                                     {opt.id}
                                   </span>
 
-                                  {/* Option Input */}
                                   <input
                                     type="text"
                                     placeholder={`Option ${opt.id} text...`}
                                     value={opt.text}
-                                    onClick={(e) => e.stopPropagation()}
-                                    onChange={(e) => {
-                                      const copy = [...newQOptions]
-                                      copy[idx].text = e.target.value
-                                      setNewQOptions(copy)
-                                    }}
+                                    onChange={(e) => handleOptionTextChange(idx, e.target.value)}
                                     className="flex-1 bg-transparent text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 outline-none"
                                   />
 
-                                  {/* Correct Key Tag */}
                                   {isCorrect && (
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 shrink-0">
-                                      Correct Key ✓
+                                      Correct ✓
                                     </span>
+                                  )}
+
+                                  {newQOptions.length > 2 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveOption(idx)}
+                                      className="text-slate-400 hover:text-rose-500 p-1 rounded transition cursor-pointer"
+                                      title="Remove this option"
+                                    >
+                                      <Trash2 size={13} />
+                                    </button>
                                   )}
                                 </div>
                               )
                             })}
                           </div>
-
-                          {/* Optional Solution Explanation */}
-                          <div className="pt-2">
-                            <label className="block text-[11px] font-semibold text-slate-500 dark:text-neutral-400 mb-1">
-                              Solution Explanation / Rationale (Shown to students after submission):
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="e.g. The autonomous multiplier formula is k = 1 / (1 - MPC) = 1 / (1 - 0.8) = 5.0."
-                              value={newQExplanation}
-                              onChange={(e) => setNewQExplanation(e.target.value)}
-                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-3 py-2 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
-                            />
-                          </div>
                         </div>
                       )}
 
-                      {/* Descriptive Model Answer Builder */}
-                      {newQType === 'descriptive' && (
-                        <div className="space-y-2 pt-1">
-                          <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
-                            Model Answer & Evaluation Rubric (Guidelines for Instructor Grading):
-                          </label>
-                          <textarea
-                            rows={3}
-                            placeholder="Detail the expected key arguments, core economic principles, and criteria for awarding full marks..."
-                            value={newQModelAnswer}
-                            onChange={(e) => setNewQModelAnswer(e.target.value)}
-                            className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none leading-relaxed"
-                          />
-                        </div>
-                      )}
-
-                      {/* Action buttons inside Question Builder */}
-                      <div className="pt-3 border-t border-slate-100 dark:border-neutral-800 flex justify-end gap-2.5">
+                      {/* Question Actions */}
+                      <div className="pt-2 border-t border-slate-200 dark:border-neutral-800 flex justify-end gap-2.5">
                         <button
                           type="button"
                           onClick={closeQuestionForm}
-                          className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
                         >
                           Cancel
                         </button>
-
                         <button
                           type="button"
                           onClick={handleSaveQuestion}
-                          className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition cursor-pointer flex items-center gap-1.5"
+                          className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
                         >
                           <Check size={14} />
-                          <span>{editingQuestionId ? 'Update Question' : 'Save Question to Paper'}</span>
+                          <span>{editingQuestionId ? 'Update Question' : 'Add to Paper'}</span>
                         </button>
                       </div>
-
                     </div>
                   )}
 
-                  {/* LIST OF AUTHORED QUESTIONS */}
-                  <div className="space-y-3">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500">
-                      Authored Questions ({examForm.questions.length})
-                    </h3>
-
+                  {/* AUTHORED QUESTIONS LIST */}
+                  <div className="space-y-2.5">
                     {examForm.questions.length === 0 ? (
-                      <div className="p-8 text-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-900/30">
-                        <HelpCircle className="w-8 h-8 text-slate-400 dark:text-neutral-600 mx-auto mb-2" />
-                        <h4 className="text-sm font-bold text-slate-700 dark:text-neutral-300">
-                          No questions authored yet
-                        </h4>
-                        <p className="text-xs text-slate-500 dark:text-neutral-500 mt-1 max-w-sm mx-auto">
-                          Click above to add Multiple Choice questions with auto-scored keys, or Descriptive essays with grading rubrics.
-                        </p>
+                      <div className="p-6 text-center rounded-xl border border-dashed border-slate-200 dark:border-neutral-800 text-xs text-slate-400">
+                        No questions added yet. Click above to add an MCQ or Descriptive question.
                       </div>
                     ) : (
                       examForm.questions.map((q, idx) => (
                         <div
                           key={q.id}
-                          className="p-4 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/80 hover:border-slate-300 dark:hover:border-neutral-700 transition space-y-2.5 group"
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 space-y-2"
                         >
-                          <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <span className="w-6 h-6 rounded-md bg-slate-100 dark:bg-neutral-800 text-slate-800 dark:text-neutral-200 font-bold text-xs flex items-center justify-center">
+                              <span className="w-5 h-5 rounded bg-slate-100 dark:bg-neutral-800 text-slate-800 dark:text-neutral-200 font-bold text-xs flex items-center justify-center">
                                 Q{idx + 1}
                               </span>
-
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
-                                q.type === 'mcq'
-                                  ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border border-sky-200/60 dark:border-sky-800/60'
-                                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60'
-                              }`}>
-                                {q.type === 'mcq' ? 'Multiple Choice' : 'Descriptive Essay'}
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400">
+                                {q.type === 'mcq' ? 'MCQ' : 'Descriptive'}
                               </span>
-
-                              <span className="text-xs font-semibold text-slate-500 dark:text-neutral-400">
-                                {q.marks} {q.marks === 1 ? 'Mark' : 'Marks'}
-                              </span>
+                              {q.marks > 0 && (
+                                <span className="text-xs text-slate-500 dark:text-neutral-400">
+                                  {q.marks} {q.marks === 1 ? 'Mark' : 'Marks'}
+                                </span>
+                              )}
                             </div>
 
-                            {/* Card Actions: Edit, Duplicate, Delete */}
-                            <div className="flex items-center gap-1 opacity-90 group-hover:opacity-100 transition">
+                            <div className="flex items-center gap-1">
                               <button
                                 type="button"
                                 onClick={() => openEditQuestionForm(q)}
-                                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
-                                title="Edit question"
+                                className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                                title="Edit"
                               >
-                                <Edit2 size={14} />
+                                <Edit2 size={13} />
                               </button>
-
                               <button
                                 type="button"
                                 onClick={() => handleDuplicateQuestion(q)}
-                                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
-                                title="Duplicate question"
+                                className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                                title="Duplicate"
                               >
-                                <Copy size={14} />
+                                <Copy size={13} />
                               </button>
-
                               <button
                                 type="button"
                                 onClick={() => handleRemoveQuestion(q.id)}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
-                                title="Delete question"
+                                className="p-1 text-slate-400 hover:text-rose-600 cursor-pointer"
+                                title="Delete"
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={13} />
                               </button>
                             </div>
                           </div>
 
-                          {/* Prompt Snippet */}
-                          <p className="text-xs text-slate-800 dark:text-neutral-200 font-medium leading-relaxed">
+                          <p className="text-xs text-slate-800 dark:text-neutral-200 font-medium">
                             {q.question}
                           </p>
 
-                          {/* MCQ Options Preview */}
                           {q.type === 'mcq' && q.options && (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                            <div className="flex flex-wrap gap-1.5 pt-0.5">
                               {q.options.map((opt) => (
-                                <div
+                                <span
                                   key={opt.id}
-                                  className={`text-[11px] px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${
+                                  className={`text-[11px] px-2 py-0.5 rounded border ${
                                     opt.id === q.correctAnswer
-                                      ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-semibold'
-                                      : 'bg-slate-50/50 dark:bg-neutral-800/40 border-slate-200/60 dark:border-neutral-700/60 text-slate-600 dark:text-neutral-400'
+                                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold'
+                                      : 'border-slate-200 dark:border-neutral-750 text-slate-600 dark:text-neutral-400'
                                   }`}
                                 >
-                                  <span className="font-bold">{opt.id}.</span>
-                                  <span className="truncate">{opt.text}</span>
-                                  {opt.id === q.correctAnswer && <span className="ml-auto text-emerald-600 dark:text-emerald-400">✓</span>}
-                                </div>
+                                  {opt.id}. {opt.text} {opt.id === q.correctAnswer && '✓'}
+                                </span>
                               ))}
-                            </div>
-                          )}
-
-                          {/* Descriptive Model Snippet */}
-                          {q.type === 'descriptive' && q.modelAnswer && (
-                            <div className="text-[11px] text-slate-500 dark:text-neutral-400 bg-slate-50 dark:bg-neutral-800/40 p-2 rounded-lg border border-slate-200/60 dark:border-neutral-700/60 truncate">
-                              <span className="font-semibold text-slate-700 dark:text-neutral-300">Rubric: </span>
-                              {q.modelAnswer}
                             </div>
                           )}
                         </div>
@@ -1669,11 +1468,9 @@ export default function AdminExams() {
             </div>
 
             {/* STICKY BOTTOM MODAL FOOTER */}
-            <div className="p-4 sm:p-5 border-t border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-between shrink-0">
+            <div className="p-4 border-t border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-between shrink-0">
               <div className="text-xs text-slate-500 dark:text-neutral-400">
                 <span className="font-bold text-slate-900 dark:text-white">Total: {examForm.totalMarks} Marks</span>
-                <span className="mx-1.5">•</span>
-                <span>Pass: {examForm.passingMarks}</span>
                 <span className="mx-1.5">•</span>
                 <span>{examForm.questions.length} Questions</span>
               </div>
@@ -1682,7 +1479,7 @@ export default function AdminExams() {
                 <button
                   type="button"
                   onClick={() => setShowExamModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white transition cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1690,10 +1487,10 @@ export default function AdminExams() {
                 <button
                   type="button"
                   onClick={handleSaveExam}
-                  className="flex items-center gap-1.5 px-6 py-2 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs font-bold shadow-sm transition cursor-pointer"
+                  className="flex items-center gap-1.5 px-6 py-2 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs font-bold transition cursor-pointer shadow-sm"
                 >
                   <Check size={14} />
-                  <span>{editingExamId ? 'Update Exam' : 'Save Examination'}</span>
+                  <span>{editingExamId ? 'Update Exam' : 'Save Exam'}</span>
                 </button>
               </div>
             </div>
