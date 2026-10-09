@@ -1019,7 +1019,7 @@ export default function AdminExams() {
     }))
   }
 
-  const handleSaveExam = (e: React.FormEvent) => {
+  const handleSaveExam = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!examForm.title.trim()) {
       alert('Please enter an exam title.')
@@ -1048,7 +1048,7 @@ export default function AdminExams() {
       : (examForm.course.trim() || 'General Examination')
 
     const assignedStudentProfile = isStudent && studentEmail
-      ? studentsList.find((s) => s.email.toLowerCase() === studentEmail)
+      ? studentsList.find((s) => s.email && s.email.toLowerCase() === studentEmail)
       : undefined
 
     const examId = editingExamId && isValidUUID(editingExamId) ? editingExamId : generateUUID()
@@ -1059,7 +1059,7 @@ export default function AdminExams() {
       course_title: resolvedCourse,
       course_id: courseId && isValidUUID(courseId) ? courseId : null,
       assigned_type: examForm.assignedType,
-      assigned_student_id: assignedStudentProfile?.id || null,
+      assigned_student_id: assignedStudentProfile?.id && isValidUUID(assignedStudentProfile.id) ? assignedStudentProfile.id : null,
       assigned_student_email: studentEmail || null,
       assigned_student_name: studentName || null,
       instructor_name: 'Rishika',
@@ -1078,13 +1078,22 @@ export default function AdminExams() {
       updated_at: new Date().toISOString()
     }
 
-    // Persist to Supabase in background
-    supabase
-      .from('exams')
-      .upsert(examPayload)
-      .then(({ error }) => {
-        if (error) console.error('Supabase exam upsert error:', error)
-      })
+    // Persist to Supabase
+    try {
+      const { error: dbError } = editingExamId
+        ? await supabase.from('exams').update(examPayload).eq('id', examId)
+        : await supabase.from('exams').insert(examPayload)
+
+      if (dbError) {
+        console.error('Supabase exam save error:', dbError)
+        alert('Database save notice: ' + dbError.message + (dbError.hint ? '\n' + dbError.hint : ''))
+      } else {
+        console.log('Exam successfully saved to Supabase:', examId)
+      }
+    } catch (err: any) {
+      console.error('Error saving exam to Supabase:', err)
+      alert('Database error: ' + (err.message || String(err)))
+    }
 
     const appExamObject: Exam = {
       id: examId,
