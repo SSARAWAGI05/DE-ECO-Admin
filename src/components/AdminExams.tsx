@@ -5,6 +5,7 @@ import {
   setStoredGroqApiKey,
   GroqParseResult
 } from '../lib/groqExamParser'
+import { supabase } from '../lib/supabaseClient'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import {
@@ -31,7 +32,13 @@ import {
   Loader2,
   ChevronDown,
   ChevronUp,
-  RefreshCw
+  RefreshCw,
+  User,
+  BookOpen,
+  UserCheck,
+  GraduationCap,
+  Mail,
+  Users
 } from 'lucide-react'
 
 /* ================= TYPES ================= */
@@ -59,6 +66,10 @@ export interface Exam {
   id: string
   title: string
   course: string
+  courseId?: string
+  assignedType?: 'course' | 'student'
+  assignedStudentEmail?: string
+  assignedStudentName?: string
   instructor: string
   status: 'live' | 'upcoming' | 'expired'
   scheduledDate: string
@@ -73,9 +84,22 @@ export interface Exam {
   questions: ExamQuestion[]
 }
 
+export interface StudentProfileOption {
+  id: string
+  first_name?: string
+  last_name?: string
+  email: string
+}
+
+export interface CourseOption {
+  id: string
+  title: string
+}
+
 export interface ExamSubmission {
   id: string
   examId: string
+  userId?: string
   examTitle: string
   course: string
   instructor: string
@@ -114,7 +138,7 @@ export interface ExamSubmission {
 
 const INITIAL_EXAMS: Exam[] = [
   {
-    id: 'exam-macro-midterm',
+    id: 'a1111111-1111-4111-8111-111111111111',
     title: 'Macroeconomics Mid-Term Examination 2026',
     course: 'Macroeconomic Theory & Policy',
     instructor: 'Rishika',
@@ -207,7 +231,7 @@ const INITIAL_EXAMS: Exam[] = [
     ]
   },
   {
-    id: 'exam-micro-structures',
+    id: 'a2222222-2222-4222-8222-222222222222',
     title: 'Microeconomics & Market Structures Unit Test',
     course: 'Foundations of Microeconomics',
     instructor: 'Rishika',
@@ -227,8 +251,8 @@ const INITIAL_EXAMS: Exam[] = [
 
 const INITIAL_SUBMISSIONS: ExamSubmission[] = [
   {
-    id: 'res-macro-student1',
-    examId: 'exam-macro-midterm',
+    id: 'b1111111-1111-4111-8111-111111111111',
+    examId: 'a1111111-1111-4111-8111-111111111111',
     examTitle: 'Macroeconomics Mid-Term Examination 2026',
     course: 'Macroeconomic Theory & Policy',
     instructor: 'Rishika',
@@ -307,8 +331,8 @@ const INITIAL_SUBMISSIONS: ExamSubmission[] = [
     ]
   },
   {
-    id: 'res-macro-student2',
-    examId: 'exam-macro-midterm',
+    id: 'b2222222-2222-4222-8222-222222222222',
+    examId: 'a1111111-1111-4111-8111-111111111111',
     examTitle: 'Macroeconomics Mid-Term Examination 2026',
     course: 'Macroeconomic Theory & Policy',
     instructor: 'Rishika',
@@ -358,6 +382,22 @@ const getTomorrowDateString = () => {
   return year + '-' + month + '-' + day;
 };
 
+const generateUUID = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+const isValidUUID = (id?: string | null): boolean => {
+  if (!id) return false
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
+}
+
 export default function AdminExams() {
   const [exams, setExams] = useState<Exam[]>([])
   const [submissions, setSubmissions] = useState<ExamSubmission[]>([])
@@ -370,9 +410,25 @@ export default function AdminExams() {
   const [editingExamId, setEditingExamId] = useState<string | null>(null)
   const [evaluatingSub, setEvaluatingSub] = useState<ExamSubmission | null>(null)
 
-  // Streamlined Exam Form State (Title, Date, Time, Duration, Total Marks)
+  // Courses & Students from Supabase
+  const [coursesList, setCoursesList] = useState<CourseOption[]>([
+    { id: 'all', title: 'All Students (Open / General Exam)' },
+    { id: 'c1', title: 'Macroeconomic Theory & Policy' },
+    { id: 'c2', title: 'Foundations of Microeconomics' },
+    { id: 'c3', title: 'Applied Econometrics & Statistics' },
+    { id: 'c4', title: 'Development Economics & Public Policy' }
+  ])
+  const [studentsList, setStudentsList] = useState<StudentProfileOption[]>([])
+  const [audienceFilter, setAudienceFilter] = useState<'all' | 'course' | 'student'>('all')
+
+  // Streamlined Exam Form State (Title, Course/Student Assignment, Date, Time, Duration, Total Marks)
   const [examForm, setExamForm] = useState({
     title: '',
+    assignedType: 'course' as 'course' | 'student',
+    course: 'All Students (Open / General Exam)',
+    courseId: 'all',
+    assignedStudentEmail: '',
+    assignedStudentName: '',
     scheduledDate: 'Anytime / Self-Paced',
     scheduledTime: 'Flexible',
     durationMinutes: 45,
@@ -428,13 +484,13 @@ export default function AdminExams() {
   /* ================= LOAD DATA ================= */
 
   useEffect(() => {
+    // 1. Initial quick load from local cache for instant UI rendering
     try {
       const savedExams = localStorage.getItem(EXAMS_STORAGE_KEY)
       if (savedExams) {
         setExams(JSON.parse(savedExams))
       } else {
         setExams(INITIAL_EXAMS)
-        localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(INITIAL_EXAMS))
       }
     } catch {
       setExams(INITIAL_EXAMS)
@@ -446,10 +502,138 @@ export default function AdminExams() {
         setSubmissions(JSON.parse(savedSubs))
       } else {
         setSubmissions(INITIAL_SUBMISSIONS)
-        localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(INITIAL_SUBMISSIONS))
       }
     } catch {
       setSubmissions(INITIAL_SUBMISSIONS)
+    }
+
+    // 2. Fetch courses and students from Supabase
+    const fetchCoursesAndStudents = async () => {
+      try {
+        const { data: cData, error: cErr } = await supabase
+          .from('courses')
+          .select('id, title')
+          .order('title')
+        if (!cErr && cData && cData.length > 0) {
+          setCoursesList([
+            { id: 'all', title: 'All Students (Open / General Exam)' },
+            ...cData
+          ])
+        }
+      } catch (err) {
+        console.warn('Could not load courses from Supabase:', err)
+      }
+
+      try {
+        const { data: sData, error: sErr } = await supabase
+          .from('profiles')
+          .select('id, first_name, last_name, email')
+          .order('first_name')
+        if (!sErr && sData && sData.length > 0) {
+          setStudentsList(sData)
+        }
+      } catch (err) {
+        console.warn('Could not load student profiles from Supabase:', err)
+      }
+    }
+
+    // 3. Fetch live exams from Supabase public.exams
+    const fetchExamsFromSupabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('exams')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (!error && data && data.length > 0) {
+          const mapped: Exam[] = data.map((d: any) => ({
+            id: d.id,
+            title: d.title,
+            course: d.course_title || 'General Examination',
+            courseId: d.course_id || undefined,
+            assignedType: d.assigned_type || 'course',
+            assignedStudentEmail: d.assigned_student_email || undefined,
+            assignedStudentName: d.assigned_student_name || undefined,
+            instructor: d.instructor_name || 'Rishika',
+            status: d.status || 'live',
+            scheduledDate: d.scheduled_date || 'Anytime / Self-Paced',
+            scheduledTime: d.scheduled_time || 'Flexible',
+            durationMinutes: Number(d.duration_minutes) || 45,
+            totalMarks: Number(d.total_marks) || 100,
+            passingMarks: Number(d.passing_marks) || 40,
+            mcqCount: Number(d.mcq_count) || 0,
+            descriptiveCount: Number(d.descriptive_count) || 0,
+            syllabus: Array.isArray(d.syllabus) ? d.syllabus : [],
+            instructions: Array.isArray(d.instructions) ? d.instructions : [],
+            questions: Array.isArray(d.questions) ? d.questions : []
+          }))
+          setExams(mapped)
+          localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(mapped))
+        }
+      } catch (err) {
+        console.warn('Could not fetch exams from Supabase:', err)
+      }
+    }
+
+    // 4. Fetch live submissions from Supabase public.exam_submissions
+    const fetchSubmissionsFromSupabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('exam_submissions')
+          .select('*')
+          .order('submitted_at', { ascending: false })
+
+        if (!error && data && data.length > 0) {
+          const mapped: ExamSubmission[] = data.map((d: any) => ({
+            id: d.id,
+            examId: d.exam_id,
+            examTitle: d.exam_title,
+            course: d.course_title || '',
+            instructor: d.instructor_name || 'Rishika',
+            studentEmail: d.student_email,
+            studentName: d.student_name || undefined,
+            submittedAt: d.submitted_at ? new Date(d.submitted_at).toLocaleString() : 'Just now',
+            status: d.status || 'under_evaluation',
+            totalMarks: Number(d.total_marks) || 100,
+            scoreObtained: d.score_obtained !== null && d.score_obtained !== undefined ? Number(d.score_obtained) : undefined,
+            percentage: d.percentage !== null && d.percentage !== undefined ? Number(d.percentage) : undefined,
+            grade: d.grade || undefined,
+            isPassed: d.is_passed !== null && d.is_passed !== undefined ? Boolean(d.is_passed) : undefined,
+            timeSpentMinutes: Number(d.time_spent_minutes) || 0,
+            userId: d.user_id || undefined,
+            teacherFeedback: d.teacher_feedback || undefined,
+            answers: Array.isArray(d.answers) ? d.answers : []
+          }))
+          setSubmissions(mapped)
+          localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(mapped))
+        }
+      } catch (err) {
+        console.warn('Could not fetch submissions from Supabase:', err)
+      }
+    }
+
+    fetchCoursesAndStudents()
+    fetchExamsFromSupabase()
+    fetchSubmissionsFromSupabase()
+
+    // Realtime subscriptions for exams and submissions
+    const submissionsChannel = supabase
+      .channel('admin_exam_submissions_channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'exam_submissions' }, () => {
+        fetchSubmissionsFromSupabase()
+      })
+      .subscribe()
+
+    const examsChannel = supabase
+      .channel('admin_exams_channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'exams' }, () => {
+        fetchExamsFromSupabase()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(submissionsChannel)
+      supabase.removeChannel(examsChannel)
     }
   }, [])
 
@@ -468,6 +652,8 @@ export default function AdminExams() {
   const liveExamsCount = useMemo(() => exams.filter((e) => e.status === 'live').length, [exams])
   const pendingCount = useMemo(() => submissions.filter((s) => s.status === 'under_evaluation').length, [submissions])
   const gradedCount = useMemo(() => submissions.filter((s) => s.status === 'graded').length, [submissions])
+  const courseExamsCount = useMemo(() => exams.filter((e) => e.assignedType !== 'student').length, [exams])
+  const studentExamsCount = useMemo(() => exams.filter((e) => e.assignedType === 'student').length, [exams])
 
   const calculatedQuestionMarks = useMemo(() => {
     return examForm.questions.reduce((acc, q) => acc + (Number(q.marks) || 0), 0)
@@ -476,10 +662,22 @@ export default function AdminExams() {
   /* ================= FILTERED DATA ================= */
 
   const filteredExams = useMemo(() => {
-    if (!searchTerm.trim()) return exams
+    let result = exams
+    if (audienceFilter === 'course') {
+      result = result.filter((e) => e.assignedType !== 'student')
+    } else if (audienceFilter === 'student') {
+      result = result.filter((e) => e.assignedType === 'student')
+    }
+    if (!searchTerm.trim()) return result
     const q = searchTerm.toLowerCase()
-    return exams.filter((e) => e.title.toLowerCase().includes(q) || (e.course && e.course.toLowerCase().includes(q)))
-  }, [exams, searchTerm])
+    return result.filter(
+      (e) =>
+        e.title.toLowerCase().includes(q) ||
+        (e.course && e.course.toLowerCase().includes(q)) ||
+        (e.assignedStudentEmail && e.assignedStudentEmail.toLowerCase().includes(q)) ||
+        (e.assignedStudentName && e.assignedStudentName.toLowerCase().includes(q))
+    )
+  }, [exams, searchTerm, audienceFilter])
 
   const filteredSubmissions = useMemo(() => {
     if (!searchTerm.trim()) return submissions
@@ -621,6 +819,11 @@ export default function AdminExams() {
     setExamModalTab('settings')
     setExamForm({
       title: '',
+      assignedType: 'course',
+      course: coursesList.length > 0 ? coursesList[0].title : 'All Students (Open / General Exam)',
+      courseId: coursesList.length > 0 ? coursesList[0].id : 'all',
+      assignedStudentEmail: '',
+      assignedStudentName: '',
       scheduledDate: 'Anytime / Self-Paced',
       scheduledTime: 'Flexible',
       durationMinutes: 45,
@@ -634,8 +837,14 @@ export default function AdminExams() {
   const handleOpenEditExam = (exam: Exam) => {
     setEditingExamId(exam.id)
     setExamModalTab('settings')
+    const isStudent = exam.assignedType === 'student' || Boolean(exam.assignedStudentEmail)
     setExamForm({
       title: exam.title,
+      assignedType: isStudent ? 'student' : 'course',
+      course: exam.course || (coursesList.length > 0 ? coursesList[0].title : 'All Students (Open / General Exam)'),
+      courseId: exam.courseId || '',
+      assignedStudentEmail: exam.assignedStudentEmail || '',
+      assignedStudentName: exam.assignedStudentName || '',
       scheduledDate: exam.scheduledDate || 'Active Now',
       scheduledTime: exam.scheduledTime || '',
       durationMinutes: exam.durationMinutes || 45,
@@ -818,48 +1027,92 @@ export default function AdminExams() {
       return
     }
 
+    if (examForm.assignedType === 'student' && !examForm.assignedStudentEmail.trim()) {
+      alert('Please select or enter the student email address.')
+      setExamModalTab('settings')
+      return
+    }
+
     const mcqCount = examForm.questions.filter((q) => q.type === 'mcq').length
     const descriptiveCount = examForm.questions.filter((q) => q.type === 'descriptive').length
     const totalMarks = Number(examForm.totalMarks) || (calculatedQuestionMarks || 50)
     const passingMarks = Math.round(totalMarks * 0.4) // Auto-calculate 40% benchmark
 
+    const isStudent = examForm.assignedType === 'student'
+    const studentEmail = isStudent ? examForm.assignedStudentEmail.trim().toLowerCase() : undefined
+    const studentName = isStudent ? examForm.assignedStudentName.trim() : undefined
+    const selectedCourseObj = coursesList.find((c) => c.title === examForm.course || c.id === examForm.courseId)
+    const courseId = isStudent ? undefined : (selectedCourseObj?.id || examForm.courseId || undefined)
+    const resolvedCourse = isStudent
+      ? (studentName ? `1-on-1: ${studentName}` : `1-on-1: ${studentEmail}`)
+      : (examForm.course.trim() || 'General Examination')
+
+    const assignedStudentProfile = isStudent && studentEmail
+      ? studentsList.find((s) => s.email.toLowerCase() === studentEmail)
+      : undefined
+
+    const examId = editingExamId && isValidUUID(editingExamId) ? editingExamId : generateUUID()
+
+    const examPayload = {
+      id: examId,
+      title: examForm.title.trim(),
+      course_title: resolvedCourse,
+      course_id: courseId && isValidUUID(courseId) ? courseId : null,
+      assigned_type: examForm.assignedType,
+      assigned_student_id: assignedStudentProfile?.id || null,
+      assigned_student_email: studentEmail || null,
+      assigned_student_name: studentName || null,
+      instructor_name: 'Rishika',
+      status: 'live',
+      scheduled_date: examForm.scheduledDate.trim() || 'Anytime / Self-Paced',
+      scheduled_time: examForm.scheduledTime.trim() || 'Flexible',
+      duration_minutes: Number(examForm.durationMinutes) || 45,
+      total_marks: totalMarks,
+      passing_marks: passingMarks,
+      mcq_count: mcqCount,
+      descriptive_count: descriptiveCount,
+      syllabus: [],
+      instructions: ['Auto-saved in real time. Please submit before timer expires.'],
+      questions: examForm.questions,
+      is_active: true,
+      updated_at: new Date().toISOString()
+    }
+
+    // Persist to Supabase in background
+    supabase
+      .from('exams')
+      .upsert(examPayload)
+      .then(({ error }) => {
+        if (error) console.error('Supabase exam upsert error:', error)
+      })
+
+    const appExamObject: Exam = {
+      id: examId,
+      title: examForm.title.trim(),
+      course: resolvedCourse,
+      courseId,
+      assignedType: examForm.assignedType,
+      assignedStudentEmail: studentEmail,
+      assignedStudentName: studentName,
+      instructor: 'Rishika',
+      status: 'live',
+      scheduledDate: examForm.scheduledDate.trim() || 'Anytime / Self-Paced',
+      scheduledTime: examForm.scheduledTime.trim() || 'Flexible',
+      durationMinutes: Number(examForm.durationMinutes) || 45,
+      totalMarks,
+      passingMarks,
+      mcqCount,
+      descriptiveCount,
+      syllabus: [],
+      instructions: ['Auto-saved in real time. Please submit before timer expires.'],
+      questions: examForm.questions
+    }
+
     if (editingExamId) {
-      const updated = exams.map((ex) =>
-        ex.id === editingExamId
-          ? {
-              ...ex,
-              title: examForm.title.trim(),
-              scheduledDate: examForm.scheduledDate.trim() || 'Active Now',
-              scheduledTime: examForm.scheduledTime.trim() || '',
-              durationMinutes: Number(examForm.durationMinutes) || 45,
-              totalMarks,
-              passingMarks,
-              mcqCount,
-              descriptiveCount,
-              questions: examForm.questions
-            }
-          : ex
-      )
+      const updated = exams.map((ex) => (ex.id === editingExamId ? appExamObject : ex))
       saveExamsToStorage(updated)
     } else {
-      const newExam: Exam = {
-        id: 'exam_' + Date.now(),
-        title: examForm.title.trim(),
-        course: 'General Examination',
-        instructor: 'Rishika',
-        status: 'live',
-        scheduledDate: examForm.scheduledDate.trim() || 'Active Now',
-        scheduledTime: examForm.scheduledTime.trim() || '',
-        durationMinutes: Number(examForm.durationMinutes) || 45,
-        totalMarks,
-        passingMarks,
-        mcqCount,
-        descriptiveCount,
-        syllabus: [],
-        instructions: ['Auto-saved in real time. Please submit before timer expires.'],
-        questions: examForm.questions
-      }
-      saveExamsToStorage([newExam, ...exams])
+      saveExamsToStorage([appExamObject, ...exams])
     }
 
     setShowExamModal(false)
@@ -867,6 +1120,15 @@ export default function AdminExams() {
 
   const handleDeleteExam = (id: string) => {
     if (!confirm('Are you sure you want to delete this exam?')) return
+    if (isValidUUID(id)) {
+      supabase
+        .from('exams')
+        .delete()
+        .eq('id', id)
+        .then(({ error }) => {
+          if (error) console.error('Supabase exam delete error:', error)
+        })
+    }
     saveExamsToStorage(exams.filter((e) => e.id !== id))
   }
 
@@ -928,6 +1190,49 @@ export default function AdminExams() {
         strengths: ['Demonstrated understanding of key concepts'],
         improvements: ['Review questions where marks were deducted'],
         evaluatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      }
+    }
+
+    if (isValidUUID(evaluatingSub.id)) {
+      supabase
+        .from('exam_submissions')
+        .update({
+          status: 'graded',
+          score_obtained: totalScore,
+          percentage,
+          grade,
+          is_passed: percentage >= 40,
+          answers: updatedAnswers,
+          teacher_feedback: updatedSub.teacherFeedback,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', evaluatingSub.id)
+        .then(({ error }) => {
+          if (error) console.error('Supabase grading update error:', error)
+        })
+
+      if (evaluatingSub.userId && isValidUUID(evaluatingSub.userId)) {
+        supabase
+          .from('exam_submissions')
+          .select('percentage')
+          .eq('user_id', evaluatingSub.userId)
+          .eq('status', 'graded')
+          .then(({ data: userGrades }) => {
+            if (userGrades && userGrades.length > 0) {
+              const allPercentages = [
+                ...userGrades.map((g: any) => Number(g.percentage) || 0),
+                percentage
+              ]
+              const avg = Math.round(
+                allPercentages.reduce((a, b) => a + b, 0) / allPercentages.length
+              )
+              supabase
+                .from('user_class_stats')
+                .update({ average_exam_score: avg, updated_at: new Date().toISOString() })
+                .eq('user_id', evaluatingSub.userId)
+                .then(() => {})
+            }
+          })
       }
     }
 
@@ -1027,33 +1332,98 @@ export default function AdminExams() {
 
       {/* 4. VIEW: EXAMS TABLE */}
       {activeTab === 'exams' && (
-        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 dark:bg-neutral-800/60 border-b border-slate-200 dark:border-neutral-800 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <tr>
-                  <th className="px-5 py-3.5">Exam Title</th>
-                  <th className="px-5 py-3.5">Schedule</th>
-                  <th className="px-5 py-3.5">Duration & Marks</th>
-                  <th className="px-5 py-3.5">Questions</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
-                {filteredExams.length === 0 ? (
+        <div className="space-y-4">
+          {/* Quick Filter Pills: All vs Course vs 1-on-1 Students */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setAudienceFilter('all')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                audienceFilter === 'all'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xs'
+                  : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              All Exams ({exams.length})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAudienceFilter('course')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                audienceFilter === 'course'
+                  ? 'bg-indigo-600 text-white shadow-2xs'
+                  : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <BookOpen size={13} />
+              <span>Course Exams ({courseExamsCount})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAudienceFilter('student')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                audienceFilter === 'student'
+                  ? 'bg-purple-600 text-white shadow-2xs'
+                  : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <User size={13} />
+              <span>1-on-1 Student Exams ({studentExamsCount})</span>
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 overflow-hidden shadow-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50 dark:bg-neutral-800/60 border-b border-slate-200 dark:border-neutral-800 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500">
-                      No exams found
-                    </td>
+                    <th className="px-5 py-3.5">Exam Title & Assignment</th>
+                    <th className="px-5 py-3.5">Schedule</th>
+                    <th className="px-5 py-3.5">Duration & Marks</th>
+                    <th className="px-5 py-3.5">Questions</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5 text-right">Actions</th>
                   </tr>
-                ) : (
-                  filteredExams.map((ex) => (
-                    <tr key={ex.id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-800/40 transition-colors">
-                      <td className="px-5 py-4">
-                        <div className="font-semibold text-slate-900 dark:text-white">{ex.title}</div>
-                        {ex.course && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{ex.course}</div>}
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+                  {filteredExams.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500">
+                        No exams found
                       </td>
+                    </tr>
+                  ) : (
+                    filteredExams.map((ex) => (
+                      <tr key={ex.id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-800/40 transition-colors">
+                        <td className="px-5 py-4">
+                          <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                            <span>{ex.title}</span>
+                            {ex.assignedType === 'student' ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                <User size={10} />
+                                1-on-1 Student
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                <BookOpen size={10} />
+                                Course
+                              </span>
+                            )}
+                          </div>
+                          {ex.assignedType === 'student' ? (
+                            <div className="text-xs text-purple-700 dark:text-purple-300 font-medium mt-1 flex items-center gap-1 flex-wrap">
+                              <span className="text-slate-400 dark:text-neutral-500">Assigned:</span>
+                              <span className="font-semibold">{ex.assignedStudentName || ex.assignedStudentEmail}</span>
+                              {ex.assignedStudentName && ex.assignedStudentEmail && (
+                                <span className="text-slate-400 dark:text-neutral-500 text-[11px]">({ex.assignedStudentEmail})</span>
+                              )}
+                            </div>
+                          ) : (
+                            ex.course && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{ex.course}</div>
+                          )}
+                        </td>
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
                         <div>{ex.scheduledDate}</div>
@@ -1113,6 +1483,7 @@ export default function AdminExams() {
               </tbody>
             </table>
           </div>
+        </div>
         </div>
       )}
 
@@ -1276,6 +1647,179 @@ export default function AdminExams() {
                       onChange={(e) => setExamForm({ ...examForm, title: e.target.value })}
                       className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-3 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
                     />
+                  </div>
+
+                  {/* Assignment Target: Course vs Particular Student */}
+                  <div className="space-y-2.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
+                      Assign Exam To <span className="text-rose-500">*</span>
+                    </label>
+
+                    {/* Segmented Control */}
+                    <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border border-slate-200 dark:border-neutral-700">
+                      <button
+                        type="button"
+                        onClick={() => setExamForm({ ...examForm, assignedType: 'course' })}
+                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
+                          examForm.assignedType === 'course'
+                            ? 'bg-white dark:bg-neutral-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
+                            : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        <BookOpen size={15} />
+                        <span>Entire Course</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setExamForm({ ...examForm, assignedType: 'student' })}
+                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
+                          examForm.assignedType === 'student'
+                            ? 'bg-white dark:bg-neutral-700 text-purple-600 dark:text-purple-300 shadow-2xs'
+                            : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        <User size={15} />
+                        <span>Particular Student</span>
+                      </button>
+                    </div>
+
+                    {/* When Assigned to Entire Course */}
+                    {examForm.assignedType === 'course' && (
+                      <div className="p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-950/60 bg-indigo-50/40 dark:bg-indigo-950/20 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300 flex items-center gap-1.5">
+                            <BookOpen size={14} className="text-indigo-600 dark:text-indigo-400" />
+                            <span>Select Target Course</span>
+                          </label>
+                          <span className="text-[11px] font-medium text-indigo-700 dark:text-indigo-300">
+                            {examForm.course.includes('All Students') || examForm.courseId === 'all'
+                              ? '🌐 Open to all'
+                              : '🔒 Enrolled only'}
+                          </span>
+                        </div>
+
+                        <select
+                          value={examForm.course}
+                          onChange={(e) => {
+                            const cObj = coursesList.find((c) => c.title === e.target.value)
+                            setExamForm({
+                              ...examForm,
+                              course: e.target.value,
+                              courseId: cObj ? cObj.id : ''
+                            })
+                          }}
+                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
+                        >
+                          {coursesList.map((c) => (
+                            <option key={c.id || c.title} value={c.title}>
+                              {c.id === 'all' ? `🌐 ${c.title}` : `📚 ${c.title}`}
+                            </option>
+                          ))}
+                        </select>
+
+                        <p className="text-[11px] text-indigo-700 dark:text-indigo-400">
+                          {examForm.course.includes('All Students') || examForm.courseId === 'all'
+                            ? '🌐 Open Exam: Visible to every student in the portal for general practice.'
+                            : '🔒 Course-Restricted: Only students actively enrolled in this specific course will see and be able to take it.'}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* When Assigned to Particular Student */}
+                    {examForm.assignedType === 'student' && (
+                      <div className="p-4 rounded-xl border border-purple-200 dark:border-purple-900/50 bg-purple-50/50 dark:bg-purple-950/20 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <UserCheck size={16} className="text-purple-600 dark:text-purple-400" />
+                            <span className="text-xs font-bold text-purple-900 dark:text-purple-300">
+                              Personalized 1-on-1 Student Exam
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                            Private Assignment
+                          </span>
+                        </div>
+
+                        {/* Select from registered profiles */}
+                        {studentsList.length > 0 && (
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">
+                              Quick Select from Enrolled Students
+                            </label>
+                            <select
+                              value={examForm.assignedStudentEmail}
+                              onChange={(e) => {
+                                const st = studentsList.find(
+                                  (s) => s.email.toLowerCase() === e.target.value.toLowerCase()
+                                )
+                                if (st) {
+                                  const fullName = `${st.first_name || ''} ${st.last_name || ''}`.trim()
+                                  setExamForm({
+                                    ...examForm,
+                                    assignedStudentEmail: st.email,
+                                    assignedStudentName: fullName || st.email
+                                  })
+                                } else {
+                                  setExamForm({
+                                    ...examForm,
+                                    assignedStudentEmail: e.target.value
+                                  })
+                                }
+                              }}
+                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
+                            >
+                              <option value="">-- Choose registered student or enter below --</option>
+                              {studentsList.map((st) => (
+                                <option key={st.id || st.email} value={st.email}>
+                                  {st.first_name || st.last_name
+                                    ? `${st.first_name || ''} ${st.last_name || ''} (${st.email})`
+                                    : st.email}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        {/* Student Email and Name input fields */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1">
+                              Student Email <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              type="email"
+                              required
+                              placeholder="student@example.com"
+                              value={examForm.assignedStudentEmail}
+                              onChange={(e) =>
+                                setExamForm({ ...examForm, assignedStudentEmail: e.target.value })
+                              }
+                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-purple-500 outline-none"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1">
+                              Student Name (Display)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. John Doe"
+                              value={examForm.assignedStudentName}
+                              onChange={(e) =>
+                                setExamForm({ ...examForm, assignedStudentName: e.target.value })
+                              }
+                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-purple-500 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-purple-700 dark:text-purple-300">
+                          🔒 This exam is privately assigned. Only this student will see and be able to take it.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Scheduling Mode (Specific Date/Time vs Anytime / Self-Paced) */}
