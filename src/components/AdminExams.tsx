@@ -976,7 +976,7 @@ export default function AdminExams() {
     assignedStudentEmails: [] as string[],
     scheduledDate: 'Anytime / Self-Paced',
     scheduledTime: 'Flexible',
-    durationMinutes: 45,
+    durationMinutes: 60,
     totalMarks: 50,
     questions: [] as ExamQuestion[]
   })
@@ -1116,7 +1116,7 @@ export default function AdminExams() {
             status: d.status || 'live',
             scheduledDate: d.scheduled_date || 'Anytime / Self-Paced',
             scheduledTime: d.scheduled_time || 'Flexible',
-            durationMinutes: Number(d.duration_minutes) || 45,
+            durationMinutes: Number(d.duration_minutes) || 60,
             totalMarks: Number(d.total_marks) || 100,
             passingMarks: Number(d.passing_marks) || 40,
             mcqCount: Number(d.mcq_count) || 0,
@@ -1264,7 +1264,7 @@ export default function AdminExams() {
 
   const handleSaveGroqKey = () => {
     if (!tempApiKeyInput.trim()) {
-      alert('Please enter your Groq API key (starts with gsk_...)')
+      alert('Please enter your extraction API key (starts with gsk_...)')
       return
     }
     setStoredGroqApiKey(tempApiKeyInput.trim())
@@ -1309,7 +1309,7 @@ export default function AdminExams() {
 
     if (!currentKey) {
       setIsApiKeyExpanded(true)
-      setAiParseError('Please provide your Groq API Key above to extract questions.')
+      setAiParseError('Please provide your extraction API Key above to extract questions.')
       return
     }
 
@@ -1317,7 +1317,7 @@ export default function AdminExams() {
       setAiParseError(
         aiSourceMode === 'pdf'
           ? 'Please upload a PDF file first and wait for text extraction.'
-          : 'Please paste your ChatGPT questions text first.'
+          : 'Please paste your question paper text first.'
       )
       return
     }
@@ -1332,7 +1332,7 @@ export default function AdminExams() {
         setAiApiKey(currentKey)
       }
     } catch (err: any) {
-      setAiParseError(err.message || 'Groq question extraction failed.')
+      setAiParseError(err.message || 'Question extraction failed.')
     } finally {
       setIsAiParsing(false)
     }
@@ -1394,7 +1394,7 @@ export default function AdminExams() {
       assignedStudentEmails: [],
       scheduledDate: 'Anytime / Self-Paced',
       scheduledTime: 'Flexible',
-      durationMinutes: 45,
+      durationMinutes: 60,
       totalMarks: 50,
       questions: []
     })
@@ -1406,17 +1406,19 @@ export default function AdminExams() {
     setEditingExamId(exam.id)
     setExamModalTab('settings')
     setStudentSearch('')
-    const isStudent = exam.assignedType === 'student' || Boolean(exam.assignedStudentEmail)
-    const emails = exam.assignedStudentEmail
+    let emails = exam.assignedStudentEmail
       ? exam.assignedStudentEmail.split(',').map((s: string) => s.trim().toLowerCase()).filter(Boolean)
       : []
+    if (emails.length === 0 && (exam.assignedType === 'all' || !exam.assignedType || exam.assignedType === 'course')) {
+      emails = studentsList.map((s) => s.email.toLowerCase().trim())
+    }
     setExamForm({
       title: exam.title,
-      assignedType: isStudent ? 'student' : 'all',
+      assignedType: 'student',
       assignedStudentEmails: emails,
       scheduledDate: exam.scheduledDate || 'Anytime / Self-Paced',
       scheduledTime: exam.scheduledTime || 'Flexible',
-      durationMinutes: exam.durationMinutes || 45,
+      durationMinutes: exam.durationMinutes || 60,
       totalMarks: exam.totalMarks || 50,
       questions: exam.questions || []
     })
@@ -1596,12 +1598,14 @@ export default function AdminExams() {
       return
     }
 
-    const isStudent = examForm.assignedType === 'student'
-    if (isStudent && examForm.assignedStudentEmails.length === 0) {
-      alert('Please select at least one student to assign this exam.')
+    if (examForm.assignedStudentEmails.length === 0) {
+      alert('Please select at least one student, or click "Select All".')
       setExamModalTab('settings')
       return
     }
+
+    const isAllSelected = studentsList.length > 0 && examForm.assignedStudentEmails.length >= studentsList.length
+    const isStudent = !isAllSelected
 
     const mcqCount = examForm.questions.filter((q) => q.type === 'mcq').length
     const descriptiveCount = examForm.questions.filter((q) => q.type === 'descriptive').length
@@ -1636,15 +1640,15 @@ export default function AdminExams() {
       title: examForm.title.trim(),
       course_title: resolvedCourse,
       course_id: null,
-      assigned_type: examForm.assignedType,
+      assigned_type: isAllSelected ? 'all' : 'student',
       assigned_student_id: null,
-      assigned_student_email: isStudent ? examForm.assignedStudentEmails.join(', ') : null,
-      assigned_student_name: isStudent ? selectedNames.join(', ') : 'All Students',
+      assigned_student_email: examForm.assignedStudentEmails.join(', '),
+      assigned_student_name: isAllSelected ? 'All Students' : selectedNames.join(', '),
       instructor_name: 'Rishika',
       status: 'live',
       scheduled_date: examForm.scheduledDate.trim() || 'Anytime / Self-Paced',
       scheduled_time: examForm.scheduledTime.trim() || 'Flexible',
-      duration_minutes: Number(examForm.durationMinutes) || 45,
+      duration_minutes: Number(examForm.durationMinutes) || 60,
       total_marks: totalMarks,
       passing_marks: 0,
       mcq_count: mcqCount,
@@ -1685,7 +1689,7 @@ export default function AdminExams() {
       status: 'live',
       scheduledDate: examForm.scheduledDate.trim() || 'Anytime / Self-Paced',
       scheduledTime: examForm.scheduledTime.trim() || 'Flexible',
-      durationMinutes: Number(examForm.durationMinutes) || 45,
+      durationMinutes: Number(examForm.durationMinutes) || 60,
       totalMarks,
       passingMarks: 0,
       mcqCount,
@@ -1920,45 +1924,11 @@ export default function AdminExams() {
       {/* 4. VIEW: EXAMS TABLE */}
       {activeTab === 'exams' && (
         <div className="space-y-4">
-          {/* Quick Filter Pills: All vs Course vs 1-on-1 Students */}
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setAudienceFilter('all')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                audienceFilter === 'all'
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xs'
-                  : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              All Exams ({exams.length})
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAudienceFilter('course')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                audienceFilter === 'course'
-                  ? 'bg-indigo-600 text-white shadow-2xs'
-                  : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <BookOpen size={13} />
-              <span>All Students ({allStudentsExamsCount})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAudienceFilter('student')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                audienceFilter === 'student'
-                  ? 'bg-purple-600 text-white shadow-2xs'
-                  : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <User size={13} />
-              <span>Specific Students ({studentExamsCount})</span>
-            </button>
+          {/* All Exams Quick Indicator */}
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-neutral-400">
+            <span className="font-bold text-slate-900 dark:text-white">
+              {filteredExams.length} {filteredExams.length === 1 ? 'Exam' : 'Exams'} listed
+            </span>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 overflow-hidden shadow-xs">
@@ -2265,132 +2235,105 @@ export default function AdminExams() {
                       />
                     </div>
 
-                    {/* Assign To Students: All vs Specific */}
-                    <div className="space-y-3">
+                    {/* Assign To Students (Directly Unified with Select All) */}
+                    <div className="space-y-2.5">
                       <div className="flex items-center justify-between">
                         <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
-                          Assign Exam To <span className="text-rose-500">*</span>
+                          Assign To Students <span className="text-rose-500">*</span>
                         </label>
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-neutral-400">
-                          {examForm.assignedType === 'all'
-                            ? '🌐 Open to all students'
-                            : `👤 ${examForm.assignedStudentEmails.length} student${examForm.assignedStudentEmails.length === 1 ? '' : 's'} selected`}
+                          {examForm.assignedStudentEmails.length === studentsList.length && studentsList.length > 0 ? (
+                            <span className="text-indigo-600 dark:text-indigo-400 font-bold">✓ All Students Selected ({studentsList.length})</span>
+                          ) : examForm.assignedStudentEmails.length > 0 ? (
+                            <span className="text-purple-600 dark:text-purple-400 font-bold">{examForm.assignedStudentEmails.length} of {studentsList.length} Selected</span>
+                          ) : (
+                            <span className="text-slate-400 dark:text-neutral-500">None selected (click Select All to assign everyone)</span>
+                          )}
                         </span>
                       </div>
 
-                      {/* Segmented Control */}
-                      <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border border-slate-200 dark:border-neutral-700">
-                        <button
-                          type="button"
-                          onClick={() => setExamForm({ ...examForm, assignedType: 'all', assignedStudentEmails: [] })}
-                          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            examForm.assignedType === 'all'
-                              ? 'bg-white dark:bg-neutral-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
-                              : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                          }`}
-                        >
-                          <BookOpen size={15} />
-                          <span>All Students</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setExamForm({ ...examForm, assignedType: 'student' })}
-                          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            examForm.assignedType === 'student'
-                              ? 'bg-white dark:bg-neutral-700 text-purple-600 dark:text-purple-300 shadow-2xs'
-                              : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                          }`}
-                        >
-                          <User size={15} />
-                          <span>Specific Students ({examForm.assignedStudentEmails.length})</span>
-                        </button>
-                      </div>
-
-                      {/* Multi-Student Selection Checklist */}
-                      {examForm.assignedType === 'student' && (
-                        <div className="p-4 rounded-xl border border-slate-200 dark:border-neutral-700 bg-slate-50/70 dark:bg-neutral-800/60 space-y-3">
-                          {/* Search bar & Quick actions */}
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="relative flex-1">
-                              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                              <input
-                                type="text"
-                                placeholder="Search by name or email..."
-                                value={studentSearch}
-                                onChange={(e) => setStudentSearch(e.target.value)}
-                                className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 pl-8 pr-3 py-1.5 rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-purple-500"
-                              />
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0 text-xs">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const allEmails = studentsList.map((s) => s.email.toLowerCase().trim());
-                                  setExamForm({ ...examForm, assignedStudentEmails: allEmails });
-                                }}
-                                className="font-semibold text-purple-600 dark:text-purple-400 hover:underline cursor-pointer"
-                              >
-                                Select All
-                              </button>
-                              <span className="text-slate-300 dark:text-neutral-600">|</span>
-                              <button
-                                type="button"
-                                onClick={() => setExamForm({ ...examForm, assignedStudentEmails: [] })}
-                                className="font-semibold text-slate-500 hover:text-rose-500 cursor-pointer"
-                              >
-                                Clear
-                              </button>
-                            </div>
+                      {/* Multi-Student Selection Box (Always Directly Visible) */}
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-neutral-700 bg-slate-50/70 dark:bg-neutral-800/60 space-y-3">
+                        {/* Search bar & Quick actions */}
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="relative flex-1">
+                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                              type="text"
+                              placeholder="Search students by name or email..."
+                              value={studentSearch}
+                              onChange={(e) => setStudentSearch(e.target.value)}
+                              className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 pl-8 pr-3 py-1.5 rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-indigo-500"
+                            />
                           </div>
-
-                          {/* Student List */}
-                          <div className="max-h-52 overflow-y-auto space-y-1 pr-1 divide-y divide-slate-100 dark:divide-neutral-800/80">
-                            {filteredStudentOptions.length === 0 ? (
-                              <p className="text-xs text-slate-400 text-center py-6">No students found</p>
-                            ) : (
-                              filteredStudentOptions.map((st) => {
-                                const email = st.email.toLowerCase().trim();
-                                const isChecked = examForm.assignedStudentEmails.includes(email);
-                                const fullName = `${st.first_name || ''} ${st.last_name || ''}`.trim() || email;
-                                return (
-                                  <label
-                                    key={st.id || email}
-                                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition select-none ${
-                                      isChecked
-                                        ? 'bg-purple-100/70 dark:bg-purple-950/40 text-purple-950 dark:text-purple-200'
-                                        : 'hover:bg-white dark:hover:bg-neutral-800/80 text-slate-700 dark:text-neutral-300'
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                      <input
-                                        type="checkbox"
-                                        checked={isChecked}
-                                        onChange={() => {
-                                          const next = isChecked
-                                            ? examForm.assignedStudentEmails.filter((e) => e !== email)
-                                            : [...examForm.assignedStudentEmails, email];
-                                          setExamForm({ ...examForm, assignedStudentEmails: next });
-                                        }}
-                                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer"
-                                      />
-                                      <div className="min-w-0">
-                                        <p className="text-xs font-semibold truncate">{fullName}</p>
-                                        <p className="text-[11px] text-slate-400 dark:text-neutral-500 truncate">{email}</p>
-                                      </div>
-                                    </div>
-                                    {isChecked && (
-                                      <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded bg-purple-200/60 dark:bg-purple-900/50 shrink-0">
-                                        Selected ✓
-                                      </span>
-                                    )}
-                                  </label>
-                                );
-                              })
-                            )}
+                          <div className="flex items-center gap-2 shrink-0 text-xs">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const allEmails = studentsList.map((s) => s.email.toLowerCase().trim());
+                                setExamForm({ ...examForm, assignedStudentEmails: allEmails });
+                              }}
+                              className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                            >
+                              Select All ({studentsList.length})
+                            </button>
+                            <span className="text-slate-300 dark:text-neutral-600">|</span>
+                            <button
+                              type="button"
+                              onClick={() => setExamForm({ ...examForm, assignedStudentEmails: [] })}
+                              className="font-semibold text-slate-500 hover:text-rose-500 cursor-pointer"
+                            >
+                              Clear
+                            </button>
                           </div>
                         </div>
-                      )}
+
+                        {/* Student List */}
+                        <div className="max-h-52 overflow-y-auto space-y-1 pr-1 divide-y divide-slate-100 dark:divide-neutral-800/80">
+                          {filteredStudentOptions.length === 0 ? (
+                            <p className="text-xs text-slate-400 text-center py-6">No students found</p>
+                          ) : (
+                            filteredStudentOptions.map((st) => {
+                              const email = st.email.toLowerCase().trim();
+                              const isChecked = examForm.assignedStudentEmails.includes(email);
+                              const fullName = `${st.first_name || ''} ${st.last_name || ''}`.trim() || email;
+                              return (
+                                <label
+                                  key={st.id || email}
+                                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition select-none ${
+                                    isChecked
+                                      ? 'bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-200'
+                                      : 'hover:bg-white dark:hover:bg-neutral-800/80 text-slate-700 dark:text-neutral-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <input
+                                      type="checkbox"
+                                      checked={isChecked}
+                                      onChange={() => {
+                                        const next = isChecked
+                                          ? examForm.assignedStudentEmails.filter((e) => e !== email)
+                                          : [...examForm.assignedStudentEmails, email];
+                                        setExamForm({ ...examForm, assignedStudentEmails: next });
+                                      }}
+                                      className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                    />
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-semibold truncate">{fullName}</p>
+                                      <p className="text-[11px] text-slate-400 dark:text-neutral-500 truncate">{email}</p>
+                                    </div>
+                                  </div>
+                                  {isChecked && (
+                                    <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/50 shrink-0">
+                                      Selected ✓
+                                    </span>
+                                  )}
+                                </label>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Schedule Mode: Single Clean 2-Pill Selector */}
@@ -2439,12 +2382,7 @@ export default function AdminExams() {
                         </button>
                       </div>
 
-                      {/* If Self-Paced: 1 clean subtle note */}
-                      {isSelfPaced ? (
-                        <p className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-2 rounded-xl border border-emerald-200/80 dark:border-emerald-900/40 font-medium">
-                          ⚡ Students can take this exam whenever they want without any schedule restriction.
-                        </p>
-                      ) : (
+                      {!isSelfPaced && (
                         /* If Scheduled: Clean Date & Time Pickers */
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                           <div>
@@ -2516,12 +2454,16 @@ export default function AdminExams() {
                           className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                         <div className="flex gap-1.5 mt-2">
-                          {[30, 45, 60, 90].map((mins) => (
+                          {[30, 45, 60, 90, 120].map((mins) => (
                             <button
                               key={mins}
                               type="button"
                               onClick={() => setExamForm({ ...examForm, durationMinutes: mins })}
-                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                examForm.durationMinutes === mins
+                                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xs font-bold'
+                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                              }`}
                             >
                               {mins}m
                             </button>
@@ -2581,10 +2523,10 @@ export default function AdminExams() {
                           setIsAiModalOpen(true)
                           setAiParseError(null)
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-violet-300 dark:border-violet-700/60 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-950/40 dark:to-indigo-950/40 text-violet-700 dark:text-violet-300 hover:from-violet-100 hover:to-indigo-100 dark:hover:from-violet-900/50 dark:hover:to-indigo-900/50 transition cursor-pointer shadow-xs"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-indigo-200 dark:border-indigo-800/60 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition cursor-pointer shadow-xs"
                       >
-                        <Sparkles size={16} className="text-violet-600 dark:text-violet-400" />
-                        <span className="text-xs font-bold">✨ AI Auto-Fill (Groq)</span>
+                        <FileUp size={16} className="text-indigo-600 dark:text-indigo-400" />
+                        <span className="text-xs font-bold">Upload PDF / Document</span>
                       </button>
                     </div>
                   )}
@@ -2758,12 +2700,12 @@ export default function AdminExams() {
                   <div className="space-y-2.5">
                     {examForm.questions.length === 0 ? (
                       <div className="p-8 text-center rounded-2xl border border-dashed border-slate-200 dark:border-neutral-800 space-y-3">
-                        <div className="w-10 h-10 mx-auto rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 flex items-center justify-center">
-                          <Sparkles size={20} />
+                        <div className="w-10 h-10 mx-auto rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                          <FileUp size={20} />
                         </div>
                         <div>
                           <p className="text-xs font-semibold text-slate-700 dark:text-neutral-300">No questions in this paper yet</p>
-                          <p className="text-[11px] text-slate-400 dark:text-neutral-500 mt-0.5">Add manually above, or auto-fill in seconds from a PDF or ChatGPT</p>
+                          <p className="text-[11px] text-slate-400 dark:text-neutral-500 mt-0.5">Add manually above, or upload a question paper PDF to import automatically</p>
                         </div>
                         <button
                           type="button"
@@ -2771,10 +2713,10 @@ export default function AdminExams() {
                             setIsAiModalOpen(true)
                             setAiParseError(null)
                           }}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold cursor-pointer transition shadow-2xs"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold cursor-pointer transition shadow-2xs"
                         >
-                          <Sparkles size={13} />
-                          <span>AI Auto-Fill with Groq</span>
+                          <FileUp size={13} />
+                          <span>Upload PDF / Import Questions</span>
                         </button>
                       </div>
                     ) : (
@@ -2874,8 +2816,8 @@ export default function AdminExams() {
                         alert('Please enter an exam title first.');
                         return;
                       }
-                      if (examForm.assignedType === 'student' && examForm.assignedStudentEmails.length === 0) {
-                        alert('Please select at least one student.');
+                      if (examForm.assignedStudentEmails.length === 0) {
+                        alert('Please select at least one student, or click "Select All".');
                         return;
                       }
                       setExamModalTab('questions');
@@ -3084,18 +3026,15 @@ export default function AdminExams() {
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between bg-slate-100 dark:bg-neutral-900">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center shadow-xs">
-                  <Sparkles size={18} />
+                <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                  <FileUp size={18} />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <span>AI Question Importer</span>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50">
-                      Groq Llama 3.3 70B
-                    </span>
+                    <span>Upload PDF / Import Questions</span>
                   </h3>
                   <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">
-                    Extract MCQs with options and descriptive questions directly from ChatGPT PDF or text
+                    Upload an exam PDF or paste questions to automatically extract questions, options, and marks
                   </p>
                 </div>
               </div>
@@ -3118,7 +3057,7 @@ export default function AdminExams() {
                   <div className="flex items-center gap-2">
                     <Key size={14} className={aiApiKey ? "text-emerald-500" : "text-amber-500"} />
                     <span className="text-xs font-semibold text-slate-800 dark:text-neutral-200">
-                      Groq API Key
+                      Extraction API Key
                     </span>
                     {aiApiKey ? (
                       <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
@@ -3126,7 +3065,7 @@ export default function AdminExams() {
                       </span>
                     ) : (
                       <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-                        Key required for instant extraction
+                        API key required for document extraction
                       </span>
                     )}
                   </div>
@@ -3184,7 +3123,7 @@ export default function AdminExams() {
                   }`}
                 >
                   <FileText size={14} />
-                  <span>Paste ChatGPT Text</span>
+                  <span>Paste Question Text</span>
                 </button>
               </div>
 
@@ -3223,7 +3162,7 @@ export default function AdminExams() {
                     <div className="p-3 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800/40 flex items-center gap-3 text-xs text-violet-700 dark:text-violet-300">
                       <Loader2 size={16} className="animate-spin" />
                       <span>
-                        Extracting digital text with Mozilla PDF.js{' '}
+                        Extracting digital text from PDF document{' '}
                         {pdfProgress ? `(${pdfProgress.current} / ${pdfProgress.total} pages)` : '...'}
                       </span>
                     </div>
@@ -3263,7 +3202,7 @@ export default function AdminExams() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-700 dark:text-neutral-300">
-                      Paste ChatGPT Response or Question Text
+                      Paste Question Paper Text
                     </label>
                     <span className="text-[10px] text-slate-400">
                       {aiPastedText.length} characters
@@ -3271,13 +3210,13 @@ export default function AdminExams() {
                   </div>
                   <textarea
                     rows={7}
-                    placeholder="Paste ChatGPT output here...&#10;&#10;Example:&#10;1. What is the multiplier in macroeconomics?&#10;A. 1 / (1 - MPC)&#10;B. MPC / MPS&#10;C. 1 - MPS&#10;Answer: A [2 Marks]&#10;&#10;2. Discuss monetary transmission mechanism. [5 Marks]"
+                    placeholder="Paste question paper text here...&#10;&#10;Example:&#10;1. What is the multiplier in macroeconomics?&#10;A. 1 / (1 - MPC)&#10;B. MPC / MPS&#10;C. 1 - MPS&#10;Answer: A [2 Marks]&#10;&#10;2. Discuss monetary transmission mechanism. [5 Marks]"
                     value={aiPastedText}
                     onChange={(e) => setAiPastedText(e.target.value)}
                     className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-500 font-mono leading-relaxed"
                   />
                   <p className="text-[11px] text-slate-500 dark:text-neutral-400">
-                    💡 Tip: You can paste the direct answer from ChatGPT without modifying the formatting. Groq will parse the questions, options, and marks cleanly.
+                    💡 Tip: You can paste questions directly. The system will detect questions, options, and marks automatically.
                   </p>
                 </div>
               )}
@@ -3299,17 +3238,17 @@ export default function AdminExams() {
                     type="button"
                     onClick={handleRunGroqExtraction}
                     disabled={isAiParsing || isPdfExtracting}
-                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 cursor-pointer shadow-md"
+                    className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 cursor-pointer shadow-md"
                   >
                     {isAiParsing ? (
                       <>
                         <Loader2 size={16} className="animate-spin" />
-                        <span>Analyzing with Groq Llama 3.3 70B (~1-2s)...</span>
+                        <span>Extracting questions from document (~1-2s)...</span>
                       </>
                     ) : (
                       <>
-                        <Sparkles size={16} />
-                        <span>Parse & Extract Questions with Groq</span>
+                        <FileUp size={16} />
+                        <span>Extract Questions from Document</span>
                       </>
                     )}
                   </button>
