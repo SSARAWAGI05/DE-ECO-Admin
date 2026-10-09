@@ -998,7 +998,8 @@ export default function AdminExams() {
   const [examModalTab, setExamModalTab] = useState<'settings' | 'questions'>('settings')
   const [editingExamId, setEditingExamId] = useState<string | null>(null)
   const [evaluatingSub, setEvaluatingSub] = useState<ExamSubmission | null>(null)
-  const [showPdfPreview, setShowPdfPreview] = useState(false)
+  const [showPdfPreview, setShowPdfPreview] = useState(true)
+  const [mobileGradeView, setMobileGradeView] = useState<'grading' | 'pdf'>('grading')
 
   // Courses & Students from Supabase
   const [coursesList, setCoursesList] = useState<CourseOption[]>([
@@ -1808,7 +1809,8 @@ export default function AdminExams() {
 
   const handleOpenEvaluation = (sub: ExamSubmission) => {
     setEvaluatingSub(sub)
-    setShowPdfPreview(false)
+    setShowPdfPreview(true)
+    setMobileGradeView('grading')
 
     const initialMarks: Record<string, number> = {}
     const initialComments: Record<string, string> = {}
@@ -3451,17 +3453,21 @@ export default function AdminExams() {
       )}
 
       {/* ========================================================================= */}
-      {/* 7. MODAL: GRADE / EVALUATE SUBMISSION - 100% MOBILE-OPTIMIZED DIALOG       */}
+      {/* 7. MODAL: GRADE / EVALUATE SUBMISSION - DUAL-PANE SPLIT WORKSTATION        */}
       {/* ========================================================================= */}
       {evaluatingSub && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs flex items-center justify-center z-50 p-0 sm:p-4 animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-neutral-900 sm:rounded-2xl w-full max-w-3xl h-full sm:h-auto sm:max-h-[92vh] flex flex-col shadow-2xl border-0 sm:border border-slate-200 dark:border-neutral-800 overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs flex items-center justify-center z-50 p-0 sm:p-2 md:p-3 animate-in fade-in duration-150">
+          <div className={`bg-white dark:bg-neutral-900 sm:rounded-2xl w-full h-full sm:h-[95vh] flex flex-col shadow-2xl border-0 sm:border border-slate-200 dark:border-neutral-800 overflow-hidden transition-all duration-200 ${
+            evaluatingSub.submissionFileUrl && showPdfPreview
+              ? 'max-w-[98vw] xl:max-w-7xl'
+              : 'max-w-3xl'
+          }`}>
             
             {/* STICKY TOP HEADER */}
-            <div className="shrink-0 p-4 sm:p-5 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-neutral-900 z-10">
+            <div className="shrink-0 p-3.5 sm:p-4 md:px-5 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-neutral-900 z-10 gap-2">
               <div className="min-w-0 pr-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-50">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-50 truncate">
                     {evaluatingSub.status === 'graded' ? 'Review Submission' : 'Grade Submission'}
                   </h2>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
@@ -3472,287 +3478,366 @@ export default function AdminExams() {
                     {evaluatingSub.status === 'graded' ? 'GRADED' : 'NEEDS GRADING'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-xs sm:max-w-md">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-xs sm:max-w-md md:max-w-xl">
                   <span className="font-semibold text-slate-800 dark:text-neutral-200">{evaluatingSub.studentName || 'Student'}</span> ({evaluatingSub.studentEmail}) • {evaluatingSub.examTitle}
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setEvaluatingSub(null)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer shrink-0"
-                title="Close grading"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {evaluatingSub.submissionFileUrl && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setShowPdfPreview(!showPdfPreview)}
+                      className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-neutral-700 bg-slate-50 hover:bg-slate-100 dark:bg-neutral-800 dark:hover:bg-neutral-750 text-slate-700 dark:text-neutral-200 transition cursor-pointer"
+                      title={showPdfPreview ? "Hide side-by-side PDF viewer" : "Show side-by-side PDF viewer"}
+                    >
+                      {showPdfPreview ? <EyeOff size={14} /> : <Eye size={14} />}
+                      <span>{showPdfPreview ? "Hide PDF Pane" : "Split PDF View"}</span>
+                    </button>
+
+                    <a
+                      href={evaluatingSub.submissionFileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition"
+                      title="Open PDF in new tab"
+                    >
+                      <ExternalLink size={13} />
+                      <span className="hidden sm:inline">Open New Tab</span>
+                    </a>
+                  </>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setEvaluatingSub(null)}
+                  className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer shrink-0"
+                  title="Close grading"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
-            {/* SCROLLABLE QUESTIONS GRADING BODY */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 pb-28 sm:pb-6">
-              {/* ATTACHED HANDWRITTEN PDF BANNER */}
-              {evaluatingSub.submissionFileUrl && (
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/30 border border-indigo-200/80 dark:border-indigo-800/60 shadow-xs space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2.5 rounded-xl bg-indigo-600 text-white shrink-0 shadow-xs">
-                        <FileText size={20} />
+            {/* MOBILE SEGMENTED VIEW SWITCHER (When PDF is attached, for mobile screens < lg) */}
+            {evaluatingSub.submissionFileUrl && showPdfPreview && (
+              <div className="lg:hidden shrink-0 px-3 py-2 bg-slate-50 dark:bg-neutral-850 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between gap-2">
+                <div className="flex p-0.5 rounded-xl bg-slate-200/80 dark:bg-neutral-800 w-full text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setMobileGradeView('pdf')}
+                    className={`flex-1 py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      mobileGradeView === 'pdf'
+                        ? 'bg-white dark:bg-neutral-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                        : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900'
+                    }`}
+                  >
+                    <FileText size={14} />
+                    <span>View Student PDF</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileGradeView('grading')}
+                    className={`flex-1 py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      mobileGradeView === 'grading'
+                        ? 'bg-white dark:bg-neutral-900 text-slate-900 dark:text-white shadow-xs'
+                        : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900'
+                    }`}
+                  >
+                    <Award size={14} />
+                    <span>Grade Questions ({evaluatingSub.answers.length})</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* MAIN WORKSTATION BODY: SPLIT VIEW ON DESKTOP */}
+            <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+              
+              {/* LEFT COLUMN: BIG PDF VIEWER */}
+              {evaluatingSub.submissionFileUrl && showPdfPreview && (
+                <div className={`lg:w-1/2 xl:w-[52%] flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-neutral-800 bg-slate-100 dark:bg-neutral-950 shrink-0 ${
+                  mobileGradeView === 'grading' ? 'hidden lg:flex' : 'flex'
+                }`}>
+                  {/* PDF Toolbar */}
+                  <div className="shrink-0 px-3.5 py-2 bg-slate-100 dark:bg-neutral-900 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                      <div className="p-1 rounded bg-indigo-600 text-white shrink-0">
+                        <FileText size={14} />
                       </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-indigo-950 dark:text-indigo-200 text-sm truncate">
-                            {evaluatingSub.submissionFileName || 'Handwritten Answer Sheet.pdf'}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-indigo-200/80 dark:bg-indigo-900/80 text-indigo-800 dark:text-indigo-200 text-[10px] font-bold shrink-0">
-                            STUDENT ATTACHMENT
-                          </span>
-                        </div>
-                        <p className="text-xs text-indigo-700/90 dark:text-indigo-300/80 mt-0.5">
-                          Student attached physical handwritten paper {evaluatingSub.submissionFileSize ? `(${evaluatingSub.submissionFileSize})` : ''}
-                        </p>
-                      </div>
+                      <span className="font-bold text-slate-800 dark:text-neutral-200 truncate text-[11px] sm:text-xs">
+                        {evaluatingSub.submissionFileName || 'Handwritten Answer Sheet.pdf'}
+                      </span>
+                      {evaluatingSub.submissionFileSize && (
+                        <span className="text-[10px] text-slate-400 dark:text-neutral-500 hidden sm:inline">
+                          ({evaluatingSub.submissionFileSize})
+                        </span>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => setShowPdfPreview(!showPdfPreview)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer shadow-xs ${
-                          showPdfPreview
-                            ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                            : 'bg-white dark:bg-neutral-800 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50'
-                        }`}
-                      >
-                        {showPdfPreview ? <EyeOff size={14} /> : <Eye size={14} />}
-                        <span>{showPdfPreview ? 'Hide Preview' : 'In-App Preview'}</span>
-                      </button>
-
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <a
                         href={evaluatingSub.submissionFileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold shadow-xs transition"
+                        title="Open PDF in new tab"
                       >
-                        <ExternalLink size={14} />
-                        <span>Open in New Tab</span>
+                        <ExternalLink size={11} />
+                        <span>Open ↗</span>
                       </a>
-
                       <a
                         href={evaluatingSub.submissionFileUrl}
-                        download={evaluatingSub.submissionFileName || 'Handwritten_Sheet.pdf'}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-neutral-800 hover:bg-indigo-50 dark:hover:bg-neutral-700 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition"
+                        download={evaluatingSub.submissionFileName || 'Answer_Sheet.pdf'}
+                        className="p-1 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 hover:bg-slate-50 transition"
                         title="Download PDF"
                       >
-                        <Download size={14} />
-                        <span className="hidden sm:inline">Download</span>
+                        <Download size={13} />
                       </a>
                     </div>
                   </div>
 
-                  {/* Inline PDF Preview Frame */}
-                  {showPdfPreview && (
-                    <div className="pt-2 animate-in fade-in duration-200">
-                      <div className="rounded-xl overflow-hidden border border-indigo-200/80 dark:border-indigo-800/80 bg-slate-900 shadow-md">
-                        <div className="bg-slate-900 text-slate-300 px-3 py-1.5 text-[11px] font-mono flex items-center justify-between border-b border-slate-800">
-                          <span className="truncate">{evaluatingSub.submissionFileName || 'Answer Sheet Preview'}</span>
-                          <span className="text-[10px] text-slate-400">PDF Document</span>
-                        </div>
-                        <iframe
-                          src={evaluatingSub.submissionFileUrl}
-                          title="Student Answer Sheet"
-                          className="w-full h-[500px] bg-white border-0"
-                        />
-                      </div>
-                    </div>
-                  )}
+                  {/* Embedded PDF Viewer Iframe */}
+                  <div className="flex-1 w-full h-full min-h-[400px] lg:min-h-0 bg-slate-900 relative">
+                    <iframe
+                      src={`${evaluatingSub.submissionFileUrl}#toolbar=1&navpanes=0`}
+                      title="Student Handwritten Answer Sheet"
+                      className="w-full h-full border-0 bg-white"
+                    />
+                  </div>
+
+                  {/* Mobile Quick Switch Button at bottom of PDF */}
+                  <div className="lg:hidden p-3 bg-white dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-800 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setMobileGradeView('grading')}
+                      className="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.98]"
+                    >
+                      <Award size={15} />
+                      <span>Switch to Scoring Questions ({evaluatingSub.answers.length}) →</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {evaluatingSub.answers.map((ans, idx) => (
-                <div
-                  key={ans.questionId || idx}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/70 dark:bg-neutral-900/60 space-y-3.5"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="text-xs font-bold text-slate-900 dark:text-white">
-                      Q{ans.questionNumber}. [{ans.type.toUpperCase()}] ({ans.marks} Marks)
-                    </span>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-slate-800 dark:text-neutral-200 font-medium leading-relaxed">
-                    {ans.question}
-                  </p>
-
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs">
-                    <span className="font-semibold text-slate-500 dark:text-neutral-400 block mb-1">
-                      Student's Answer:
-                    </span>
-                    <div className="text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto pr-1">
-                      {ans.studentAnswer ? (
-                        ans.studentAnswer
-                      ) : (
-                        <span className="italic text-slate-400">(No answer submitted)</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {ans.type === 'mcq' && (
-                    <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
-                      <span>Correct Key:</span>
-                      <span className="font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                        {ans.correctAnswer}
-                      </span>
-                      {ans.isCorrect !== undefined && (
-                        <span className={`text-[11px] font-bold ${ans.isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                          ({ans.isCorrect ? '✓ Correct Choice' : '✗ Incorrect Choice'})
+              {/* RIGHT COLUMN: QUESTIONS & SCORING DESK */}
+              <div className={`flex-1 flex flex-col min-w-0 ${
+                evaluatingSub.submissionFileUrl && showPdfPreview && mobileGradeView === 'pdf'
+                  ? 'hidden lg:flex'
+                  : 'flex'
+              }`}>
+                
+                {/* Scrollable Questions Body */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 custom-scrollbar pb-28 sm:pb-6">
+                  {/* Mobile Quick Alert if PDF attached */}
+                  {evaluatingSub.submissionFileUrl && (
+                    <div className="lg:hidden p-3 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 min-w-0 pr-2">
+                        <FileText size={15} className="text-indigo-600 dark:text-indigo-400 shrink-0" />
+                        <span className="font-bold text-indigo-950 dark:text-indigo-200 text-xs truncate">
+                          Handwritten PDF Attached
                         </span>
-                      )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setMobileGradeView('pdf')}
+                        className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-xs font-bold cursor-pointer shrink-0"
+                      >
+                        View PDF
+                      </button>
                     </div>
                   )}
 
-                  {/* 1-TAP QUICK MARK PRESETS & SCORE AWARD */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-100/70 dark:bg-neutral-800/80 border border-slate-200 dark:border-neutral-700">
-                    <span className="text-xs font-bold text-slate-700 dark:text-neutral-300">
-                      Marks Awarded:
-                    </span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => setGradeMarks({ ...gradeMarks, [ans.questionId]: 0 })}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer active:scale-95 ${
-                          (gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)) === 0
-                            ? 'bg-rose-500 text-white shadow-2xs'
-                            : 'bg-white dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-neutral-600 hover:bg-slate-50'
-                        }`}
-                      >
-                        0
-                      </button>
-                      {ans.marks >= 2 && ans.type === 'descriptive' && (
-                        <button
-                          type="button"
-                          onClick={() => setGradeMarks({ ...gradeMarks, [ans.questionId]: Math.round(ans.marks / 2) })}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer active:scale-95 ${
-                            (gradeMarks[ans.questionId] ?? 0) === Math.round(ans.marks / 2)
-                              ? 'bg-amber-500 text-white shadow-2xs'
-                              : 'bg-white dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-neutral-600 hover:bg-slate-50'
-                          }`}
-                        >
-                          Half ({Math.round(ans.marks / 2)})
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => setGradeMarks({ ...gradeMarks, [ans.questionId]: ans.marks })}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer active:scale-95 ${
-                          (gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)) === ans.marks
-                            ? 'bg-emerald-600 text-white shadow-2xs'
-                            : 'bg-white dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-neutral-600 hover:bg-slate-50'
-                        }`}
-                      >
-                        Full ({ans.marks})
-                      </button>
+                  {evaluatingSub.answers.map((ans, idx) => (
+                    <div
+                      key={ans.questionId || idx}
+                      className="p-4 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/70 dark:bg-neutral-900/60 space-y-3.5"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          Q{ans.questionNumber}. [{ans.type.toUpperCase()}] ({ans.marks} Marks)
+                        </span>
+                      </div>
 
-                      <div className="flex items-center gap-1 pl-1 border-l border-slate-300 dark:border-neutral-600">
+                      <p className="text-xs sm:text-sm text-slate-800 dark:text-neutral-200 font-medium leading-relaxed">
+                        {ans.question}
+                      </p>
+
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs">
+                        <span className="font-semibold text-slate-500 dark:text-neutral-400 block mb-1">
+                          Student's Answer:
+                        </span>
+                        <div className="text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto pr-1">
+                          {ans.studentAnswer ? (
+                            ans.studentAnswer
+                          ) : (
+                            <span className="italic text-slate-400">(No answer submitted)</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {ans.type === 'mcq' && (
+                        <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+                          <span>Correct Key:</span>
+                          <span className="font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                            {ans.correctAnswer}
+                          </span>
+                          {ans.isCorrect !== undefined && (
+                            <span className={`text-[11px] font-bold ${ans.isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                              ({ans.isCorrect ? '✓ Correct Choice' : '✗ Incorrect Choice'})
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* 1-TAP QUICK MARK PRESETS & SCORE AWARD */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-100/70 dark:bg-neutral-800/80 border border-slate-200 dark:border-neutral-700">
+                        <span className="text-xs font-bold text-slate-700 dark:text-neutral-300">
+                          Marks Awarded:
+                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => setGradeMarks({ ...gradeMarks, [ans.questionId]: 0 })}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer active:scale-95 ${
+                              (gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)) === 0
+                                ? 'bg-rose-500 text-white shadow-2xs'
+                                : 'bg-white dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-neutral-600 hover:bg-slate-50'
+                            }`}
+                          >
+                            0
+                          </button>
+                          {ans.marks >= 2 && ans.type === 'descriptive' && (
+                            <button
+                              type="button"
+                              onClick={() => setGradeMarks({ ...gradeMarks, [ans.questionId]: Math.round(ans.marks / 2) })}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer active:scale-95 ${
+                                (gradeMarks[ans.questionId] ?? 0) === Math.round(ans.marks / 2)
+                                  ? 'bg-amber-500 text-white shadow-2xs'
+                                  : 'bg-white dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-neutral-600 hover:bg-slate-50'
+                              }`}
+                            >
+                              Half ({Math.round(ans.marks / 2)})
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setGradeMarks({ ...gradeMarks, [ans.questionId]: ans.marks })}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer active:scale-95 ${
+                              (gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)) === ans.marks
+                                ? 'bg-emerald-600 text-white shadow-2xs'
+                                : 'bg-white dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-neutral-600 hover:bg-slate-50'
+                            }`}
+                          >
+                            Full ({ans.marks})
+                          </button>
+
+                          <div className="flex items-center gap-1 pl-1 border-l border-slate-300 dark:border-neutral-600">
+                            <input
+                              type="number"
+                              min="0"
+                              max={ans.marks}
+                              value={gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)}
+                              onChange={(e) =>
+                                setGradeMarks({
+                                  ...gradeMarks,
+                                  [ans.questionId]: Math.min(ans.marks, Math.max(0, Number(e.target.value)))
+                                })
+                              }
+                              className="w-14 bg-white dark:bg-neutral-900 border border-slate-300 dark:border-neutral-600 px-1.5 py-1 rounded-lg text-xs font-bold text-slate-900 dark:text-white text-center outline-none focus:ring-1 focus:ring-indigo-500"
+                            />
+                            <span className="text-xs font-semibold text-slate-400">/ {ans.marks}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
                         <input
-                          type="number"
-                          min="0"
-                          max={ans.marks}
-                          value={gradeMarks[ans.questionId] ?? (ans.isCorrect ? ans.marks : 0)}
+                          type="text"
+                          placeholder="Feedback for this question (optional)..."
+                          value={gradeComments[ans.questionId] || ''}
                           onChange={(e) =>
-                            setGradeMarks({
-                              ...gradeMarks,
-                              [ans.questionId]: Math.min(ans.marks, Math.max(0, Number(e.target.value)))
-                            })
+                            setGradeComments({ ...gradeComments, [ans.questionId]: e.target.value })
                           }
-                          className="w-14 bg-white dark:bg-neutral-900 border border-slate-300 dark:border-neutral-600 px-1.5 py-1 rounded-lg text-xs font-bold text-slate-900 dark:text-white text-center outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 px-3 py-2 rounded-xl text-xs text-slate-900 dark:text-slate-50 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-indigo-500"
                         />
-                        <span className="text-xs font-semibold text-slate-400">/ {ans.marks}</span>
                       </div>
                     </div>
-                  </div>
+                  ))}
 
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Feedback for this question (optional)..."
-                      value={gradeComments[ans.questionId] || ''}
-                      onChange={(e) =>
-                        setGradeComments({ ...gradeComments, [ans.questionId]: e.target.value })
-                      }
-                      className="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 px-3 py-2 rounded-xl text-xs text-slate-900 dark:text-slate-50 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-indigo-500"
+                  {/* Overall Commentary */}
+                  <div className="space-y-2 pt-2">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      Overall Instructor Commentary
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Provide comprehensive feedback for the student..."
+                      value={overallFeedback}
+                      onChange={(e) => setOverallFeedback(e.target.value)}
+                      className="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 p-3 rounded-xl text-xs text-slate-900 dark:text-slate-50 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                   </div>
                 </div>
-              ))}
 
-              {/* Overall Commentary */}
-              <div className="space-y-2 pt-2">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  Overall Instructor Commentary
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Provide comprehensive feedback for the student..."
-                  value={overallFeedback}
-                  onChange={(e) => setOverallFeedback(e.target.value)}
-                  className="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 p-3 rounded-xl text-xs text-slate-900 dark:text-slate-50 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-indigo-500"
-                />
+                {/* Sticky Bottom Action Bar with Total Score & Publish */}
+                <div className="shrink-0 p-3.5 sm:p-4 border-t border-slate-100 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md z-10 shadow-lg">
+                  {(() => {
+                    const liveScore = evaluatingSub.answers.reduce((acc, ans) => {
+                      const awarded = gradeMarks[ans.questionId] !== undefined
+                        ? gradeMarks[ans.questionId]
+                        : (ans.isCorrect ? ans.marks : 0);
+                      return acc + awarded;
+                    }, 0);
+                    const livePct = Math.round((liveScore / (evaluatingSub.totalMarks || 1)) * 100);
+
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center justify-between sm:justify-start gap-2.5">
+                          <span className="text-xs font-semibold text-slate-500 dark:text-neutral-400">Total Score:</span>
+                          <span className="text-sm font-bold text-slate-900 dark:text-white">
+                            <span className="text-emerald-600 dark:text-emerald-400 text-base">{liveScore}</span> / {evaluatingSub.totalMarks} Marks
+                          </span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                            {livePct}%
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setEvaluatingSub(null)}
+                            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                          {evaluatingSub.status === 'graded' && (
+                            <button
+                              type="button"
+                              onClick={() => downloadReportCard(evaluatingSub, { studentName: evaluatingSub.studentName, studentEmail: evaluatingSub.studentEmail })}
+                              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Download size={14} />
+                              <span className="hidden sm:inline">Download</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={handlePublishGrade}
+                            className="flex-1 sm:flex-none px-5 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer active:scale-[0.98] text-center"
+                          >
+                            Publish Grade & Feedback
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
               </div>
+
             </div>
-
-            {/* STICKY BOTTOM ACTION BAR WITH LIVE TOTAL & FAST ACTIONS */}
-            <div className="shrink-0 p-3.5 sm:p-4 border-t border-slate-100 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md z-10 shadow-lg">
-              {(() => {
-                const liveScore = evaluatingSub.answers.reduce((acc, ans) => {
-                  const awarded = gradeMarks[ans.questionId] !== undefined
-                    ? gradeMarks[ans.questionId]
-                    : (ans.isCorrect ? ans.marks : 0);
-                  return acc + awarded;
-                }, 0);
-                const livePct = Math.round((liveScore / (evaluatingSub.totalMarks || 1)) * 100);
-
-                return (
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center justify-between sm:justify-start gap-2.5">
-                      <span className="text-xs font-semibold text-slate-500 dark:text-neutral-400">Total Score:</span>
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">
-                        <span className="text-emerald-600 dark:text-emerald-400 text-base">{liveScore}</span> / {evaluatingSub.totalMarks} Marks
-                      </span>
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                        {livePct}%
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setEvaluatingSub(null)}
-                        className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      {evaluatingSub.status === 'graded' && (
-                        <button
-                          type="button"
-                          onClick={() => downloadReportCard(evaluatingSub, { studentName: evaluatingSub.studentName, studentEmail: evaluatingSub.studentEmail })}
-                          className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1"
-                        >
-                          <Download size={14} />
-                          <span className="hidden sm:inline">Download</span>
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={handlePublishGrade}
-                        className="flex-1 sm:flex-none px-5 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer active:scale-[0.98] text-center"
-                      >
-                        Publish Grade & Feedback
-                      </button>
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
           </div>
         </div>
       )}
