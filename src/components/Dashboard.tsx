@@ -61,47 +61,55 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
     setActiveSection?.('exams')
   }
 
-  // 4 Top Priority Navigation Portals
+  // 4 Top Priority Navigation Portal Buttons
   const priorityPortals = [
     {
       id: 'enrollments',
       title: 'Enrollments',
-      subtitle: 'Student roster & access',
+      subtitle: 'Student roster',
       count: stats.loading ? '...' : `${stats.studentsCount} Students`,
       icon: Users,
-      color: 'text-blue-600 dark:text-blue-400',
-      bg: 'bg-blue-50 dark:bg-blue-950/40',
-      border: 'border-blue-200/60 dark:border-blue-800/40'
+      surface: 'bg-blue-50/90 dark:bg-blue-950/40',
+      border: 'border-blue-200 dark:border-blue-800/80',
+      hover: 'hover:bg-blue-100/90 dark:hover:bg-blue-900/50 hover:border-blue-300 dark:hover:border-blue-700',
+      iconBadge: 'bg-blue-600 text-white',
+      badge: 'bg-blue-100/90 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
     },
     {
       id: 'classes',
       title: 'Live Classes',
-      subtitle: 'Sessions & timetable',
+      subtitle: 'Timetable',
       count: stats.loading ? '...' : `${stats.classesCount} Classes`,
       icon: Video,
-      color: 'text-emerald-600 dark:text-emerald-400',
-      bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-      border: 'border-emerald-200/60 dark:border-emerald-800/40'
+      surface: 'bg-emerald-50/90 dark:bg-emerald-950/40',
+      border: 'border-emerald-200 dark:border-emerald-800/80',
+      hover: 'hover:bg-emerald-100/90 dark:hover:bg-emerald-900/50 hover:border-emerald-300 dark:hover:border-emerald-700',
+      iconBadge: 'bg-emerald-600 text-white',
+      badge: 'bg-emerald-100/90 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300'
     },
     {
       id: 'earnings_analytics',
       title: 'Earning',
-      subtitle: 'Revenue & analytics',
-      count: 'Performance',
+      subtitle: 'Analytics',
+      count: 'Revenue',
       icon: TrendingUp,
-      color: 'text-violet-600 dark:text-violet-400',
-      bg: 'bg-violet-50 dark:bg-violet-950/40',
-      border: 'border-violet-200/60 dark:border-violet-800/40'
+      surface: 'bg-violet-50/90 dark:bg-violet-950/40',
+      border: 'border-violet-200 dark:border-violet-800/80',
+      hover: 'hover:bg-violet-100/90 dark:hover:bg-violet-900/50 hover:border-violet-300 dark:hover:border-violet-700',
+      iconBadge: 'bg-violet-600 text-white',
+      badge: 'bg-violet-100/90 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300'
     },
     {
       id: 'billing',
       title: 'Student Billing',
-      subtitle: 'Rates & statements',
-      count: 'Billing Console',
+      subtitle: 'Statements',
+      count: 'Billing',
       icon: DollarSign,
-      color: 'text-amber-600 dark:text-amber-400',
-      bg: 'bg-amber-50 dark:bg-amber-950/40',
-      border: 'border-amber-200/60 dark:border-amber-800/40'
+      surface: 'bg-amber-50/90 dark:bg-amber-950/40',
+      border: 'border-amber-200 dark:border-amber-800/80',
+      hover: 'hover:bg-amber-100/90 dark:hover:bg-amber-900/50 hover:border-amber-300 dark:hover:border-amber-700',
+      iconBadge: 'bg-amber-600 text-white',
+      badge: 'bg-amber-100/90 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300'
     }
   ]
 
@@ -168,49 +176,42 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
         </div>
       </div>
 
-      {/* 3. CORE 4 NAVIGATION PORTALS */}
+      {/* 3. CORE 4 NAVIGATION PORTAL BUTTONS */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Main Portals
           </span>
-          <span className="text-[11px] text-slate-400 dark:text-slate-500">4 Core</span>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">Quick Portals</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5">
           {priorityPortals.map((portal) => {
             const Icon = portal.icon
             return (
-              <div
+              <button
                 key={portal.id}
+                type="button"
                 onClick={() => setActiveSection?.(portal.id)}
-                className="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 p-3.5 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 active:scale-[0.98] active:bg-slate-50 dark:active:bg-slate-800/60 transition cursor-pointer group flex flex-col justify-between shadow-2xs"
+                className={`flex items-center gap-2.5 sm:gap-3.5 p-3 sm:p-4 rounded-2xl ${portal.surface} border-2 ${portal.border} ${portal.hover} active:scale-[0.97] transition-all cursor-pointer text-left select-none shadow-xs group`}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-2.5 sm:mb-3">
-                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg ${portal.bg} ${portal.color} flex items-center justify-center border ${portal.border}`}>
-                      <Icon size={18} />
-                    </div>
-                    <ChevronRight size={15} className="text-slate-300 dark:text-slate-600 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-0.5 transition-transform" />
+                <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl ${portal.iconBadge} flex items-center justify-center shrink-0 shadow-2xs`}>
+                  <Icon size={19} strokeWidth={2.4} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                      {portal.title}
+                    </span>
+                    <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
                   </div>
-
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
-                    {portal.title}
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">
-                    {portal.subtitle}
-                  </p>
+                  <div className="mt-1 flex items-center gap-1.5">
+                    <span className={`text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-md ${portal.badge} truncate`}>
+                      {portal.count}
+                    </span>
+                  </div>
                 </div>
-
-                <div className="pt-2.5 mt-2.5 sm:pt-3 sm:mt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-                  <span className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
-                    {portal.count}
-                  </span>
-                  <span className="text-[10px] font-semibold text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                    Open
-                  </span>
-                </div>
-              </div>
+              </button>
             )
           })}
         </div>
