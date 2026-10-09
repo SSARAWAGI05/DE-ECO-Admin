@@ -122,7 +122,7 @@ const INITIAL_EXAMS: Exam[] = [
     scheduledDate: 'Active Now',
     scheduledTime: 'Closes today at 6:00 PM IST',
     durationMinutes: 45,
-    totalMarks: 50,
+    totalMarks: 100,
     passingMarks: 20,
     mcqCount: 4,
     descriptiveCount: 2,
@@ -339,6 +339,25 @@ const OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
 /* ================= MAIN COMPONENT ================= */
 
+/* ================= DATE HELPERS ================= */
+
+const getTodayDateString = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return year + '-' + month + '-' + day;
+};
+
+const getTomorrowDateString = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return year + '-' + month + '-' + day;
+};
+
 export default function AdminExams() {
   const [exams, setExams] = useState<Exam[]>([])
   const [submissions, setSubmissions] = useState<ExamSubmission[]>([])
@@ -354,10 +373,10 @@ export default function AdminExams() {
   // Streamlined Exam Form State (Title, Date, Time, Duration, Total Marks)
   const [examForm, setExamForm] = useState({
     title: '',
-    scheduledDate: 'Active Now',
-    scheduledTime: '',
+    scheduledDate: 'Anytime / Self-Paced',
+    scheduledTime: 'Flexible',
     durationMinutes: 45,
-    totalMarks: 50,
+    totalMarks: 100,
     questions: [] as ExamQuestion[]
   })
 
@@ -602,10 +621,10 @@ export default function AdminExams() {
     setExamModalTab('settings')
     setExamForm({
       title: '',
-      scheduledDate: 'Active Now',
-      scheduledTime: '',
+      scheduledDate: 'Anytime / Self-Paced',
+      scheduledTime: 'Flexible',
       durationMinutes: 45,
-      totalMarks: 50,
+      totalMarks: 100,
       questions: []
     })
     closeQuestionForm()
@@ -1259,33 +1278,162 @@ export default function AdminExams() {
                     />
                   </div>
 
-                  {/* Date & Time */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                        Date
+                  {/* Scheduling Mode (Specific Date/Time vs Anytime / Self-Paced) */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/80 dark:bg-neutral-850/60">
+                      <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={(examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint')}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setExamForm({
+                                ...examForm,
+                                scheduledDate: 'Anytime / Self-Paced',
+                                scheduledTime: 'Flexible'
+                              })
+                            } else {
+                              setExamForm({
+                                ...examForm,
+                                scheduledDate: getTodayDateString(),
+                                scheduledTime: '10:00'
+                              })
+                            }
+                          }}
+                          className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                        />
+                        <span className="text-xs font-semibold text-slate-800 dark:text-neutral-200">
+                          No date or time constraint (Anytime / Self-paced)
+                        </span>
                       </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Active Now or Oct 15, 2026"
-                        value={examForm.scheduledDate}
-                        onChange={(e) => setExamForm({ ...examForm, scheduledDate: e.target.value })}
-                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
-                      />
+
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-neutral-400">
+                        {(examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint') ? '✓ Self-paced exam' : 'Scheduled window'}
+                      </span>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-neutral-300 mb-1.5">
-                        Time
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. 10:00 AM - 11:30 AM IST"
-                        value={examForm.scheduledTime}
-                        onChange={(e) => setExamForm({ ...examForm, scheduledTime: e.target.value })}
-                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-indigo-500 outline-none"
-                      />
-                    </div>
+                    {(examForm.scheduledDate === 'Anytime / Self-Paced' || examForm.scheduledDate === 'No constraint') ? (
+                      <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/60 dark:bg-emerald-950/20 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-base">
+                            ∞
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                              No Date/Time Constraint
+                            </p>
+                            <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
+                              Students can take this exam whenever they want without any schedule restriction.
+                            </p>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExamForm({
+                              ...examForm,
+                              scheduledDate: getTodayDateString(),
+                              scheduledTime: '10:00'
+                            })
+                          }
+                          className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:underline cursor-pointer"
+                        >
+                          Set specific slot
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                              Date
+                            </label>
+                            {examForm.scheduledDate && (
+                              <span className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                                {examForm.scheduledDate}
+                              </span>
+                            )}
+                          </div>
+                          <input
+                            type="date"
+                            value={examForm.scheduledDate === 'Active Now' ? '' : examForm.scheduledDate}
+                            onChange={(e) => setExamForm({ ...examForm, scheduledDate: e.target.value })}
+                            className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
+                          />
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            <button
+                              type="button"
+                              onClick={() => setExamForm({ ...examForm, scheduledDate: getTodayDateString() })}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                examForm.scheduledDate === getTodayDateString()
+                                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                              }`}
+                            >
+                              Today
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setExamForm({ ...examForm, scheduledDate: getTomorrowDateString() })}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                examForm.scheduledDate === getTomorrowDateString()
+                                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                              }`}
+                            >
+                              Tomorrow
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setExamForm({ ...examForm, scheduledDate: 'Active Now' })}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                examForm.scheduledDate === 'Active Now'
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                              }`}
+                            >
+                              Active Now
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                              Time
+                            </label>
+                            {examForm.scheduledTime && (
+                              <span className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                                {examForm.scheduledTime}
+                              </span>
+                            )}
+                          </div>
+                          <input
+                            type="time"
+                            value={examForm.scheduledTime}
+                            onChange={(e) => setExamForm({ ...examForm, scheduledTime: e.target.value })}
+                            className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
+                          />
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {['09:00', '10:00', '14:00', '18:00'].map((timePreset) => (
+                              <button
+                                key={timePreset}
+                                type="button"
+                                onClick={() => setExamForm({ ...examForm, scheduledTime: timePreset })}
+                                className={`px-2 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                  examForm.scheduledTime === timePreset
+                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                                    : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                                }`}
+                              >
+                                {timePreset}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Duration & Total Marks */}
@@ -1335,8 +1483,24 @@ export default function AdminExams() {
                         min="1"
                         value={examForm.totalMarks}
                         onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
-                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                        className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-sm text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-indigo-500 outline-none"
                       />
+                      <div className="flex gap-1.5 mt-2">
+                        {[25, 50, 80, 100].map((presetMarks) => (
+                          <button
+                            key={presetMarks}
+                            type="button"
+                            onClick={() => setExamForm({ ...examForm, totalMarks: presetMarks })}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                              examForm.totalMarks === presetMarks
+                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                                : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                          >
+                            {presetMarks}M
+                          </button>
+                        ))}
+                      </div>
                       <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1 block">
                         Sum of questions: {calculatedQuestionMarks} Marks
                       </span>
@@ -1828,6 +1992,353 @@ export default function AdminExams() {
           </div>
         </div>
       )}
+
+      {/* GROQ AI QUESTION IMPORTER MODAL */}
+      {isAiModalOpen && (
+        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between bg-slate-50/50 dark:bg-neutral-850/50">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center shadow-xs">
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>AI Question Importer</span>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50">
+                      Groq Llama 3.3 70B
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">
+                    Extract MCQs with options and descriptive questions directly from ChatGPT PDF or text
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAiModalOpen(false)
+                  setAiParseError(null)
+                }}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-neutral-200 hover:bg-slate-100 dark:hover:bg-neutral-800 cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+              {/* GROQ API KEY CONFIGURATION STRIP */}
+              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800/60 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Key size={14} className={aiApiKey ? "text-emerald-500" : "text-amber-500"} />
+                    <span className="text-xs font-semibold text-slate-800 dark:text-neutral-200">
+                      Groq API Key
+                    </span>
+                    {aiApiKey ? (
+                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                        ✓ Configured ({aiApiKey.slice(0, 6)}...{aiApiKey.slice(-4)})
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                        Key required for instant extraction
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsApiKeyExpanded(!isApiKeyExpanded)}
+                    className="text-xs font-medium text-violet-600 dark:text-violet-400 hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <span>{aiApiKey ? 'Change Key' : 'Enter Key'}</span>
+                    {isApiKeyExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                  </button>
+                </div>
+
+                {(!aiApiKey || isApiKeyExpanded) && (
+                  <div className="pt-2 border-t border-slate-200 dark:border-neutral-750 flex items-center gap-2">
+                    <input
+                      type="password"
+                      placeholder="gsk_..."
+                      value={tempApiKeyInput}
+                      onChange={(e) => setTempApiKeyInput(e.target.value)}
+                      className="flex-1 bg-white dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-500 font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveGroqKey}
+                      className="px-3.5 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-bold cursor-pointer hover:opacity-90"
+                    >
+                      Save Key
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* MODE SELECTOR (PDF vs TEXT PASTE) */}
+              <div className="flex bg-slate-100 dark:bg-neutral-800 p-1 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setAiSourceMode('pdf')}
+                  className={\`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition cursor-pointer \${
+                    aiSourceMode === 'pdf'
+                      ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
+                      : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  }\`}
+                >
+                  <UploadCloud size={14} />
+                  <span>Upload PDF / Document</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAiSourceMode('paste')}
+                  className={\`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition cursor-pointer \${
+                    aiSourceMode === 'paste'
+                      ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
+                      : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  }\`}
+                >
+                  <FileText size={14} />
+                  <span>Paste ChatGPT Text</span>
+                </button>
+              </div>
+
+              {/* PDF UPLOAD TAB */}
+              {aiSourceMode === 'pdf' && (
+                <div className="space-y-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.txt,.md"
+                    className="hidden"
+                    onChange={handleFileInputChange}
+                  />
+
+                  <div
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleFileDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-slate-300 dark:border-neutral-750 hover:border-violet-500 dark:hover:border-violet-500 rounded-2xl p-6 text-center cursor-pointer transition bg-slate-50/50 dark:bg-neutral-850/50 group"
+                  >
+                    <div className="w-12 h-12 mx-auto rounded-xl bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                      <UploadCloud size={24} />
+                    </div>
+                    <p className="text-xs font-bold text-slate-800 dark:text-neutral-200">
+                      {aiUploadedFile ? aiUploadedFile.name : 'Click to upload or drag & drop your PDF'}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-1">
+                      {aiUploadedFile
+                        ? \`\${(aiUploadedFile.size / 1024).toFixed(1)} KB • Click to choose another file\`
+                        : 'Supports PDF (.pdf), Plain Text (.txt), or Markdown (.md)'}
+                    </p>
+                  </div>
+
+                  {/* PDF Extraction Status & Preview */}
+                  {isPdfExtracting && (
+                    <div className="p-3 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800/40 flex items-center gap-3 text-xs text-violet-700 dark:text-violet-300">
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>
+                        Extracting digital text with Mozilla PDF.js{' '}
+                        {pdfProgress ? \`(\${pdfProgress.current} / \${pdfProgress.total} pages)\` : '...'}
+                      </span>
+                    </div>
+                  )}
+
+                  {aiExtractedPdfText && !isPdfExtracting && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+                          <CheckCircle2 size={14} />
+                          <span>Extracted {aiPdfPages} page(s) ({aiExtractedPdfText.length} characters)</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setShowTextPreview(!showTextPreview)}
+                          className="text-slate-500 hover:text-slate-800 dark:hover:text-neutral-200 underline cursor-pointer text-[11px]"
+                        >
+                          {showTextPreview ? 'Hide Text' : 'Preview Extracted Text'}
+                        </button>
+                      </div>
+
+                      {showTextPreview && (
+                        <textarea
+                          readOnly
+                          rows={4}
+                          value={aiExtractedPdfText}
+                          className="w-full bg-slate-100 dark:bg-neutral-850 border border-slate-200 dark:border-neutral-750 rounded-xl p-3 text-[11px] font-mono text-slate-700 dark:text-neutral-300 outline-none"
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* PASTE TEXT TAB */}
+              {aiSourceMode === 'paste' && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 dark:text-neutral-300">
+                      Paste ChatGPT Response or Question Text
+                    </label>
+                    <span className="text-[10px] text-slate-400">
+                      {aiPastedText.length} characters
+                    </span>
+                  </div>
+                  <textarea
+                    rows={7}
+                    placeholder="Paste ChatGPT output here...&#10;&#10;Example:&#10;1. What is the multiplier in macroeconomics?&#10;A. 1 / (1 - MPC)&#10;B. MPC / MPS&#10;C. 1 - MPS&#10;Answer: A [2 Marks]&#10;&#10;2. Discuss monetary transmission mechanism. [5 Marks]"
+                    value={aiPastedText}
+                    onChange={(e) => setAiPastedText(e.target.value)}
+                    className="w-full bg-white dark:bg-neutral-850 border border-slate-300 dark:border-neutral-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-500 font-mono leading-relaxed"
+                  />
+                  <p className="text-[11px] text-slate-500 dark:text-neutral-400">
+                    💡 Tip: You can paste the direct answer from ChatGPT without modifying the formatting. Groq will parse the questions, options, and marks cleanly.
+                  </p>
+                </div>
+              )}
+
+              {/* ERROR BANNER */}
+              {aiParseError && (
+                <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 flex items-start gap-2.5">
+                  <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
+                  <div className="space-y-1">
+                    <p className="font-semibold">{aiParseError}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* PARSE ACTION BUTTON */}
+              {!aiParseResult && (
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleRunGroqExtraction}
+                    disabled={isAiParsing || isPdfExtracting}
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 cursor-pointer shadow-md"
+                  >
+                    {isAiParsing ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span>Analyzing with Groq Llama 3.3 70B (~1-2s)...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={16} />
+                        <span>Parse & Extract Questions with Groq</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* EXTRACTION RESULTS PREVIEW */}
+              {aiParseResult && (
+                <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-neutral-800 animate-in fade-in duration-200">
+                  <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                        <CheckCircle2 size={15} />
+                        <span>Successfully Extracted {aiParseResult.questions.length} Questions</span>
+                      </p>
+                      <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
+                        {aiParseResult.questions.filter((q) => q.type === 'mcq').length} MCQs •{' '}
+                        {aiParseResult.questions.filter((q) => q.type === 'descriptive').length} Descriptive •{' '}
+                        {aiParseResult.totalMarks} Total Marks
+                        {aiParseResult.examTitle ? \` • "\${aiParseResult.examTitle}"\` : ''}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setAiParseResult(null)}
+                      className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <RefreshCw size={11} />
+                      <span>Re-parse</span>
+                    </button>
+                  </div>
+
+                  {/* Questions Preview List */}
+                  <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                    {aiParseResult.questions.map((q, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-850/50 space-y-1.5"
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-800 dark:text-neutral-200">
+                              Q{idx + 1}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-neutral-750 text-slate-700 dark:text-neutral-300">
+                              {q.type === 'mcq' ? 'MCQ' : 'Descriptive'}
+                            </span>
+                            {q.marks > 0 && (
+                              <span className="text-[11px] text-slate-500 dark:text-neutral-400">
+                                {q.marks} {q.marks === 1 ? 'Mark' : 'Marks'}
+                              </span>
+                            )}
+                          </div>
+
+                          {q.type === 'mcq' && q.correctAnswer && (
+                            <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                              Key: {q.correctAnswer}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-slate-800 dark:text-neutral-200 line-clamp-2">
+                          {q.question}
+                        </p>
+
+                        {q.type === 'mcq' && q.options && (
+                          <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px] text-slate-600 dark:text-neutral-400">
+                            {q.options.map((opt) => (
+                              <div
+                                key={opt.id}
+                                className={\`truncate px-2 py-0.5 rounded \${
+                                  opt.id === q.correctAnswer
+                                    ? 'bg-emerald-100/70 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-semibold'
+                                    : 'bg-white dark:bg-neutral-800'
+                                }\`}
+                              >
+                                <span className="font-bold mr-1">{opt.id}:</span>
+                                {opt.text}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Action Buttons to Apply */}
+                  <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => handleApplyAiQuestions('append')}
+                      className="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs hover:opacity-90 transition cursor-pointer"
+                    >
+                      Append to Exam (+{aiParseResult.questions.length} Questions)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleApplyAiQuestions('replace')}
+                      className="w-full sm:w-auto py-2.5 px-4 rounded-xl border border-slate-300 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+                    >
+                      Replace All Questions
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   )
 }
