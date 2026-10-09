@@ -1,4 +1,12 @@
-import { useEffect, useState, useMemo } from 'react'
+import {
+  parseQuestionsWithGroq,
+  extractTextFromPdfFile,
+  getStoredGroqApiKey,
+  setStoredGroqApiKey,
+  GroqParseResult
+} from '../lib/groqExamParser'
+
+import { useEffect, useState, useMemo, useRef } from 'react'
 import {
   Plus,
   Edit2,
@@ -15,7 +23,15 @@ import {
   HelpCircle,
   Copy,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Sparkles,
+  UploadCloud,
+  FileUp,
+  Key,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw
 } from 'lucide-react'
 
 /* ================= TYPES ================= */
@@ -359,6 +375,32 @@ export default function AdminExams() {
   ])
   const [newQCorrect, setNewQCorrect] = useState('A')
 
+  // Groq AI Auto-Fill State
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false)
+  const [aiApiKey, setAiApiKey] = useState('')
+  const [tempApiKeyInput, setTempApiKeyInput] = useState('')
+  const [isApiKeyExpanded, setIsApiKeyExpanded] = useState(false)
+  const [aiSourceMode, setAiSourceMode] = useState<'pdf' | 'paste'>('pdf')
+  const [aiPastedText, setAiPastedText] = useState('')
+  const [aiUploadedFile, setAiUploadedFile] = useState<File | null>(null)
+  const [aiExtractedPdfText, setAiExtractedPdfText] = useState('')
+  const [aiPdfPages, setAiPdfPages] = useState(0)
+  const [isPdfExtracting, setIsPdfExtracting] = useState(false)
+  const [pdfProgress, setPdfProgress] = useState<{ current: number; total: number } | null>(null)
+  const [isAiParsing, setIsAiParsing] = useState(false)
+  const [aiParseError, setAiParseError] = useState<string | null>(null)
+  const [aiParseResult, setAiParseResult] = useState<GroqParseResult | null>(null)
+  const [showTextPreview, setShowTextPreview] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    const stored = getStoredGroqApiKey()
+    if (stored) {
+      setAiApiKey(stored)
+      setTempApiKeyInput(stored)
+    }
+  }, [])
+
   // Grading Form State (inside Evaluation Modal)
   const [gradeMarks, setGradeMarks] = useState<Record<string, number>>({})
   const [gradeComments, setGradeComments] = useState<Record<string, string>>({})
@@ -430,6 +472,128 @@ export default function AdminExams() {
         s.examTitle.toLowerCase().includes(q)
     )
   }, [submissions, searchTerm])
+
+  /* ================= GROQ AI AUTO-FILL ACTIONS ================= */
+
+  const handleSaveGroqKey = () => {
+    if (!tempApiKeyInput.trim()) {
+      alert('Please enter your Groq API key (starts with gsk_...)')
+      return
+    }
+    setStoredGroqApiKey(tempApiKeyInput.trim())
+    setAiApiKey(tempApiKeyInput.trim())
+    setIsApiKeyExpanded(false)
+    setAiParseError(null)
+  }
+
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processSelectedFile(e.dataTransfer.files[0])
+    }
+  }
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processSelectedFile(e.target.files[0])
+    }
+  }
+
+  const processSelectedFile = async (file: File) => {
+    setAiUploadedFile(file)
+    setAiParseError(null)
+    setAiParseResult(null)
+    setIsPdfExtracting(true)
+    setPdfProgress(null)
+    try {
+      const { text, pageCount } = await extractTextFromPdfFile(file, (p) => setPdfProgress(p))
+      setAiExtractedPdfText(text)
+      setAiPdfPages(pageCount)
+    } catch (err: any) {
+      setAiParseError(err.message || 'Failed to extract text from PDF.')
+    } finally {
+      setIsPdfExtracting(false)
+    }
+  }
+
+  const handleRunGroqExtraction = async () => {
+    const textToAnalyze = aiSourceMode === 'pdf' ? aiExtractedPdfText : aiPastedText
+    const currentKey = aiApiKey.trim() || tempApiKeyInput.trim()
+
+    if (!currentKey) {
+      setIsApiKeyExpanded(true)
+      setAiParseError('Please provide your Groq API Key above to extract questions.')
+      return
+    }
+
+    if (!textToAnalyze.trim()) {
+      setAiParseError(
+        aiSourceMode === 'pdf'
+          ? 'Please upload a PDF file first and wait for text extraction.'
+          : 'Please paste your ChatGPT questions text first.'
+      )
+      return
+    }
+
+    setAiParseError(null)
+    setIsAiParsing(true)
+    try {
+      const result = await parseQuestionsWithGroq(textToAnalyze, currentKey)
+      setAiParseResult(result)
+      if (!aiApiKey.trim() && currentKey) {
+        setStoredGroqApiKey(currentKey)
+        setAiApiKey(currentKey)
+      }
+    } catch (err: any) {
+      setAiParseError(err.message || 'Groq question extraction failed.')
+    } finally {
+      setIsAiParsing(false)
+    }
+  }
+
+  const handleApplyAiQuestions = (mode: 'append' | 'replace') => {
+    if (!aiParseResult || aiParseResult.questions.length === 0) return
+
+    let finalQuestions: ExamQuestion[]
+
+    if (mode === 'append') {
+      const baseNum = examForm.questions.length
+      const mapped: ExamQuestion[] = aiParseResult.questions.map((q, idx) => ({
+        id: 'q_' + Date.now() + '_' + idx,
+        number: baseNum + idx + 1,
+        type: q.type,
+        question: q.question,
+        marks: q.marks,
+        options: q.options,
+        correctAnswer: q.correctAnswer
+      }))
+      finalQuestions = [...examForm.questions, ...mapped]
+    } else {
+      finalQuestions = aiParseResult.questions.map((q, idx) => ({
+        id: 'q_' + Date.now() + '_' + idx,
+        number: idx + 1,
+        type: q.type,
+        question: q.question,
+        marks: q.marks,
+        options: q.options,
+        correctAnswer: q.correctAnswer
+      }))
+    }
+
+    const calcTotal = finalQuestions.reduce((acc, q) => acc + q.marks, 0)
+
+    setExamForm((prev) => ({
+      ...prev,
+      questions: finalQuestions,
+      totalMarks: calcTotal > 0 ? calcTotal : prev.totalMarks,
+      ...(mode === 'replace' && aiParseResult.examTitle && !prev.title
+        ? { title: aiParseResult.examTitle }
+        : {})
+    }))
+
+    setIsAiModalOpen(false)
+    setAiParseResult(null)
+  }
 
   /* ================= EXAM MODAL ACTIONS ================= */
 
@@ -1197,23 +1361,35 @@ export default function AdminExams() {
                 <div className="space-y-5">
                   {/* Action buttons */}
                   {!isQuestionFormOpen && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <button
                         type="button"
                         onClick={() => openNewQuestionForm('mcq')}
-                        className="flex items-center justify-center gap-2.5 p-3 rounded-xl border border-indigo-200 dark:border-neutral-700 bg-indigo-50/50 dark:bg-neutral-800 text-indigo-700 dark:text-neutral-200 hover:bg-indigo-100 dark:hover:bg-neutral-750 transition cursor-pointer"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-indigo-200 dark:border-neutral-700 bg-indigo-50/50 dark:bg-neutral-800 text-indigo-700 dark:text-neutral-200 hover:bg-indigo-100 dark:hover:bg-neutral-750 transition cursor-pointer"
                       >
                         <Plus size={16} className="text-indigo-600 dark:text-indigo-400" />
-                        <span className="text-xs font-bold">+ Add Multiple Choice (MCQ)</span>
+                        <span className="text-xs font-bold">+ Add MCQ</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => openNewQuestionForm('descriptive')}
-                        className="flex items-center justify-center gap-2.5 p-3 rounded-xl border border-emerald-200 dark:border-neutral-700 bg-emerald-50/50 dark:bg-neutral-800 text-emerald-700 dark:text-neutral-200 hover:bg-emerald-100 dark:hover:bg-neutral-750 transition cursor-pointer"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-emerald-200 dark:border-neutral-700 bg-emerald-50/50 dark:bg-neutral-800 text-emerald-700 dark:text-neutral-200 hover:bg-emerald-100 dark:hover:bg-neutral-750 transition cursor-pointer"
                       >
                         <Plus size={16} className="text-emerald-600 dark:text-emerald-400" />
-                        <span className="text-xs font-bold">+ Add Descriptive Question</span>
+                        <span className="text-xs font-bold">+ Add Descriptive</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAiModalOpen(true)
+                          setAiParseError(null)
+                        }}
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl border border-violet-300 dark:border-violet-700/60 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-950/40 dark:to-indigo-950/40 text-violet-700 dark:text-violet-300 hover:from-violet-100 hover:to-indigo-100 dark:hover:from-violet-900/50 dark:hover:to-indigo-900/50 transition cursor-pointer shadow-xs"
+                      >
+                        <Sparkles size={16} className="text-violet-600 dark:text-violet-400" />
+                        <span className="text-xs font-bold">✨ AI Auto-Fill (Groq)</span>
                       </button>
                     </div>
                   )}
@@ -1386,8 +1562,25 @@ export default function AdminExams() {
                   {/* AUTHORED QUESTIONS LIST */}
                   <div className="space-y-2.5">
                     {examForm.questions.length === 0 ? (
-                      <div className="p-6 text-center rounded-xl border border-dashed border-slate-200 dark:border-neutral-800 text-xs text-slate-400">
-                        No questions added yet. Click above to add an MCQ or Descriptive question.
+                      <div className="p-8 text-center rounded-2xl border border-dashed border-slate-200 dark:border-neutral-800 space-y-3">
+                        <div className="w-10 h-10 mx-auto rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+                          <Sparkles size={20} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-700 dark:text-neutral-300">No questions in this paper yet</p>
+                          <p className="text-[11px] text-slate-400 dark:text-neutral-500 mt-0.5">Add manually above, or auto-fill in seconds from a PDF or ChatGPT</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAiModalOpen(true)
+                            setAiParseError(null)
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold cursor-pointer transition shadow-2xs"
+                        >
+                          <Sparkles size={13} />
+                          <span>AI Auto-Fill with Groq</span>
+                        </button>
                       </div>
                     ) : (
                       examForm.questions.map((q, idx) => (
