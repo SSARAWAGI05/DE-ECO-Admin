@@ -318,12 +318,39 @@ export const downloadReportCard = (
 '        break-inside: avoid;' +
 '        page-break-inside: avoid;' +
 '      }' +
+'      .report-watermark {' +
+'        opacity: 0.07 !important;' +
+'        -webkit-print-color-adjust: exact !important;' +
+'        print-color-adjust: exact !important;' +
+'      }' +
+'    }' +
+'    .report-watermark {' +
+'      position: absolute;' +
+'      top: 50%;' +
+'      left: 50%;' +
+'      transform: translate(-50%, -50%);' +
+'      width: 440px;' +
+'      max-width: 70%;' +
+'      opacity: 0.05;' +
+'      pointer-events: none;' +
+'      z-index: 1;' +
+'      display: flex;' +
+'      align-items: center;' +
+'      justify-content: center;' +
+'    }' +
+'    .report-watermark img {' +
+'      width: 100%;' +
+'      height: auto;' +
+'      object-fit: contain;' +
+'      filter: grayscale(100%);' +
 '    }' +
 '    .header-banner {' +
 '      background: linear-gradient(135deg, #0b1329 0%, #172554 100%);' +
 '      color: #ffffff;' +
 '      padding: 28px 36px;' +
 '      border-bottom: 4px solid #10b981;' +
+'      position: relative;' +
+'      z-index: 2;' +
 '    }' +
 '    .header-top {' +
 '      display: flex;' +
@@ -393,6 +420,8 @@ export const downloadReportCard = (
 '    }' +
 '    .card-content {' +
 '      padding: 28px 36px;' +
+'      position: relative;' +
+'      z-index: 2;' +
 '    }' +
 '    .meta-grid {' +
 '      display: grid;' +
@@ -729,10 +758,13 @@ export const downloadReportCard = (
 '    </div>' +
 '  </div>' +
 '  <div class="report-card-wrapper">' +
+'    <div class="report-watermark">' +
+'      <img src="/logo.png" alt="" onerror="this.src=\'/logo/De-Eco-logo.png\'" />' +
+'    </div>' +
 '    <header class="header-banner">' +
 '      <div class="header-top">' +
 '        <div class="brand-group">' +
-'          <img src="/logo/De-Eco-logo.png" alt="DE-ECO" class="brand-logo-img" onerror="this.style.display=\'none\'" />' +
+'          <img src="/logo.png" alt="DE-ECO" class="brand-logo-img" onerror="this.src=\'/logo/De-Eco-logo.png\'" />' +
 '          <div>' +
 '            <div class="brand-text-name">DE-ECO</div>' +
 '            <div class="brand-text-sub">Academic Assessment & Evaluation</div>' +
@@ -751,9 +783,9 @@ export const downloadReportCard = (
 '    </header>' +
 '    <div class="card-content">' +
 '      <div class="meta-grid">' +
-'        <div class="meta-item"><span class="meta-label">Candidate Name</span><span class="meta-val">' + escapeHtml(candidateName) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Student Name</span><span class="meta-val">' + escapeHtml(candidateName) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">' + courseMetaLabel + '</span><span class="meta-val">' + escapeHtml(courseTitle) + '</span></div>' +
-'        <div class="meta-item"><span class="meta-label">Candidate Email</span><span class="meta-val">' + escapeHtml(candidateEmail) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Student Email</span><span class="meta-val">' + escapeHtml(candidateEmail) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">Evaluating Faculty</span><span class="meta-val">' + escapeHtml(instructor) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">Submission Date</span><span class="meta-val">' + escapeHtml(submittedAt) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">Time Spent</span><span class="meta-val">' + (timeSpent <= 0 ? '< 1 Minute' : timeSpent === 1 ? '1 Minute' : timeSpent + ' Minutes') + '</span></div>' +
@@ -814,7 +846,7 @@ export const downloadReportCard = (
               '<div class="q-marks"><span style="color: ' + (marksAwarded >= ans.marks ? '#059669' : marksAwarded > 0 ? '#d97706' : '#dc2626') + '">' + marksAwarded + '</span> / ' + ans.marks + ' Marks</div>' +
             '</div>' +
             '<div class="q-text">' + escapeHtml(ans.question) + '</div>' +
-            '<div class="q-answer-box"><strong>Candidate Response:</strong> ' +
+            '<div class="q-answer-box"><strong>Student Response:</strong> ' +
               (isMcq ? 'Option ' + escapeHtml(ans.studentAnswer || 'Unanswered') + (ans.isCorrect ? ' <span style="color:#059669; font-weight:800;">(Correct)</span>' : ' <span style="color:#dc2626; font-weight:800;">(Incorrect)</span>') : escapeHtml(studentAnsText || '(No response recorded)')) +
               (isMcq && ans.correctAnswer ? '<div style="margin-top: 4px; color: #475569;"><strong>Correct Key:</strong> Option ' + escapeHtml(ans.correctAnswer) + '</div>' : '') +
             '</div>' +
