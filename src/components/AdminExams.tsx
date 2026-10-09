@@ -1019,6 +1019,25 @@ export default function AdminExams() {
       setAiApiKey(stored)
       setTempApiKeyInput(stored)
     }
+
+    const auto = localStorage.getItem('admin_auto_action')
+    if (auto === 'new_exam') {
+      localStorage.removeItem('admin_auto_action')
+      setEditingExamId(null)
+      setExamModalTab('settings')
+      setStudentSearch('')
+      setExamForm({
+        title: '',
+        assignedType: 'all',
+        assignedStudentEmails: [],
+        scheduledDate: 'Anytime / Self-Paced',
+        scheduledTime: 'Flexible',
+        durationMinutes: 60,
+        totalMarks: 50,
+        questions: []
+      })
+      setShowExamModal(true)
+    }
   }, [])
 
   // Grading Form State (inside Evaluation Modal)
@@ -2378,7 +2397,7 @@ export default function AdminExams() {
                           }`}
                         >
                           <Calendar size={15} />
-                          <span>Scheduled Window</span>
+                          <span>Set Date/Time</span>
                         </button>
                       </div>
 
@@ -2440,9 +2459,8 @@ export default function AdminExams() {
                       )}
                     </div>
 
-                    {/* Duration & Total Marks */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
+                    {/* Duration */}
+                    <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
                           Duration (Minutes)
                         </label>
@@ -2469,27 +2487,7 @@ export default function AdminExams() {
                             </button>
                           ))}
                         </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
-                          Total Marks
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          value={calculatedQuestionMarks > 0 ? calculatedQuestionMarks : examForm.totalMarks}
-                          onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
-                          className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white font-bold outline-none focus:ring-1 focus:ring-indigo-500"
-                        />
-                        <span className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1.5 block">
-                          {calculatedQuestionMarks > 0
-                            ? `⚡ Auto-calculated from ${examForm.questions.length} questions`
-                            : 'Will auto-calculate as you add questions in Step 2'}
-                        </span>
-                      </div>
                     </div>
-                  </div>
                 );
               })()}
 
@@ -2528,6 +2526,47 @@ export default function AdminExams() {
                         <FileUp size={16} className="text-indigo-600 dark:text-indigo-400" />
                         <span className="text-xs font-bold">Upload PDF / Document</span>
                       </button>
+                    </div>
+                  )}
+
+                  {/* TOTAL MARKS CONTROL: DISPLAYED AFTER QUESTIONS ARE ENTERED OR DOC PARSED */}
+                  {examForm.questions.length > 0 && !isQuestionFormOpen && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800/60 transition-colors">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-900 dark:text-white">
+                            Total Exam Marks
+                          </span>
+                          <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60">
+                            {examForm.questions.length} {examForm.questions.length === 1 ? 'Question' : 'Questions'}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">
+                          {examForm.questions.filter((q) => q.type === 'mcq').length} MCQs •{' '}
+                          {examForm.questions.filter((q) => q.type === 'descriptive').length} Descriptive
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                        <label className="text-xs font-semibold text-slate-700 dark:text-neutral-300">
+                          Total Marks:
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={calculatedQuestionMarks > 0 ? calculatedQuestionMarks : examForm.totalMarks}
+                          onChange={(e) => setExamForm({ ...examForm, totalMarks: Number(e.target.value) })}
+                          className="w-20 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 text-center"
+                        />
+                        <span className="text-xs font-semibold text-slate-500 dark:text-neutral-400">
+                          Marks
+                        </span>
+                        {calculatedQuestionMarks > 0 && (
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold ml-0.5">
+                            (auto-summed)
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -2840,11 +2879,17 @@ export default function AdminExams() {
                   </button>
 
                   <div className="text-xs text-slate-500 dark:text-neutral-400">
-                    <span className="font-bold text-slate-900 dark:text-white">
-                      Total: {calculatedQuestionMarks > 0 ? calculatedQuestionMarks : examForm.totalMarks} Marks
-                    </span>
-                    <span className="mx-1.5">•</span>
-                    <span>{examForm.questions.length} Questions</span>
+                    {examForm.questions.length > 0 ? (
+                      <>
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          Total: {calculatedQuestionMarks > 0 ? calculatedQuestionMarks : examForm.totalMarks} Marks
+                        </span>
+                        <span className="mx-1.5">•</span>
+                        <span>{examForm.questions.length} {examForm.questions.length === 1 ? 'Question' : 'Questions'}</span>
+                      </>
+                    ) : (
+                      <span>No questions added yet</span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">

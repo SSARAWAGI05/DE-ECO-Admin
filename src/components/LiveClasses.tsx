@@ -70,6 +70,13 @@ export default function LiveClasses() {
   useEffect(() => {
     fetchEligibleUsers()
     fetchCourses()
+
+    const auto = localStorage.getItem('admin_auto_action')
+    if (auto === 'new_class') {
+      localStorage.removeItem('admin_auto_action')
+      resetForm()
+      setPanelOpen(true)
+    }
   }, [])
 
   useEffect(() => {
