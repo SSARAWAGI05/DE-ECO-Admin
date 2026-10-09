@@ -170,12 +170,22 @@ export const downloadReportCard = (
   const candidateName = options?.studentName || data.studentName || 'Student';
   const candidateEmail = options?.studentEmail || data.studentEmail || 'Registered Student';
   const examTitle = data.examTitle || 'Academic Examination';
-  const courseTitle = data.course || 'Economics & Finance Curriculum';
+  const rawCourse = (data.course || '').trim();
+  let courseTitle = rawCourse || 'Economics & Finance Curriculum';
+  let courseMetaLabel = 'Associated Course';
+  if (/^1-on-1/i.test(rawCourse) || rawCourse.toLowerCase().includes('1-on-1')) {
+    const match = rawCourse.match(/^1-on-1\s*[:\-–]?\s*(.*)$/i);
+    const namePart = (match && match[1] ? match[1].trim() : '') || candidateName;
+    courseTitle = namePart ? `Assessment #1: ${namePart}` : 'Assessment #1';
+    courseMetaLabel = 'Academic Assessment';
+  } else if (rawCourse.startsWith('Assessment #')) {
+    courseMetaLabel = 'Academic Assessment';
+  }
   const instructor = data.instructor || 'Instructor Rishika';
   const totalMarks = Number(data.totalMarks) || 100;
   const scoreObtained = data.scoreObtained !== undefined ? Number(data.scoreObtained) : 0;
   const percentage = data.percentage !== undefined ? Number(data.percentage) : Math.round((scoreObtained / (totalMarks || 1)) * 100);
-  const grade = data.grade || (data.isPassed ? 'A Distinction' : 'Needs Retake');
+  const grade = data.grade || 'Completed';
   const isPassed = data.isPassed !== undefined ? Boolean(data.isPassed) : percentage >= 40;
   const timeSpent = Number(data.timeSpentMinutes) || 0;
   const submittedAt = data.submittedAt || new Date().toLocaleDateString('en-US');
@@ -740,11 +750,11 @@ export const downloadReportCard = (
 '    <div class="card-content">' +
 '      <div class="meta-grid">' +
 '        <div class="meta-item"><span class="meta-label">Candidate Name</span><span class="meta-val">' + escapeHtml(candidateName) + '</span></div>' +
-'        <div class="meta-item"><span class="meta-label">Course Title</span><span class="meta-val">' + escapeHtml(courseTitle) + '</span></div>' +
+'        <div class="meta-item"><span class="meta-label">' + courseMetaLabel + '</span><span class="meta-val">' + escapeHtml(courseTitle) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">Candidate Email</span><span class="meta-val">' + escapeHtml(candidateEmail) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">Evaluating Faculty</span><span class="meta-val">' + escapeHtml(instructor) + '</span></div>' +
 '        <div class="meta-item"><span class="meta-label">Submission Date</span><span class="meta-val">' + escapeHtml(submittedAt) + '</span></div>' +
-'        <div class="meta-item"><span class="meta-label">Time Spent</span><span class="meta-val">' + timeSpent + ' Minutes</span></div>' +
+'        <div class="meta-item"><span class="meta-label">Time Spent</span><span class="meta-val">' + (timeSpent <= 0 ? '< 1 Minute' : timeSpent === 1 ? '1 Minute' : timeSpent + ' Minutes') + '</span></div>' +
 '      </div>' +
 '      <div class="score-summary-grid keep-together">' +
 '        <div class="score-box score-box-primary">' +
@@ -763,27 +773,31 @@ export const downloadReportCard = (
 '          <div class="score-box-sub">Evaluation Tier</div>' +
 '        </div>' +
 '        <div class="score-box">' +
-'          <div class="score-box-label">Result Status</div>' +
-'          <div style="margin-top: 6px;"><span class="' + (isPassed ? 'status-badge-pass' : 'status-badge-fail') + '">' + (isPassed ? '✓ PASSED' : '✗ NEEDS RETAKE') + '</span></div>' +
+'          <div class="score-box-label">Evaluation Status</div>' +
+'          <div style="margin-top: 6px;"><span class="status-badge-pass">✓ EVALUATED</span></div>' +
 '          <div class="score-box-sub" style="margin-top: 6px;">Official Verification</div>' +
 '        </div>' +
 '      </div>' +
 '      <table class="breakdown-table keep-together">' +
 '        <thead><tr><th>Assessment Component</th><th>Questions</th><th>Max Marks</th><th>Marks Awarded</th><th>Accuracy</th></tr></thead>' +
 '        <tbody>' +
-'          <tr><td><strong>Section A: Multiple Choice Questions</strong></td><td>' + mcqQuestions.length + '</td><td>' + mcqTotal + '</td><td>' + mcqAwarded + '</td><td>' + (mcqTotal > 0 ? Math.round((mcqAwarded / mcqTotal) * 100) : 0) + '%</td></tr>' +
-'          <tr><td><strong>Section B: Descriptive Responses</strong></td><td>' + descriptiveQuestions.length + '</td><td>' + descTotal + '</td><td>' + descAwarded + '</td><td>' + (descTotal > 0 ? Math.round((descAwarded / descTotal) * 100) : 0) + '%</td></tr>' +
+          (mcqQuestions.length > 0 ? '<tr><td><strong>Section A: Multiple Choice Questions</strong></td><td>' + mcqQuestions.length + '</td><td>' + mcqTotal + '</td><td>' + mcqAwarded + '</td><td>' + (mcqTotal > 0 ? Math.round((mcqAwarded / mcqTotal) * 100) : 0) + '%</td></tr>' : '') +
+          (descriptiveQuestions.length > 0 ? '<tr><td><strong>' + (mcqQuestions.length > 0 ? 'Section B: Descriptive Responses' : 'Descriptive Responses') + '</strong></td><td>' + descriptiveQuestions.length + '</td><td>' + descTotal + '</td><td>' + descAwarded + '</td><td>' + (descTotal > 0 ? Math.round((descAwarded / descTotal) * 100) : 0) + '%</td></tr>' : '') +
 '          <tr><td>TOTAL PERFORMANCE</td><td>' + answersList.length + '</td><td>' + totalMarks + '</td><td>' + scoreObtained + '</td><td>' + percentage + '%</td></tr>' +
 '        </tbody>' +
 '      </table>' +
-      (feedback ?
+      (feedback && (
+        (feedback.overall && feedback.overall.trim() !== '' && feedback.overall !== 'Good attempt on the paper.') ||
+        (Array.isArray(feedback.strengths) && feedback.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts').length > 0) ||
+        (Array.isArray(feedback.improvements) && feedback.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted').length > 0)
+      ) ?
 '      <div class="feedback-box keep-together">' +
 '        <div class="feedback-header"><h4><span>✍️</span> Official Faculty Evaluation & Commentary</h4><span class="feedback-eval-meta">' + escapeHtml(feedback.evaluatedAt || ('Evaluated by ' + instructor)) + '</span></div>' +
-        (feedback.overall ? '<p class="feedback-body">"' + escapeHtml(feedback.overall) + '"</p>' : '') +
-        ((feedback.strengths && feedback.strengths.length > 0) || (feedback.improvements && feedback.improvements.length > 0) ?
+        (feedback.overall && feedback.overall.trim() !== '' && feedback.overall !== 'Good attempt on the paper.' ? '<p class="feedback-body">"' + escapeHtml(feedback.overall) + '"</p>' : '') +
+        ((Array.isArray(feedback.strengths) && feedback.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts').length > 0) || (Array.isArray(feedback.improvements) && feedback.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted').length > 0) ?
 '        <div class="feedback-pillars">' +
-          (feedback.strengths && feedback.strengths.length > 0 ? '<div class="pillar-col strengths"><h5>Key Strengths</h5><ul>' + feedback.strengths.map((s: string) => '<li>' + escapeHtml(s) + '</li>').join('') + '</ul></div>' : '') +
-          (feedback.improvements && feedback.improvements.length > 0 ? '<div class="pillar-col improvements"><h5>Areas for Growth</h5><ul>' + feedback.improvements.map((i: string) => '<li>' + escapeHtml(i) + '</li>').join('') + '</ul></div>' : '') +
+          (Array.isArray(feedback.strengths) && feedback.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts').length > 0 ? '<div class="pillar-col strengths"><h5>Key Strengths</h5><ul>' + feedback.strengths.filter((s: string) => s && s !== 'Demonstrated understanding of key concepts').map((s: string) => '<li>' + escapeHtml(s) + '</li>').join('') + '</ul></div>' : '') +
+          (Array.isArray(feedback.improvements) && feedback.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted').length > 0 ? '<div class="pillar-col improvements"><h5>Areas for Growth</h5><ul>' + feedback.improvements.filter((i: string) => i && i !== 'Review questions where marks were deducted').map((i: string) => '<li>' + escapeHtml(i) + '</li>').join('') + '</ul></div>' : '') +
 '        </div>' : '') +
 '      </div>' : '') +
 '      <h3 class="section-title">Itemized Assessment Details</h3>' +
@@ -802,7 +816,7 @@ export const downloadReportCard = (
               (isMcq ? 'Option ' + escapeHtml(ans.studentAnswer || 'Unanswered') + (ans.isCorrect ? ' <span style="color:#059669; font-weight:800;">(Correct)</span>' : ' <span style="color:#dc2626; font-weight:800;">(Incorrect)</span>') : escapeHtml(studentAnsText || '(No response recorded)')) +
               (isMcq && ans.correctAnswer ? '<div style="margin-top: 4px; color: #475569;"><strong>Correct Key:</strong> Option ' + escapeHtml(ans.correctAnswer) + '</div>' : '') +
             '</div>' +
-            (ans.teacherComment ? '<div class="q-teacher-remark"><strong>Faculty Annotation:</strong> "' + escapeHtml(ans.teacherComment) + '"</div>' : '') +
+            (ans.teacherComment ? '<div class="q-teacher-remark"><strong>Feedback:</strong> "' + escapeHtml(ans.teacherComment) + '"</div>' : '') +
           '</div>';
         }).join('') +
 '      </div>' +
@@ -830,40 +844,65 @@ export const downloadReportCard = (
 '    </div>' +
 '  </div>' +
 '  <script>' +
-'    window.addEventListener("load", function() {' +
-'      setTimeout(function() { window.print(); }, 500);' +
-'    });' +
+'    function triggerReportPrint() {' +
+'      try {' +
+'        window.focus();' +
+'        window.print();' +
+'      } catch(e) { console.warn(e); }' +
+'    }' +
+'    if (document.readyState === "complete" || document.readyState === "interactive") {' +
+'      setTimeout(triggerReportPrint, 350);' +
+'    } else {' +
+'      window.addEventListener("DOMContentLoaded", function() { setTimeout(triggerReportPrint, 350); });' +
+'      window.addEventListener("load", function() { setTimeout(triggerReportPrint, 350); });' +
+'      setTimeout(triggerReportPrint, 1000);' +
+'    }' +
 '  <\/script>' +
 '</body>' +
 '</html>';
 
-  const printWindow = window.open('', '_blank', 'width=950,height=1000');
-  if (printWindow) {
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-  } else {
+  // 1. Create a Blob URL so the report opens as a legitimate document
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const blobUrl = URL.createObjectURL(blob);
+
+  // 2. Open in a new tab without restrictive window dimensions (prevents popup blocker)
+  let printWindow: Window | null = null;
+  try {
+    printWindow = window.open(blobUrl, '_blank');
+  } catch (err) {
+    console.warn('Window open error:', err);
+  }
+
+  // 3. Robust fallback if popup is blocked: use visible-dimension transparent iframe
+  if (!printWindow || printWindow.closed || typeof printWindow.closed === 'undefined') {
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    iframe.style.width = '100vw';
+    iframe.style.height = '100vh';
+    iframe.style.opacity = '0.01';
+    iframe.style.pointerEvents = 'none';
+    iframe.style.zIndex = '-9999';
+    iframe.src = blobUrl;
     document.body.appendChild(iframe);
-    const doc = iframe.contentWindow?.document || iframe.contentDocument;
-    if (doc) {
-      doc.open();
-      doc.write(html);
-      doc.close();
+
+    iframe.onload = () => {
       setTimeout(() => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
+        try {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } catch (e) {
+          console.warn('Iframe print failed', e);
+        }
         setTimeout(() => {
-          document.body.removeChild(iframe);
-        }, 1000);
-      }, 500);
-    }
+          try {
+            document.body.removeChild(iframe);
+            URL.revokeObjectURL(blobUrl);
+          } catch (e) {}
+        }, 3000);
+      }, 400);
+    };
   }
 };
 
@@ -1574,7 +1613,18 @@ export default function AdminExams() {
     const studentName = isStudent ? examForm.assignedStudentName.trim() : undefined
     const selectedCourseObj = coursesList.find((c) => c.title === examForm.course || c.id === examForm.courseId)
     const courseId = isStudent ? undefined : (selectedCourseObj?.id || examForm.courseId || undefined)
-    const resolvedCourse = examForm.course.trim() || 'General Examination'
+
+    let resolvedCourse = examForm.course.trim() || 'General Examination'
+    if (isStudent) {
+      const studentExamsCount = exams.filter(
+        (e) => (e.assignedStudentEmail && e.assignedStudentEmail.toLowerCase() === studentEmail) ||
+               (e.assignedType === 'student' && e.assignedStudentName === studentName)
+      ).length
+      const num = editingExamId ? (exams.findIndex(e => e.id === editingExamId) + 1 || 1) : studentExamsCount + 1
+      if (/^1-on-1/i.test(resolvedCourse) || resolvedCourse.includes('All Students') || !resolvedCourse) {
+        resolvedCourse = `Assessment #${num}: ${studentName || 'Student'}`
+      }
+    }
 
     const assignedStudentProfile = isStudent && studentEmail
       ? studentsList.find((s) => s.email && s.email.toLowerCase() === studentEmail)
@@ -1712,8 +1762,8 @@ export default function AdminExams() {
     else if (percentage >= 80) grade = 'A Distinction'
     else if (percentage >= 70) grade = 'B+ Meritorious'
     else if (percentage >= 60) grade = 'B Qualified'
-    else if (percentage >= 40) grade = 'C Pass'
-    else grade = 'F Needs Retake'
+    else if (percentage >= 40) grade = 'C Satisfactory'
+    else grade = 'Completed'
 
     const updatedSub: ExamSubmission = {
       ...evaluatingSub,
@@ -1721,7 +1771,7 @@ export default function AdminExams() {
       scoreObtained: totalScore,
       percentage,
       grade,
-      isPassed: percentage >= 40,
+      isPassed: true,
       answers: updatedAnswers,
       teacherFeedback: overallFeedback.trim()
         ? {
@@ -1959,7 +2009,15 @@ export default function AdminExams() {
                               )}
                             </div>
                           ) : (
-                            ex.course && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{ex.course}</div>
+                            ex.course && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{(() => {
+    const raw = ex.course.trim();
+    if (/^1-on-1/i.test(raw)) {
+      const m = raw.match(/^1-on-1\s*[:\-–]?\s*(.*)$/i);
+      const p = (m && m[1] ? m[1].trim() : '') || ex.assignedStudentName || '';
+      return p ? `Assessment #1: ${p}` : 'Assessment #1';
+    }
+    return raw;
+  })()}</div>
                           )}
                         </td>
 
@@ -2059,7 +2117,15 @@ export default function AdminExams() {
 
                       <td className="px-5 py-4">
                         <div className="font-medium text-slate-900 dark:text-white text-xs">{sub.examTitle}</div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{sub.course}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{(() => {
+    const raw = (sub.course || '').trim();
+    if (/^1-on-1/i.test(raw)) {
+      const m = raw.match(/^1-on-1\s*[:\-–]?\s*(.*)$/i);
+      const p = (m && m[1] ? m[1].trim() : '') || sub.studentName || '';
+      return p ? `Assessment #1: ${p}` : 'Assessment #1';
+    }
+    return raw;
+  })()}</div>
                       </td>
 
                       <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
@@ -2098,7 +2164,7 @@ export default function AdminExams() {
                               title="Download Official DE-ECO Report Card"
                             >
                               <Download size={13} />
-                              <span>PDF</span>
+                              <span>Download Report</span>
                             </button>
                           )}
                           <button
@@ -3081,7 +3147,7 @@ export default function AdminExams() {
                       className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-sm font-bold transition cursor-pointer flex items-center gap-1.5"
                     >
                       <Download size={15} />
-                      <span>Download Report Card</span>
+                      <span>Download Report</span>
                     </button>
                   )}
                   <button
