@@ -2081,11 +2081,11 @@ export default function AdminExams() {
                 <button
                   type="button"
                   onClick={() => setAiSourceMode('pdf')}
-                  className={\`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition cursor-pointer \${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition cursor-pointer ${
                     aiSourceMode === 'pdf'
                       ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
                       : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                  }\`}
+                  }`}
                 >
                   <UploadCloud size={14} />
                   <span>Upload PDF / Document</span>
@@ -2093,11 +2093,11 @@ export default function AdminExams() {
                 <button
                   type="button"
                   onClick={() => setAiSourceMode('paste')}
-                  className={\`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition cursor-pointer \${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition cursor-pointer ${
                     aiSourceMode === 'paste'
                       ? 'bg-white dark:bg-neutral-700 text-slate-900 dark:text-white shadow-2xs'
                       : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
-                  }\`}
+                  }`}
                 >
                   <FileText size={14} />
                   <span>Paste ChatGPT Text</span>
@@ -2129,7 +2129,7 @@ export default function AdminExams() {
                     </p>
                     <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-1">
                       {aiUploadedFile
-                        ? \`\${(aiUploadedFile.size / 1024).toFixed(1)} KB • Click to choose another file\`
+                        ? `${(aiUploadedFile.size / 1024).toFixed(1)} KB • Click to choose another file`
                         : 'Supports PDF (.pdf), Plain Text (.txt), or Markdown (.md)'}
                     </p>
                   </div>
@@ -2140,7 +2140,7 @@ export default function AdminExams() {
                       <Loader2 size={16} className="animate-spin" />
                       <span>
                         Extracting digital text with Mozilla PDF.js{' '}
-                        {pdfProgress ? \`(\${pdfProgress.current} / \${pdfProgress.total} pages)\` : '...'}
+                        {pdfProgress ? `(${pdfProgress.current} / ${pdfProgress.total} pages)` : '...'}
                       </span>
                     </div>
                   )}
@@ -2245,7 +2245,7 @@ export default function AdminExams() {
                         {aiParseResult.questions.filter((q) => q.type === 'mcq').length} MCQs •{' '}
                         {aiParseResult.questions.filter((q) => q.type === 'descriptive').length} Descriptive •{' '}
                         {aiParseResult.totalMarks} Total Marks
-                        {aiParseResult.examTitle ? \` • "\${aiParseResult.examTitle}"\` : ''}
+                        {aiParseResult.examTitle ? ` • "${aiParseResult.examTitle}"` : ''}
                       </p>
                     </div>
 
@@ -2297,11 +2297,11 @@ export default function AdminExams() {
                             {q.options.map((opt) => (
                               <div
                                 key={opt.id}
-                                className={\`truncate px-2 py-0.5 rounded \${
+                                className={`truncate px-2 py-0.5 rounded ${
                                   opt.id === q.correctAnswer
                                     ? 'bg-emerald-100/70 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-semibold'
                                     : 'bg-white dark:bg-neutral-800'
-                                }\`}
+                                }`}
                               >
                                 <span className="font-bold mr-1">{opt.id}:</span>
                                 {opt.text}
