@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Plus, Edit2, Trash2, X, Download, FileText, UploadCloud, Mail } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import {
+  Plus, Edit2, Trash2, X, Download, FileText, UploadCloud,
+  Mail, Search, ExternalLink, Loader2
+} from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
-import { useGoogleLogin } from '@react-oauth/google'
 import { sendNotesEmail } from '../lib/emailService'
 
 /* ================= TYPES ================= */
@@ -10,9 +12,11 @@ interface ClassNote {
   id: string
   class_id: string | null
   user_id: string
-  uploaded_by: string | null
+  uploaded_by?: string | null
   title: string
   file_url: string
+  created_at?: string
+  upload_date?: string
 }
 
 interface LiveClass {
@@ -25,7 +29,7 @@ interface UserProfile {
   first_name: string | null
   last_name: string | null
   email: string | null
-  is_active: boolean
+  is_active?: boolean | null
 }
 
 
@@ -35,11 +39,14 @@ export default function ClassNotes() {
   const [notes, setNotes] = useState<ClassNote[]>([])
   const [classes, setClasses] = useState<LiveClass[]>([])
   const [users, setUsers] = useState<UserProfile[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedStudentFilter, setSelectedStudentFilter] = useState('all')
 
   const [formData, setFormData] = useState({
     class_id: '',     // optional
@@ -52,67 +59,102 @@ export default function ClassNotes() {
   /* ================= INITIAL LOAD ================= */
 
   useEffect(() => {
-    fetchNotes()
-    fetchClasses()
-    fetchUsers()
+    async function loadData() {
+      setIsLoading(true)
+      await Promise.all([fetchNotes(), fetchClasses(), fetchUsers()])
+      setIsLoading(false)
+    }
+    loadData()
   }, [])
 
-  /* ================= FETCH NOTES ================= */
+  /* ================= FETCH NOTES (WITH RESILIENT FALLBACKS) ================= */
 
   const fetchNotes = async () => {
-    const { data, error } = await supabase
-      .from('class_notes')
-      .select('*')
-      .order('created_at', { ascending: false })
+    try {
+      // 1. Try ordering by created_at
+      let { data, error } = await supabase
+        .from('class_notes')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Failed to fetch notes:', error)
-      return
+      // 2. Fallback to upload_date if created_at does not exist
+      if (error) {
+        const res2 = await supabase
+          .from('class_notes')
+          .select('*')
+          .order('upload_date', { ascending: false })
+
+        if (!res2.error) {
+          data = res2.data
+          error = null
+        } else {
+          // 3. Fallback to unordered query
+          const res3 = await supabase.from('class_notes').select('*')
+          data = res3.data
+          error = res3.error
+        }
+      }
+
+      if (error) {
+        console.warn('Note: fetchNotes error or table empty:', error.message)
+      }
+
+      setNotes(data ?? [])
+    } catch (err) {
+      console.error('Failed to fetch class notes:', err)
+      setNotes([])
     }
-
-    setNotes(data ?? [])
   }
 
   /* ================= FETCH CLASSES ================= */
 
   const fetchClasses = async () => {
-    const { data, error } = await supabase
-      .from('live_classes')
-      .select('id, title')
-      .order('scheduled_date')
+    try {
+      let { data, error } = await supabase
+        .from('live_classes')
+        .select('id, title')
+        .order('scheduled_datetime', { ascending: false })
 
-    if (error) {
-      console.error('Failed to fetch classes:', error)
-      return
+      if (error) {
+        const fallback = await supabase
+          .from('live_classes')
+          .select('id, title')
+        data = fallback.data
+      }
+
+      setClasses(data ?? [])
+    } catch (err) {
+      console.error('Failed to fetch classes:', err)
+      setClasses([])
     }
-
-    setClasses(data ?? [])
   }
 
   /* ================= FETCH USERS ================= */
 
   const fetchUsers = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, first_name, last_name, email, is_active')
-      .order('first_name')
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, is_active')
+        .order('first_name', { ascending: true })
 
-    if (error) {
-      console.error('Failed to fetch users:', error)
-      return
+      if (!error && data) {
+        setUsers(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch users:', err)
+      setUsers([])
     }
-
-    setUsers(data ?? [])
   }
 
-  /* ================= SUBMIT / GOOGLE DRIVE ================= */
+  /* ================= SAVE TO SUPABASE ================= */
 
   const saveToSupabase = async (fileUrl: string) => {
     const payload = {
-      class_id: formData.class_id || null, // ✅ OPTIONAL
-      user_id: formData.user_id,            // ✅ REQUIRED
-      title: formData.title,
-      file_url: fileUrl,
+      class_id: formData.class_id || null,
+      user_id: formData.user_id,
+      title: formData.title.trim(),
+      file_url: fileUrl.trim(),
     }
 
     const { error } = editingId
@@ -126,16 +168,20 @@ export default function ClassNotes() {
 
     if (error) {
       console.error('Save failed:', error)
-      alert(error.message)
+      alert('Save failed: ' + error.message)
       return
     }
 
-    // Trigger email if send_email toggle is enabled
+    // Trigger email notification if enabled
     if (formData.send_email) {
       const student = users.find(u => u.id === formData.user_id)
       if (student && student.email) {
         const studentName = `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
-        sendNotesEmail(student.email, studentName, formData.title, fileUrl)
+        try {
+          sendNotesEmail(student.email, studentName, formData.title, fileUrl)
+        } catch (emailErr) {
+          console.warn('Email notification skipped or failed:', emailErr)
+        }
       }
     }
 
@@ -143,100 +189,67 @@ export default function ClassNotes() {
     fetchNotes()
   }
 
-  const loginAndUploadToDrive = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        if (!selectedFile) return
-
-        // 1. Create the file metadata in Google Drive
-        const metadataRes = await fetch('https://www.googleapis.com/drive/v3/files', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: selectedFile.name,
-            mimeType: selectedFile.type,
-          })
-        });
-        
-        if (!metadataRes.ok) {
-           const errTxt = await metadataRes.text();
-           throw new Error('Failed to create file metadata: ' + errTxt);
-        }
-        
-        const metadata = await metadataRes.json();
-        const fileId = metadata.id;
-
-        // 2. Upload the actual file content to the created file ID
-        const uploadRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media&fields=id,webViewLink`, {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-            'Content-Type': selectedFile.type,
-          },
-          body: selectedFile,
-        });
-
-        if (!uploadRes.ok) {
-           throw new Error('Failed to upload file content');
-        }
-
-        const data = await uploadRes.json()
-
-        if (!data.id) {
-          throw new Error('Failed to get Drive file ID')
-        }
-
-        // 3. Make the file public (Anyone with the link can view)
-        const permRes = await fetch(
-          `https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ role: 'reader', type: 'anyone' }),
-          }
-        )
-
-        // 4. Save link to Supabase
-        await saveToSupabase(data.webViewLink)
-
-      } catch (err: any) {
-        console.error('Drive upload failed', err)
-        alert('Failed to upload to Google Drive: ' + (err.message || 'Unknown error'))
-        setIsUploading(false)
-      }
-    },
-    onError: () => {
-      alert('Google Login Failed')
-      setIsUploading(false)
-    },
-    scope: 'https://www.googleapis.com/auth/drive.file',
-  })
+  /* ================= FORM SUBMISSION ================= */
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.user_id || !formData.title) {
-      alert('User and Title are required')
+    if (!formData.user_id || !formData.title.trim()) {
+      alert('Please select a student and enter a title.')
       return
     }
 
+    setIsUploading(true)
+
+    // Option A: If file is selected, upload directly to Supabase Storage
     if (selectedFile) {
-      setIsUploading(true)
-      loginAndUploadToDrive()
-    } else {
-      if (!formData.file_url) {
-        alert('Please select a file or provide a URL')
+      try {
+        const cleanName = selectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+        const filePath = `notes/${Date.now()}_${cleanName}`
+
+        let uploadRes = await supabase.storage
+          .from('class-notes')
+          .upload(filePath, selectedFile, { upsert: true })
+
+        let bucketName = 'class-notes'
+        if (uploadRes.error) {
+          uploadRes = await supabase.storage
+            .from('documents')
+            .upload(filePath, selectedFile, { upsert: true })
+          bucketName = 'documents'
+        }
+
+        if (uploadRes.error) {
+          console.warn('Storage bucket upload failed:', uploadRes.error.message)
+          alert(
+            `Direct storage upload failed (${uploadRes.error.message}).\n\nPlease paste a Google Drive, Dropbox, or document link in the "Document URL" field instead.`
+          )
+          setIsUploading(false)
+          return
+        }
+
+        const { data: publicData } = supabase.storage
+          .from(bucketName)
+          .getPublicUrl(filePath)
+
+        await saveToSupabase(publicData.publicUrl)
+        return
+      } catch (err: any) {
+        console.error('File upload failed:', err)
+        alert('File upload failed: ' + (err.message || 'Unknown error'))
+        setIsUploading(false)
         return
       }
-      setIsUploading(true)
-      saveToSupabase(formData.file_url)
     }
+
+    // Option B: Direct URL provided (Google Drive, PDF, etc.)
+    if (!formData.file_url.trim()) {
+      alert('Please select a file to upload or enter a document URL.')
+      setIsUploading(false)
+      return
+    }
+
+    await saveToSupabase(formData.file_url)
   }
 
   /* ================= EDIT ================= */
@@ -268,231 +281,421 @@ export default function ClassNotes() {
     fetchNotes()
   }
 
-  /* ================= HELPERS ================= */
-
-  const closeForm = () => {
-    setShowForm(false)
-    setEditingId(null)
-    setSelectedFile(null)
-    setFormData({ class_id: '', user_id: '', title: '', file_url: '', send_email: true })
-  }
+  /* ================= HELPERS & FILTERING ================= */
 
   const getClassTitle = (classId: string | null) => {
-    if (!classId) return '—'
-    return classes.find((c) => c.id === classId)?.title ?? '—'
+    if (!classId) return 'General Class Note'
+    return classes.find((c) => c.id === classId)?.title ?? 'General Class Note'
   }
 
   const getUserName = (userId: string) => {
     const user = users.find((u) => u.id === userId)
-    if (!user) return '—'
-    return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
+    if (!user) return 'Assigned Student'
+    const name = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
+    return name || user.email || 'Assigned Student'
   }
 
-  /* ================= UI ================= */
+  const filteredNotes = useMemo(() => {
+    return notes.filter((n) => {
+      // Student filter
+      if (selectedStudentFilter !== 'all' && n.user_id !== selectedStudentFilter) {
+        return false
+      }
+      // Search query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase()
+        const titleMatch = n.title.toLowerCase().includes(q)
+        const studentName = getUserName(n.user_id).toLowerCase()
+        const classTitle = getClassTitle(n.class_id).toLowerCase()
+        return titleMatch || studentName.includes(q) || classTitle.includes(q)
+      }
+      return true
+    })
+  }, [notes, searchQuery, selectedStudentFilter, users, classes])
+
+  /* ================= UI RENDER ================= */
 
   return (
-    <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
-      {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shrink-0">
+    <div className="max-w-6xl mx-auto space-y-6 pb-16 px-1 sm:px-0">
+      {/* 1. TOP HEADER & DIRECT ACTION */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200 dark:border-neutral-800">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-1">Class Notes</h1>
-          <p className="text-slate-500 dark:text-slate-400 font-medium">Upload and manage class study materials</p>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider">
+              Study Materials & Resources
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Class Notes
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-neutral-400 mt-0.5">
+            Upload study summaries, PDF materials, or Google Drive notes for enrolled students
+          </p>
         </div>
 
         <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-white dark:text-slate-900 px-5 py-2.5 rounded-lg font-semibold w-full sm:w-auto"
+          type="button"
+          onClick={() => {
+            closeForm()
+            setShowForm(true)
+          }}
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-sm hover:opacity-95 active:scale-[0.98] transition cursor-pointer shrink-0"
         >
-          <Plus className="w-5 h-5" />
-          Upload Note
+          <Plus size={16} strokeWidth={2.5} />
+          <span>Upload Note</span>
         </button>
       </div>
 
-      {/* MODAL */}
+      {/* 2. SEARCH & FILTER BAR */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1">
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search notes by title, student, or class..."
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-2xs"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 cursor-pointer"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* Student Filter */}
+        <select
+          value={selectedStudentFilter}
+          onChange={(e) => setSelectedStudentFilter(e.target.value)}
+          className="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs cursor-pointer"
+        >
+          <option value="all">All Students ({notes.length})</option>
+          {users.map((u) => {
+            const studentNotesCount = notes.filter((n) => n.user_id === u.id).length
+            if (studentNotesCount === 0) return null
+            const name = `${u.first_name || ''} ${u.last_name || ''}`.trim() || u.email || 'Student'
+            return (
+              <option key={u.id} value={u.id}>
+                {name} ({studentNotesCount})
+              </option>
+            )
+          })}
+        </select>
+      </div>
+
+      {/* 3. CONTENT AREA */}
+      {isLoading ? (
+        /* Loading Skeleton */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 animate-pulse space-y-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-neutral-800" />
+                <div className="space-y-1.5 flex-1">
+                  <div className="h-4 bg-slate-100 dark:bg-neutral-800 rounded w-3/4" />
+                  <div className="h-3 bg-slate-100 dark:bg-neutral-800 rounded w-1/2" />
+                </div>
+              </div>
+              <div className="h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg w-full mt-2" />
+            </div>
+          ))}
+        </div>
+      ) : filteredNotes.length === 0 ? (
+        /* Empty State */
+        <div className="p-8 sm:p-12 text-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 mx-auto flex items-center justify-center border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs">
+            <FileText size={26} strokeWidth={2} />
+          </div>
+          <div className="max-w-md mx-auto space-y-1">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              {notes.length === 0 ? 'No Class Notes Uploaded Yet' : 'No Matching Notes Found'}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-neutral-400 leading-relaxed">
+              {notes.length === 0
+                ? 'Upload your first study note, revision guide, or Google Drive link to share study materials directly with your students.'
+                : 'Try adjusting your search query or filter to find the study notes you are looking for.'}
+            </p>
+          </div>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                closeForm()
+                setShowForm(true)
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:opacity-90 active:scale-[0.98] transition cursor-pointer shadow-sm"
+            >
+              <Plus size={15} strokeWidth={2.5} />
+              <span>{notes.length === 0 ? 'Upload First Note' : 'Upload New Note'}</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Notes Cards Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredNotes.map((note) => {
+            const studentName = getUserName(note.user_id)
+            const classTitle = getClassTitle(note.class_id)
+            const isDriveLink = note.file_url.includes('drive.google.com')
+
+            return (
+              <div
+                key={note.id}
+                className="bg-white dark:bg-neutral-900 rounded-2xl border border-slate-200/90 dark:border-neutral-800 p-4 sm:p-5 flex flex-col justify-between hover:border-slate-300 dark:hover:border-neutral-700 transition shadow-2xs group"
+              >
+                <div>
+                  {/* Top Badges */}
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/60 dark:border-indigo-800/40 shadow-2xs">
+                      <FileText size={18} strokeWidth={2.2} />
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 truncate max-w-[150px]">
+                      {classTitle}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug line-clamp-2" title={note.title}>
+                    {note.title}
+                  </h3>
+
+                  {/* Student Tag */}
+                  <div className="mt-2 text-xs text-slate-500 dark:text-neutral-400 flex items-center gap-1.5 truncate">
+                    <span className="font-medium text-slate-400 dark:text-neutral-500 text-[11px]">For:</span>
+                    <span className="font-bold text-slate-800 dark:text-neutral-200 truncate">{studentName}</span>
+                  </div>
+                </div>
+
+                {/* Bottom Actions */}
+                <div className="pt-3.5 mt-3.5 border-t border-slate-100 dark:border-neutral-800/80 flex items-center justify-between gap-2">
+                  <a
+                    href={note.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition cursor-pointer"
+                  >
+                    <span>{isDriveLink ? 'Open Drive' : 'View File'}</span>
+                    <ExternalLink size={12} />
+                  </a>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(note)}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+                      title="Edit note"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(note.id)}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                      title="Delete note"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ================= 4. UPLOAD / EDIT NOTE MODAL ================= */}
       {showForm && (
-        <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white dark:bg-neutral-900 rounded-t-2xl sm:rounded-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700">
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 sticky top-0 bg-white dark:bg-neutral-900/95 backdrop-blur z-10">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-50">
-                {editingId ? 'Edit Notes' : 'Upload Notes'}
-              </h2>
-              <button onClick={closeForm} disabled={isUploading} className="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 rounded-lg transition-colors">
-                <X className="w-6 h-6" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-neutral-900 rounded-3xl w-full max-w-lg max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-neutral-800 flex flex-col">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-5 sm:p-6 border-b border-slate-100 dark:border-neutral-800 sticky top-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur z-10">
+              <div>
+                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+                  {editingId ? 'Edit Study Note' : 'Upload Study Note'}
+                </h2>
+                <p className="text-xs text-slate-400 dark:text-neutral-500 mt-0.5">
+                  Attach PDF or share Google Drive notes with your student
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeForm}
+                disabled={isUploading}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+              >
+                <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              
-              {/* USER (REQUIRED) */}
+            {/* Modal Form */}
+            <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 text-xs">
+              {/* STUDENT SELECTION (REQUIRED) */}
               <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Student</label>
+                <label className="block font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                  Select Student <span className="text-rose-500">*</span>
+                </label>
                 <select
-                  className="w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow bg-white dark:bg-neutral-800"
+                  className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                   value={formData.user_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, user_id: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
                   required
                 >
-                  <option value="">Select user</option>
-                  {users.filter(u => u.is_active).map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {`${u.first_name ?? ''} ${u.last_name ?? ''}`.trim()}
-                      {u.email ? ` (${u.email})` : ''}
+                  <option value="">-- Choose Student --</option>
+                  {users
+                    .filter((u) => u.is_active !== false)
+                    .map((u) => {
+                      const name = `${u.first_name ?? ''} ${u.last_name ?? ''}`.trim() || 'Student'
+                      return (
+                        <option key={u.id} value={u.id}>
+                          {name} {u.email ? `(${u.email})` : ''}
+                        </option>
+                      )
+                    })}
+                </select>
+              </div>
+
+              {/* ASSOCIATED CLASS (OPTIONAL) */}
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                  Associated Class Session <span className="text-slate-400 font-normal">(Optional)</span>
+                </label>
+                <select
+                  className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                  value={formData.class_id}
+                  onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
+                >
+                  <option value="">General Class Note (No specific class)</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.title}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* TITLE */}
+              {/* TITLE (REQUIRED) */}
               <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Title</label>
+                <label className="block font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                  Note Title <span className="text-rose-500">*</span>
+                </label>
                 <input
-                  placeholder="e.g. Chapter 1 Notes"
-                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400"
+                  type="text"
+                  placeholder="e.g. Chapter 3: Microeconomics Revision Summary"
+                  className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-400"
                   value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
                 />
               </div>
 
-              {/* UPLOAD FILE TO DRIVE */}
-              <div className="bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 p-5 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800">
-                <label className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                  <UploadCloud size={20} className="text-slate-600 dark:text-slate-400" />
-                  Upload PDF to Google Drive
+              {/* DOCUMENT / DRIVE LINK INPUT */}
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
+                  Google Drive / Document Link <span className="text-rose-500">*</span>
                 </label>
                 <input
-                  type="file"
-                  accept="application/pdf"
-                  className="w-full text-sm text-slate-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-white dark:bg-neutral-900 file:border file:border-slate-200 dark:border-neutral-800 dark:border-neutral-700 file:text-slate-700 dark:text-slate-300 hover:file:bg-slate-50 dark:bg-neutral-800/50 transition-colors cursor-pointer"
-                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  type="url"
+                  placeholder="https://drive.google.com/file/d/... or PDF URL"
+                  className="w-full bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-400 disabled:opacity-50"
+                  value={formData.file_url}
+                  onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
+                  disabled={!!selectedFile}
                 />
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-3">
-                  If you select a file, it will automatically upload to your Google Drive and attach the link.
+                <p className="text-[11px] text-slate-400 dark:text-neutral-500 mt-1">
+                  Paste any public/shared Google Drive link, OneDrive link, or direct file URL.
                 </p>
               </div>
 
-              <div className="flex items-center">
-                <div className="flex-grow border-t border-slate-200 dark:border-neutral-800 dark:border-neutral-700"></div>
-                <span className="flex-shrink-0 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  OR PROVIDE EXISTING LINK
-                </span>
-                <div className="flex-grow border-t border-slate-200 dark:border-neutral-800 dark:border-neutral-700"></div>
-              </div>
-
-              {/* MANUAL URL */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Drive URL</label>
+              {/* OPTIONAL DIRECT FILE ATTACHMENT */}
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-neutral-700/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-700 dark:text-neutral-300 flex items-center gap-1.5">
+                    <UploadCloud size={14} className="text-indigo-600 dark:text-indigo-400" />
+                    Or Upload File from Device
+                  </span>
+                  {selectedFile && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFile(null)}
+                      className="text-[10px] font-bold text-rose-500 hover:underline cursor-pointer"
+                    >
+                      Clear File
+                    </button>
+                  )}
+                </div>
                 <input
-                  type="url"
-                  placeholder="https://drive.google.com/..."
-                  className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3.5 rounded-lg text-base focus:ring-2 focus:ring-slate-900 outline-none text-slate-900 dark:text-slate-50 transition-shadow placeholder:text-slate-400 disabled:bg-slate-100 dark:bg-neutral-800 disabled:text-slate-500 dark:text-slate-400"
-                  value={formData.file_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, file_url: e.target.value })
-                  }
-                  disabled={!!selectedFile}
+                  type="file"
+                  accept="application/pdf,image/*,.doc,.docx"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null
+                    setSelectedFile(file)
+                    if (file && !formData.title) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        title: file.name.replace(/\.[^/.]+$/, '')
+                      }))
+                    }
+                  }}
+                  className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white dark:file:bg-white dark:file:text-slate-900 hover:file:opacity-90 cursor-pointer"
                 />
               </div>
 
               {/* EMAIL NOTIFICATION TOGGLE */}
-              <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-neutral-800/50 rounded-lg border border-slate-200 dark:border-neutral-800">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg transition-colors ${formData.send_email ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-neutral-800 text-slate-400'}`}>
-                    <Mail className="w-5 h-5" />
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-neutral-800/40 border border-slate-200/80 dark:border-neutral-700/60">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className={`p-1.5 rounded-lg ${formData.send_email ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <Mail size={14} />
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Send Email Notification</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Notify student with note details and access link</p>
+                  <div className="truncate">
+                    <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
+                      Send Email Notification
+                    </span>
+                    <span className="text-[10px] text-slate-400 block truncate">
+                      Email student note access link via EmailJS
+                    </span>
                   </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer shrink-0 ml-2">
                   <input
                     type="checkbox"
                     className="sr-only peer"
                     checked={formData.send_email}
                     onChange={(e) => setFormData({ ...formData, send_email: e.target.checked })}
                   />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-neutral-600 peer-checked:bg-indigo-600 dark:peer-checked:bg-indigo-500"></div>
+                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-neutral-600 peer-checked:bg-indigo-600"></div>
                 </label>
               </div>
 
-              <button
-                type="submit"
-                disabled={isUploading}
-                className={`w-full py-4 rounded-lg font-bold text-base transition-colors ${
-                  isUploading 
-                    ? 'bg-slate-100 dark:bg-neutral-800 text-slate-400 cursor-not-allowed border border-slate-200 dark:border-neutral-800 dark:border-neutral-700' 
-                    : 'bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900'
-                }`}
-              >
-                {isUploading 
-                  ? 'Processing...' 
-                  : selectedFile 
-                    ? 'Upload to Drive & Save' 
-                    : editingId 
-                      ? 'Update Note' 
-                      : 'Save Note'}
-              </button>
+              {/* SUBMIT BUTTON */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isUploading}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs shadow-sm hover:opacity-90 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Saving Note...</span>
+                    </>
+                  ) : (
+                    <span>{editingId ? 'Update Note' : 'Save & Publish Note'}</span>
+                  )}
+                </button>
+              </div>
             </form>
           </div>
         </div>
       )}
-
-      {/* LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {notes.map((note) => (
-          <div
-            key={note.id}
-            className="bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 hover:shadow-sm transition-shadow p-6 flex flex-col"
-          >
-            <div className="flex gap-4 flex-1">
-              <div className="bg-slate-50 dark:bg-neutral-800/50 p-3.5 rounded-lg border border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 flex-shrink-0 h-fit">
-                <FileText className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-lg text-slate-900 dark:text-slate-50 mb-1.5 truncate" title={note.title}>{note.title}</h3>
-                
-                <div className="space-y-1 mb-4">
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
-                    <span className="text-slate-400 mr-1">Class:</span> {getClassTitle(note.class_id)}
-                  </p>
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
-                    <span className="text-slate-400 mr-1">Student:</span> {getUserName(note.user_id)}
-                  </p>
-                </div>
-
-                <a
-                  href={note.file_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-neutral-800/50 border border-slate-200 dark:border-neutral-800 dark:border-neutral-700 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:hover:bg-slate-200 dark:bg-neutral-800 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 font-bold transition-colors"
-                >
-                  <Download size={16} /> Open Note
-                </a>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50">
-              <button
-                onClick={() => handleEdit(note)}
-                className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-50 hover:bg-slate-50 dark:hover:bg-neutral-800 dark:hover:bg-slate-200/50 dark:bg-neutral-800/50 rounded-lg transition-colors"
-              >
-                <Edit2 className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleDelete(note.id)}
-                className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-lg transition-colors"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
