@@ -121,6 +121,13 @@ export default function ClassEnrollments() {
     fetchUsers()
     fetchClasses()
     fetchCourses()
+
+    const auto = localStorage.getItem('admin_auto_action')
+    if (auto === 'new_enrollment') {
+      localStorage.removeItem('admin_auto_action')
+      resetNewEnrollForm()
+      setShowNewEnrollModal(true)
+    }
   }, [])
 
   const fetchUsers = async () => {
@@ -416,12 +423,26 @@ export default function ClassEnrollments() {
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <button
-                          onClick={() => setSelectedProfile(profile)}
-                          className="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 px-3.5 py-1.5 rounded-lg font-semibold transition-colors text-xs cursor-pointer shadow-xs"
-                        >
-                          <Settings size={14} /> Manage
-                        </button>
+                        <div className="inline-flex items-center gap-2 justify-end">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              resetNewEnrollForm()
+                              setEnrollFormStudentId(profile.id)
+                              setShowNewEnrollModal(true)
+                            }}
+                            className="inline-flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40 px-3 py-1.5 rounded-lg font-bold transition-colors text-xs cursor-pointer shadow-2xs"
+                            title="Enroll this student in a course or class"
+                          >
+                            <Plus size={13} strokeWidth={2.5} /> Enroll
+                          </button>
+                          <button
+                            onClick={() => setSelectedProfile(profile)}
+                            className="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 px-3.5 py-1.5 rounded-lg font-semibold transition-colors text-xs cursor-pointer shadow-xs"
+                          >
+                            <Settings size={14} /> Manage
+                          </button>
+                        </div>
                       </td>
 
                     </tr>
@@ -520,12 +541,23 @@ export default function ClassEnrollments() {
                     </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetNewEnrollForm()
+                        setEnrollFormStudentId(profile.id)
+                        setShowNewEnrollModal(true)
+                      }}
+                      className="flex items-center justify-center gap-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-2.5 rounded-lg font-bold transition-all shadow-xs text-xs cursor-pointer active:scale-[0.98]"
+                    >
+                      <Plus size={14} strokeWidth={2.5} /> Enroll
+                    </button>
                     <button
                       onClick={() => setSelectedProfile(profile)}
-                      className="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-3 rounded-lg font-semibold transition-colors text-sm"
+                      className="flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2.5 rounded-lg font-bold transition-colors text-xs cursor-pointer"
                     >
-                      <Settings size={16} /> Manage Enrollments
+                      <Settings size={14} /> Manage
                     </button>
                   </div>
                 </div>
