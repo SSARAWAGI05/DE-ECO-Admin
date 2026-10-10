@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Calendar, Search, Filter, ArrowUpDown, Download, ArrowLeft, Printer, AlertCircle, Share2, Receipt } from 'lucide-react'
+import { Calendar, Download, ArrowLeft, Printer, Share2, Receipt } from 'lucide-react'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 
@@ -109,7 +109,7 @@ export default function Invoices() {
       .select('user_id, custom_hourly_rate, courses(title)')
 
     if (courseEnrollData) {
-      setCourseEnrollments(courseEnrollData)
+      setCourseEnrollments(courseEnrollData as any)
     }
 
     setLoading(false)

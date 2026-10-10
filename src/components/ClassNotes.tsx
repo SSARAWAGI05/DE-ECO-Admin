@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
-  Plus, Edit2, Trash2, X, Download, FileText, UploadCloud,
+  Plus, Edit2, Trash2, X, FileText, UploadCloud,
   Mail, Search, ExternalLink, Loader2
 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
@@ -56,6 +56,24 @@ export default function ClassNotes() {
     send_email: true, // toggle to send email
   })
 
+  const closeForm = () => {
+    setShowForm(false)
+    setEditingId(null)
+    setSelectedFile(null)
+    setFormData({
+      class_id: '',
+      user_id: '',
+      title: '',
+      file_url: '',
+      send_email: true,
+    })
+  }
+
+  const handleOpenNew = () => {
+    closeForm()
+    setShowForm(true)
+  }
+
   /* ================= INITIAL LOAD ================= */
 
   useEffect(() => {
@@ -110,7 +128,7 @@ export default function ClassNotes() {
 
   const fetchClasses = async () => {
     try {
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('live_classes')
         .select('id, title')
         .order('scheduled_datetime', { ascending: false })
@@ -119,10 +137,10 @@ export default function ClassNotes() {
         const fallback = await supabase
           .from('live_classes')
           .select('id, title')
-        data = fallback.data
+        setClasses(fallback.data ?? [])
+      } else {
+        setClasses(data ?? [])
       }
-
-      setClasses(data ?? [])
     } catch (err) {
       console.error('Failed to fetch classes:', err)
       setClasses([])
@@ -207,16 +225,23 @@ export default function ClassNotes() {
         const cleanName = selectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')
         const filePath = `notes/${Date.now()}_${cleanName}`
 
+        let bucketName = 'class-notes'
         let uploadRes = await supabase.storage
-          .from('class-notes')
+          .from(bucketName)
           .upload(filePath, selectedFile, { upsert: true })
 
-        let bucketName = 'class-notes'
         if (uploadRes.error) {
-          uploadRes = await supabase.storage
-            .from('documents')
-            .upload(filePath, selectedFile, { upsert: true })
           bucketName = 'documents'
+          uploadRes = await supabase.storage
+            .from(bucketName)
+            .upload(filePath, selectedFile, { upsert: true })
+        }
+
+        if (uploadRes.error) {
+          bucketName = 'exam-submissions'
+          uploadRes = await supabase.storage
+            .from(bucketName)
+            .upload(filePath, selectedFile, { upsert: true })
         }
 
         if (uploadRes.error) {
@@ -336,10 +361,7 @@ export default function ClassNotes() {
 
         <button
           type="button"
-          onClick={() => {
-            closeForm()
-            setShowForm(true)
-          }}
+          onClick={handleOpenNew}
           className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-sm hover:opacity-95 active:scale-[0.98] transition cursor-pointer shrink-0"
         >
           <Plus size={16} strokeWidth={2.5} />
@@ -428,10 +450,7 @@ export default function ClassNotes() {
           <div className="pt-2">
             <button
               type="button"
-              onClick={() => {
-                closeForm()
-                setShowForm(true)
-              }}
+              onClick={handleOpenNew}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:opacity-90 active:scale-[0.98] transition cursor-pointer shadow-sm"
             >
               <Plus size={15} strokeWidth={2.5} />

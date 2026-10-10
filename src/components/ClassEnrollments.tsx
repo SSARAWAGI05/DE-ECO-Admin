@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Search, UserCheck, UserX, Plus, X, Settings, Trash2, Edit2 } from 'lucide-react'
+import { Search, UserCheck, UserX, Plus, X, Settings, Trash2 } from 'lucide-react'
 
 /* ================= TYPES & CONSTANTS ================= */
 
@@ -42,6 +42,15 @@ export default function ClassEnrollments() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isSaving, setIsSaving] = useState<string | null>(null)
 
+  // Top-Level "New Enrollment" Modal State
+  const [showNewEnrollModal, setShowNewEnrollModal] = useState(false)
+  const [enrollFormStudentId, setEnrollFormStudentId] = useState('')
+  const [enrollFormType, setEnrollFormType] = useState<'course' | 'class'>('course')
+  const [enrollFormTargetId, setEnrollFormTargetId] = useState('')
+  const [enrollFormCustomRate, setEnrollFormCustomRate] = useState<string>('')
+  const [enrollFormStatus, setEnrollFormStatus] = useState<string>('active')
+  const [isEnrollingSubmitting, setIsEnrollingSubmitting] = useState(false)
+
   // Enrollment Modal State
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
   const [userCourseEnrollments, setUserCourseEnrollments] = useState<any[]>([])
@@ -51,6 +60,61 @@ export default function ClassEnrollments() {
   // Add Enrollment Form State inside modal
   const [newEnrollmentType, setNewEnrollmentType] = useState<'course' | 'class'>('course')
   const [newEnrollmentId, setNewEnrollmentId] = useState('')
+
+  const resetNewEnrollForm = () => {
+    setEnrollFormStudentId('')
+    setEnrollFormType('course')
+    setEnrollFormTargetId('')
+    setEnrollFormCustomRate('')
+    setEnrollFormStatus('active')
+  }
+
+  const handleCreateNewEnrollment = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!enrollFormStudentId || !enrollFormTargetId) {
+      alert('Please select both a student and a ' + (enrollFormType === 'course' ? 'course' : 'live class') + '.')
+      return
+    }
+
+    setIsEnrollingSubmitting(true)
+    try {
+      if (enrollFormType === 'course') {
+        const rateVal = enrollFormCustomRate ? parseFloat(enrollFormCustomRate) : null
+        const { error } = await supabase.from('course_enrollments').insert({
+          user_id: enrollFormStudentId,
+          course_id: enrollFormTargetId,
+          status: enrollFormStatus || 'active',
+          custom_hourly_rate: isNaN(rateVal as number) ? null : rateVal,
+          enrolled_at: new Date().toISOString()
+        })
+        if (error) {
+          alert('Failed to enroll student in course: ' + error.message)
+        } else {
+          alert('Student successfully enrolled in course!')
+          setShowNewEnrollModal(false)
+          resetNewEnrollForm()
+          fetchUsers()
+        }
+      } else {
+        const { error } = await supabase.from('class_enrollments').insert({
+          user_id: enrollFormStudentId,
+          class_id: enrollFormTargetId
+        })
+        if (error) {
+          alert('Failed to enroll student in live class: ' + error.message)
+        } else {
+          alert('Student successfully enrolled in live class!')
+          setShowNewEnrollModal(false)
+          resetNewEnrollForm()
+          fetchUsers()
+        }
+      }
+    } catch (err: any) {
+      alert('Error: ' + (err.message || 'Enrollment failed'))
+    } finally {
+      setIsEnrollingSubmitting(false)
+    }
+  }
 
   /* ================= INITIAL LOAD ================= */
   useEffect(() => {
@@ -197,15 +261,27 @@ export default function ClassEnrollments() {
     <div className="p-4 sm:p-6 lg:p-10 overflow-x-hidden w-full ">
       
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800 dark:border-neutral-700 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200 dark:border-neutral-800 shrink-0">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight mb-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight mb-1">
             Student Enrollments
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 font-medium">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
             Manage global student status, billing rates, and course/class enrollments.
           </p>
         </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            resetNewEnrollForm()
+            setShowNewEnrollModal(true)
+          }}
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-sm hover:opacity-95 active:scale-[0.98] transition cursor-pointer shrink-0 self-start sm:self-auto"
+        >
+          <Plus size={16} strokeWidth={2.5} />
+          <span>New Enrollment</span>
+        </button>
       </div>
 
       {/* SEARCH BAR */}
@@ -240,7 +316,17 @@ export default function ClassEnrollments() {
                 {filteredProfiles.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="p-12 text-center">
-                      <p className="text-base font-bold text-slate-900 dark:text-slate-100">No students found</p>
+                      <p className="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">No students found</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          resetNewEnrollForm()
+                          setShowNewEnrollModal(true)
+                        }}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:opacity-90 transition cursor-pointer"
+                      >
+                        <Plus size={14} /> New Enrollment
+                      </button>
                     </td>
                   </tr>
                 ) : (
@@ -349,7 +435,17 @@ export default function ClassEnrollments() {
           <div className="md:hidden flex flex-col gap-4 p-4">
             {filteredProfiles.length === 0 ? (
               <div className="p-12 text-center">
-                <p className="text-lg font-bold text-slate-900 dark:text-slate-50">No students found</p>
+                <p className="text-base font-bold text-slate-900 dark:text-slate-50 mb-3">No students found</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetNewEnrollForm()
+                    setShowNewEnrollModal(true)
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:opacity-90 transition cursor-pointer"
+                >
+                  <Plus size={14} /> New Enrollment
+                </button>
               </div>
             ) : (
               filteredProfiles.map((profile) => (
@@ -575,24 +671,33 @@ export default function ClassEnrollments() {
             </div>
 
             {/* ADD ENROLLMENT SECTION */}
-            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-neutral-800 dark:border-neutral-700/50 bg-slate-50 dark:bg-neutral-800/50 shrink-0">
+            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-800/50 shrink-0">
               <div className="mb-3">
                 <h4 className="font-bold text-slate-900 dark:text-slate-50">Add New Enrollment</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Please select a course from the dropdown below to enroll the student.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Select whether to enroll in a Course or Live Class.</p>
               </div>
               <form onSubmit={handleAssignEnrollment} className="flex flex-col sm:flex-row gap-3">
-                {/* 
-                  Temporarily hidden as requested:
-                  <select value={newEnrollmentType} ... >
-                */}
+                <select
+                  value={newEnrollmentType}
+                  onChange={(e) => {
+                    setNewEnrollmentType(e.target.value as 'course' | 'class')
+                    setNewEnrollmentId('')
+                  }}
+                  className="bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium text-xs sm:text-sm"
+                >
+                  <option value="course">Course</option>
+                  <option value="class">Live Class</option>
+                </select>
 
                 <select
                   value={newEnrollmentId}
                   onChange={(e) => setNewEnrollmentId(e.target.value)}
-                  className="bg-white dark:bg-neutral-800 flex-1 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                  className="bg-white dark:bg-neutral-800 flex-1 border border-slate-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-slate-900 font-medium text-xs sm:text-sm"
                   required
                 >
-                  <option value="">-- Select a Course to Enroll --</option>
+                  <option value="">
+                    {newEnrollmentType === 'course' ? '-- Select a Course to Enroll --' : '-- Select a Live Class to Enroll --'}
+                  </option>
                   {newEnrollmentType === 'course' 
                     ? courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)
                     : classes.map(c => <option key={c.id} value={c.id}>{c.title}</option>)
@@ -602,13 +707,181 @@ export default function ClassEnrollments() {
                 <button
                   type="submit"
                   disabled={!newEnrollmentId}
-                  className="bg-slate-900 dark:bg-indigo-500 w-full sm:w-auto hover:bg-slate-800 dark:hover:bg-indigo-400 text-white px-5 py-2.5 rounded-lg font-bold transition-colors disabled:opacity-50"
+                  className="bg-slate-900 dark:bg-indigo-500 w-full sm:w-auto hover:bg-slate-800 dark:hover:bg-indigo-400 text-white px-5 py-2.5 rounded-lg font-bold transition-colors disabled:opacity-50 text-xs sm:text-sm cursor-pointer"
                 >
                   Assign
                 </button>
               </form>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ================= GLOBAL NEW ENROLLMENT MODAL ================= */}
+      {showNewEnrollModal && (
+        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl w-full max-w-lg max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur z-10">
+              <div>
+                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+                  New Student Enrollment
+                </h2>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                  Enroll any student into an academic course or live class session
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNewEnrollModal(false)
+                  resetNewEnrollForm()
+                }}
+                disabled={isEnrollingSubmitting}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleCreateNewEnrollment} className="p-5 sm:p-6 space-y-4 text-xs">
+              {/* STUDENT SELECTION */}
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Select Student <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer font-medium"
+                  value={enrollFormStudentId}
+                  onChange={(e) => setEnrollFormStudentId(e.target.value)}
+                  required
+                >
+                  <option value="">-- Choose Student --</option>
+                  {profiles.map((p) => {
+                    const name = `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() || 'Student'
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {name} {p.email ? `(${p.email})` : ''} {!p.is_active ? '[Inactive]' : ''}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+
+              {/* ENROLLMENT TYPE */}
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Enrollment Type <span className="text-rose-500">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEnrollFormType('course')
+                      setEnrollFormTargetId('')
+                    }}
+                    className={`p-2.5 rounded-xl font-bold text-xs border transition cursor-pointer ${
+                      enrollFormType === 'course'
+                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
+                        : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    Course Enrollment
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEnrollFormType('class')
+                      setEnrollFormTargetId('')
+                    }}
+                    className={`p-2.5 rounded-xl font-bold text-xs border transition cursor-pointer ${
+                      enrollFormType === 'class'
+                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
+                        : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    Live Class
+                  </button>
+                </div>
+              </div>
+
+              {/* TARGET COURSE OR CLASS */}
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  {enrollFormType === 'course' ? 'Select Course' : 'Select Live Class'} <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer font-medium"
+                  value={enrollFormTargetId}
+                  onChange={(e) => setEnrollFormTargetId(e.target.value)}
+                  required
+                >
+                  <option value="">
+                    {enrollFormType === 'course' ? '-- Choose Course --' : '-- Choose Live Class --'}
+                  </option>
+                  {enrollFormType === 'course'
+                    ? courses.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.title}
+                        </option>
+                      ))
+                    : classes.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.title}
+                        </option>
+                      ))}
+                </select>
+              </div>
+
+              {/* IF COURSE: STATUS & CUSTOM RATE */}
+              {enrollFormType === 'course' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                      Status
+                    </label>
+                    <select
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer font-medium uppercase"
+                      value={enrollFormStatus}
+                      onChange={(e) => setEnrollFormStatus(e.target.value)}
+                    >
+                      <option value="active">Active</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="completed">Completed</option>
+                      <option value="dropped">Dropped</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                      Custom Hourly Rate <span className="text-slate-400 font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Default rate"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-2.5 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-indigo-500 font-medium"
+                      value={enrollFormCustomRate}
+                      onChange={(e) => setEnrollFormCustomRate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* SUBMIT BUTTON */}
+              <div className="pt-3">
+                <button
+                  type="submit"
+                  disabled={isEnrollingSubmitting || !enrollFormStudentId || !enrollFormTargetId}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-sm hover:opacity-90 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
+                >
+                  {isEnrollingSubmitting ? 'Enrolling...' : 'Confirm & Enroll Student'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

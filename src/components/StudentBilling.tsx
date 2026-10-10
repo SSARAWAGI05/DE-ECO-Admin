@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { 
-  DollarSign, Clock, Users, Edit3, Check, X, 
+  DollarSign, Clock, Users, Check, X, 
   TrendingUp, Calendar as CalendarIcon, 
-  Search, Filter, ArrowUpDown, AlertCircle, History,
+  Search, ArrowUpDown, AlertCircle, History,
   ArrowLeft, Receipt, Download, Share2
 } from 'lucide-react'
 import html2canvas from 'html2canvas'
@@ -77,7 +77,7 @@ export default function StudentBilling() {
   const [sortBy, setSortBy] = useState<SortOption>('name_asc')
 
   // Settlement Modal State
-  const [settleProfile, setSettleProfile] = useState<Profile | null>(null)
+  const [settleProfile, setSettleProfile] = useState<any | null>(null)
   const [settleAmount, setSettleAmount] = useState('')
   const [isSettling, setIsSettling] = useState(false)
 
@@ -126,7 +126,7 @@ export default function StudentBilling() {
       .select('user_id, status, custom_hourly_rate, courses(id, title)')
 
     if (courseEnrollErr) console.error('Failed to fetch course enrollments:', courseEnrollErr)
-    else setCourseEnrollments(courseEnrollData ?? [])
+    else setCourseEnrollments((courseEnrollData as any) ?? [])
   }
 
   /* ================= CALCULATION LOGIC ================= */
@@ -283,7 +283,7 @@ export default function StudentBilling() {
   const summaryStats = useMemo(() => {
     let activeStudents = 0
     let totalScheduledHours = 0
-    let totalOutstandingDue: Record<string, number> = {}
+    const totalOutstandingDue: Record<string, number> = {}
     
     profilesWithStats.forEach(p => {
       if (p.stats.classCount > 0 && p.stats.isEnrolled) activeStudents++
@@ -1141,7 +1141,7 @@ export default function StudentBilling() {
                   step="0.01"
                   min="0"
                   required
-                  placeholder={`e.g. ${settleProfile.stats.totalDue.toFixed(2)}`}
+                  placeholder={`e.g. ${settleProfile?.stats?.totalDue !== undefined ? settleProfile.stats.totalDue.toFixed(2) : '0.00'}`}
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-900 dark:focus:ring-white outline-none text-slate-900 dark:text-white text-sm font-semibold transition-all"

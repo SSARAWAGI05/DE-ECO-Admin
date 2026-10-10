@@ -25,11 +25,9 @@ import {
   FileText,
   AlertCircle,
   Settings,
-  HelpCircle,
   Copy,
   Layers,
   ArrowRight,
-  Sparkles,
   UploadCloud,
   FileUp,
   Key,
@@ -37,14 +35,9 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronRight,
-  Filter,
   RefreshCw,
   User,
   BookOpen,
-  UserCheck,
-  GraduationCap,
-  Mail,
-  Users,
   ExternalLink,
   Eye,
   EyeOff,
@@ -79,7 +72,7 @@ export interface Exam {
   title: string
   course: string
   courseId?: string
-  assignedType?: 'course' | 'student'
+  assignedType?: 'course' | 'student' | 'all'
   assignedStudentEmail?: string
   assignedStudentName?: string
   instructor: string
@@ -127,8 +120,8 @@ export interface ExamSubmission {
   timeSpentMinutes: number
   teacherFeedback?: {
     overall: string
-    strengths: string[]
-    improvements: string[]
+    strengths?: string[]
+    improvements?: string[]
     evaluatedAt: string
   }
   answers: {
@@ -148,11 +141,6 @@ export interface ExamSubmission {
   submissionFileName?: string
   submissionFileSize?: string
 }
-
-/* ================= INITIAL SEED DATA ================= */
-
-const INITIAL_EXAMS: Exam[] = []
-const INITIAL_SUBMISSIONS: ExamSubmission[] = []
 
 /* ================= STORAGE KEYS ================= */
 const EXAMS_STORAGE_KEY = 'deeco_admin_exams'
@@ -200,7 +188,6 @@ export const downloadReportCard = (
   const scoreObtained = data.scoreObtained !== undefined ? Number(data.scoreObtained) : 0;
   const percentage = data.percentage !== undefined ? Number(data.percentage) : Math.round((scoreObtained / (totalMarks || 1)) * 100);
   const grade = data.grade || 'Completed';
-  const isPassed = data.isPassed !== undefined ? Boolean(data.isPassed) : percentage >= 40;
   const timeSpent = Number(data.timeSpentMinutes) || 0;
   const submittedAt = data.submittedAt || new Date().toLocaleDateString('en-US');
   const feedback = data.teacherFeedback;
@@ -1005,7 +992,7 @@ export default function AdminExams() {
   const [mobilePdfHeight, setMobilePdfHeight] = useState<'half' | 'expanded' | 'collapsed'>('half')
 
   // Courses & Students from Supabase
-  const [coursesList, setCoursesList] = useState<CourseOption[]>([
+  const [, setCoursesList] = useState<CourseOption[]>([
     { id: 'all', title: 'All Students (Open / General Exam)' },
     { id: 'c1', title: 'Macroeconomic Theory & Policy' },
     { id: 'c2', title: 'Foundations of Microeconomics' },
@@ -1013,7 +1000,7 @@ export default function AdminExams() {
     { id: 'c4', title: 'Development Economics & Public Policy' }
   ])
   const [studentsList, setStudentsList] = useState<StudentProfileOption[]>([])
-  const [audienceFilter, setAudienceFilter] = useState<'all' | 'course' | 'student'>('all')
+  const [audienceFilter] = useState<'all' | 'course' | 'student'>('all')
   const [studentSearch, setStudentSearch] = useState('')
 
   // Streamlined Exam Form State (Title, Student-level Assignment, Date, Time, Duration, Total Marks)
@@ -1301,8 +1288,6 @@ export default function AdminExams() {
   const liveExamsCount = useMemo(() => exams.filter((e) => e.status === 'live').length, [exams])
   const pendingCount = useMemo(() => submissions.filter((s) => s.status === 'under_evaluation').length, [submissions])
   const gradedCount = useMemo(() => submissions.filter((s) => s.status === 'graded').length, [submissions])
-  const allStudentsExamsCount = useMemo(() => exams.filter((e) => e.assignedType !== 'student').length, [exams])
-  const studentExamsCount = useMemo(() => exams.filter((e) => e.assignedType === 'student').length, [exams])
 
   const calculatedQuestionMarks = useMemo(() => {
     return examForm.questions.reduce((acc, q) => acc + (Number(q.marks) || 0), 0)

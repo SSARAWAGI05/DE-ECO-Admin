@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area
 } from 'recharts'
-import { Calendar, TrendingUp, DollarSign, Users, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, TrendingUp, Users, ChevronLeft, ChevronRight } from 'lucide-react'
 
 // --- TYPES ---
 interface Profile {
@@ -93,15 +93,15 @@ export default function EarningsAnalytics() {
       .select('user_id, custom_hourly_rate, courses(title)')
 
     if (courseEnrollData) {
-      setCourseEnrollments(courseEnrollData)
+      setCourseEnrollments(courseEnrollData as any)
     }
 
     setLoading(false)
   }
 
   // --- AGGREGATION LOGIC ---
-  const { chartData, availableCurrencies } = useMemo(() => {
-    if (!classes.length || Object.keys(profiles).length === 0) return { chartData: [], availableCurrencies: ['INR'] }
+  const { chartData } = useMemo(() => {
+    if (!classes.length || Object.keys(profiles).length === 0) return { chartData: [] }
 
     const aggregated: Record<string, { key: string, label: string, totals: Record<string, number>, classes: any[] }> = {}
     const currs = new Set<string>()
@@ -202,16 +202,6 @@ export default function EarningsAnalytics() {
     if (!selectedDateKey) return null
     return chartData.find(d => d.key === selectedDateKey)
   }, [chartData, selectedDateKey])
-
-  const totalAllTime = useMemo(() => {
-    const totals: Record<string, number> = {}
-    chartData.forEach(d => {
-      Object.entries(d.totals).forEach(([curr, amount]) => {
-        totals[curr] = (totals[curr] || 0) + amount
-      })
-    })
-    return totals
-  }, [chartData])
 
   // --- UI ---
   if (loading) {
@@ -429,7 +419,7 @@ export default function EarningsAnalytics() {
                     }
                   });
                   return { ...d, chartTotal: inrTotal };
-                })} onClick={(e) => {
+                })} onClick={(e: any) => {
                   if (e && e.activePayload && e.activePayload.length > 0) {
                     setSelectedDateKey(e.activePayload[0].payload.key)
                   }

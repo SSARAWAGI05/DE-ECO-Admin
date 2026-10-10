@@ -8,7 +8,6 @@ import {
   Clock,
   Users,
   Link as LinkIcon,
-  Settings,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'

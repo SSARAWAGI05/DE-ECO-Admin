@@ -363,7 +363,7 @@ export default function AdminCourses() {
               <div className="flex items-center gap-3 mb-2">
                 <h3 className="font-bold text-xl text-slate-900 dark:text-slate-50 flex items-center gap-2">
                   {c.title}
-                  {c.featured && <Star size={16} className="text-amber-400 fill-amber-400" title="Featured Course" />}
+                  {c.featured && <span title="Featured Course"><Star size={16} className="text-amber-400 fill-amber-400" /></span>}
                 </h3>
                 {!c.is_active && (
                   <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-neutral-800 text-slate-500 dark:text-slate-400 text-xs font-semibold">

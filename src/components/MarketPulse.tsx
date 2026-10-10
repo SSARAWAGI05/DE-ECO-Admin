@@ -5,7 +5,6 @@ import {
   Trash2,
   X,
   Link,
-  Image,
   Clock,
   Eye,
   Tag,

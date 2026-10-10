@@ -69,10 +69,18 @@ export default function ClassRecordings() {
   /* ================= FETCH CLASSES ================= */
 
   const fetchClasses = async () => {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('live_classes')
       .select('id, title')
-      .order('scheduled_date')
+      .order('scheduled_datetime', { ascending: false })
+
+    if (error) {
+      const fallback = await supabase
+        .from('live_classes')
+        .select('id, title')
+      data = fallback.data
+      error = fallback.error
+    }
 
     if (error) {
       console.error('Failed to fetch classes:', error)
