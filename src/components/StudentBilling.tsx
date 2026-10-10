@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { 
   DollarSign, Clock, Users, Check, X, 
@@ -160,7 +160,7 @@ export default function StudentBilling() {
   }
 
   // Calculate stats for a single user
-  const getUserStats = (userId: string, defaultRate: number, isActiveProfile: boolean, totalPaid: number, manualOutstanding: number) => {
+  const getUserStats = useCallback((userId: string, defaultRate: number, isActiveProfile: boolean, totalPaid: number, manualOutstanding: number) => {
     const studentClasses = filteredClasses.filter(c => c.user_id === userId)
     const allTimeClasses = classes.filter(c => c.user_id === userId)
     const enrollments = courseEnrollments.filter(e => e.user_id === userId)
@@ -232,7 +232,7 @@ export default function StudentBilling() {
       manualOutstanding,
       totalPaid
     }
-  }
+  }, [filteredClasses, classes, courseEnrollments])
 
   // Pre-calculate all stats for filtering and sorting
   const profilesWithStats = useMemo(() => {
@@ -240,7 +240,7 @@ export default function StudentBilling() {
       ...p,
       stats: getUserStats(p.id, p.hourly_rate, p.is_active, p.total_paid, p.manual_outstanding)
     }))
-  }, [profiles, filteredClasses, classes, courseEnrollments])
+  }, [profiles, getUserStats])
 
   // Apply Search, Filter, and Sort
   const processedProfiles = useMemo(() => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   Plus,
   Edit2,
@@ -65,6 +65,39 @@ export default function LiveClasses() {
     send_email: true,
   })
 
+  /* ---------- MEMOIZED ACTIONS & FETCHERS ---------- */
+  const resetForm = useCallback(() => {
+    setEditingId(null)
+    setCustomDuration(false)
+    const today = new Date().toISOString().slice(0, 10)
+    setFormData({
+      user_id: '',
+      title: '',
+      instructor_name: 'Rishika',
+      meeting_link: defaultLink,
+      scheduled_datetime: `${today}T12:00`,
+      duration_minutes: '60',
+      send_email: true,
+    })
+  }, [defaultLink])
+
+  /**
+   * Fetch classes for the selected date
+   */
+  const fetchClasses = useCallback(async () => {
+    const startOfDay = new Date(selectedDate + "T00:00:00")
+    const endOfDay = new Date(selectedDate + "T23:59:59.999")
+
+    const { data } = await supabase
+      .from('live_classes')
+      .select('*')
+      .gte('scheduled_datetime', startOfDay.toISOString())
+      .lte('scheduled_datetime', endOfDay.toISOString())
+      .order('scheduled_datetime', { ascending: true })
+
+    setClasses(data ?? [])
+  }, [selectedDate])
+
   /* ---------- INITIAL LOAD ---------- */
   useEffect(() => {
     fetchEligibleUsers()
@@ -76,11 +109,11 @@ export default function LiveClasses() {
       resetForm()
       setPanelOpen(true)
     }
-  }, [])
+  }, [resetForm])
 
   useEffect(() => {
     fetchClasses()
-  }, [selectedDate])
+  }, [fetchClasses])
 
   /* ================= DATA FETCHING ================= */
 
@@ -129,43 +162,11 @@ export default function LiveClasses() {
     setUsers(usersData ?? [])
   }
 
-  /**
-   * Fetch classes for the selected date
-   */
-  const fetchClasses = async () => {
-    const startOfDay = new Date(selectedDate + "T00:00:00")
-    const endOfDay = new Date(selectedDate + "T23:59:59.999")
-
-    const { data } = await supabase
-      .from('live_classes')
-      .select('*')
-      .gte('scheduled_datetime', startOfDay.toISOString())
-      .lte('scheduled_datetime', endOfDay.toISOString())
-      .order('scheduled_datetime', { ascending: true })
-
-    setClasses(data ?? [])
-  }
-
   /* ================= HELPERS ================= */
 
   const getUserName = (id: string) => {
     const u = users.find((x) => x.id === id)
     return u ? `${u.first_name ?? ''} ${u.last_name ?? ''}`.trim() : '—'
-  }
-
-  const resetForm = () => {
-    setEditingId(null)
-    setCustomDuration(false)
-    const today = new Date().toISOString().slice(0, 10)
-    setFormData({
-      user_id: '',
-      title: '',
-      instructor_name: 'Rishika',
-      meeting_link: defaultLink,
-      scheduled_datetime: `${today}T12:00`,
-      duration_minutes: '60',
-      send_email: true,
-    })
   }
 
   /* ================= ACTIONS ================= */

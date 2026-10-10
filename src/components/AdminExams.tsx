@@ -165,7 +165,7 @@ const stripHtmlTags = (html: string = ''): string => {
   return html.replace(/<[^>]*>/g, '').trim();
 };
 
-export const downloadReportCard = (
+const downloadReportCard = (
   data: any,
   options?: { studentName?: string; studentEmail?: string }
 ) => {
@@ -890,7 +890,7 @@ export const downloadReportCard = (
 '      window.addEventListener("load", function() { setTimeout(triggerReportPrint, 350); });' +
 '      setTimeout(triggerReportPrint, 1000);' +
 '    }' +
-'  <\/script>' +
+'  </script>' +
 '</body>' +
 '</html>';
 
@@ -932,7 +932,9 @@ export const downloadReportCard = (
           try {
             document.body.removeChild(iframe);
             URL.revokeObjectURL(blobUrl);
-          } catch (e) {}
+          } catch {
+            // ignore
+          }
         }, 3000);
       }, 400);
     };

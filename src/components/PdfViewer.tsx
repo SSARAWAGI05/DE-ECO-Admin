@@ -158,7 +158,9 @@ export default function PdfViewer({
     return () => {
       isMounted = false
       if (loadingTask) {
-        try { loadingTask.destroy(); } catch {}
+        try { loadingTask.destroy(); } catch {
+          // ignore cleanup errors
+        }
       }
     }
   }, [viewerMode, url, zoomScale])

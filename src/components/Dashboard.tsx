@@ -6,8 +6,24 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 
+export type DashboardSection =
+  | 'dashboard'
+  | 'announcements'
+  | 'classes'
+  | 'courses'
+  | 'enrollments'
+  | 'notes'
+  | 'recordings'
+  | 'market_pulse'
+  | 'contact_messages'
+  | 'billing'
+  | 'invoices'
+  | 'past_history'
+  | 'earnings_analytics'
+  | 'exams'
+
 interface DashboardProps {
-  setActiveSection?: (section: any) => void
+  setActiveSection?: (section: DashboardSection) => void
 }
 
 export default function Dashboard({ setActiveSection }: DashboardProps) {
@@ -62,7 +78,18 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
   }
 
   // 4 Top Priority Navigation Portal Buttons
-  const priorityPortals = [
+  const priorityPortals: {
+    id: DashboardSection
+    title: string
+    subtitle: string
+    count: string
+    icon: any
+    surface: string
+    border: string
+    hover: string
+    iconBadge: string
+    badge: string
+  }[] = [
     {
       id: 'enrollments',
       title: 'Enrollments',
@@ -114,7 +141,12 @@ export default function Dashboard({ setActiveSection }: DashboardProps) {
   ]
 
   // Secondary Tools (Clean, compact list/grid at the bottom)
-  const secondaryTools = [
+  const secondaryTools: {
+    id: DashboardSection
+    title: string
+    icon: any
+    meta: string
+  }[] = [
     { id: 'invoices', title: 'Invoices', icon: Receipt, meta: `${stats.invoicesCount} Issued` },
     { id: 'exams', title: 'All Exams', icon: Award, meta: `${stats.examsCount} Tests` },
     { id: 'notes', title: 'Class Notes', icon: FileText, meta: 'Curriculum' },

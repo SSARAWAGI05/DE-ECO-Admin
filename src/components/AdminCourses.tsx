@@ -224,7 +224,7 @@ export default function AdminCourses() {
                 className="bg-white dark:bg-neutral-800 w-full border border-slate-300 dark:border-neutral-700 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-shadow text-slate-900 dark:text-slate-50"
                 value={formData.level}
                 onChange={(e) =>
-                  setFormData({ ...formData, level: e.target.value as any })
+                  setFormData({ ...formData, level: e.target.value as 'beginner' | 'intermediate' | 'advanced' })
                 }
               >
                 <option value="beginner">Beginner</option>

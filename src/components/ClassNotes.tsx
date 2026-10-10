@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import {
   Plus, Edit2, Trash2, X, FileText, UploadCloud,
   Mail, Search, ExternalLink, Loader2
@@ -306,19 +306,17 @@ export default function ClassNotes() {
     fetchNotes()
   }
 
-  /* ================= HELPERS & FILTERING ================= */
-
-  const getClassTitle = (classId: string | null) => {
+  const getClassTitle = useCallback((classId: string | null) => {
     if (!classId) return 'General Class Note'
     return classes.find((c) => c.id === classId)?.title ?? 'General Class Note'
-  }
+  }, [classes])
 
-  const getUserName = (userId: string) => {
+  const getUserName = useCallback((userId: string) => {
     const user = users.find((u) => u.id === userId)
     if (!user) return 'Assigned Student'
     const name = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
     return name || user.email || 'Assigned Student'
-  }
+  }, [users])
 
   const filteredNotes = useMemo(() => {
     return notes.filter((n) => {
@@ -336,7 +334,7 @@ export default function ClassNotes() {
       }
       return true
     })
-  }, [notes, searchQuery, selectedStudentFilter, users, classes])
+  }, [notes, searchQuery, selectedStudentFilter, getUserName, getClassTitle])
 
   /* ================= UI RENDER ================= */
 

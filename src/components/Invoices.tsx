@@ -162,7 +162,7 @@ export default function Invoices() {
       const nameB = `${b.profile.first_name || ''} ${b.profile.last_name || ''}`
       return nameA.localeCompare(nameB)
     })
-  }, [classes, profiles, startDate, endDate])
+  }, [classes, profiles, startDate, endDate, courseEnrollments])
 
   const generatePdfBlob = async () => {
     const element = document.getElementById('invoice-pdf-content')

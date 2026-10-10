@@ -274,7 +274,7 @@ JSON Response Schema:
   let parsed: any;
   try {
     parsed = JSON.parse(content);
-  } catch (err) {
+  } catch {
     throw new Error('Failed to parse Groq response as valid JSON.');
   }
 
